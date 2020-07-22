@@ -30,6 +30,6 @@ export class CaptureComponent implements OnInit {
   }
 
   captureImage(): void {
-    // Not implemented
+    console.log("called captureImage()...");
   }
 }
