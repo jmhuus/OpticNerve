@@ -1,0 +1,1636 @@
+.mediaViewInfo {
+    --web-view-name: Custom Size – 1;
+    --web-view-id: Custom_Size__1;
+    --web-scale-on-resize: true;
+    --web-enable-deep-linking: true;
+}
+:root {
+    --web-view-ids: Custom_Size__1;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: none;
+}
+#Custom_Size__1 {
+    position: absolute;
+    width: 1920px;
+    height: 1080px;
+    background-color: rgba(43,37,60,1);
+    overflow: hidden;
+    --web-view-name: Custom Size – 1;
+    --web-view-id: Custom_Size__1;
+    --web-scale-on-resize: true;
+    --web-enable-deep-linking: true;
+}
+#Group_1 {
+    position: absolute;
+    width: 149px;
+    height: 47px;
+    left: 227px;
+    top: 987px;
+    overflow: visible;
+}
+#Rectangle_1 {
+    fill: rgba(5,9,13,1);
+}
+.Rectangle_1 {
+    filter: drop-shadow(5px 5px 6px rgba(37, 4, 39, 0.514));
+    position: absolute;
+    overflow: visible;
+    width: 167px;
+    height: 65px;
+    left: 0px;
+    top: 0px;
+}
+#Capture {
+    left: 37px;
+    top: 12px;
+    position: absolute;
+    overflow: visible;
+    width: 77px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#Group_18 {
+    position: absolute;
+    width: 162px;
+    height: 36px;
+    left: 1551px;
+    top: 715px;
+    overflow: visible;
+}
+#Rectangle_1_k {
+    fill: rgba(5,9,13,1);
+}
+.Rectangle_1_k {
+    filter: drop-shadow(5px 5px 6px rgba(37, 4, 39, 0.514));
+    position: absolute;
+    overflow: visible;
+    width: 180px;
+    height: 54px;
+    left: 0px;
+    top: 0px;
+}
+#Open_File_Browser {
+    left: 13px;
+    top: 10px;
+    position: absolute;
+    overflow: visible;
+    width: 133px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 15px;
+    color: rgba(255,255,255,1);
+}
+#Group_19 {
+    position: absolute;
+    width: 162px;
+    height: 36px;
+    left: 1551px;
+    top: 761px;
+    overflow: visible;
+}
+#Rectangle_1_n {
+    fill: rgba(5,9,13,1);
+}
+.Rectangle_1_n {
+    filter: drop-shadow(5px 5px 6px rgba(37, 4, 39, 0.514));
+    position: absolute;
+    overflow: visible;
+    width: 180px;
+    height: 54px;
+    left: 0px;
+    top: 0px;
+}
+#Open_Image {
+    left: 38px;
+    top: 9px;
+    position: absolute;
+    overflow: visible;
+    width: 88px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 15px;
+    color: rgba(255,255,255,1);
+}
+#Line_1 {
+    fill: transparent;
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Line_1 {
+    overflow: visible;
+    position: absolute;
+    width: 1px;
+    height: 931px;
+    left: 655.5px;
+    top: 71.5px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Aperture {
+    left: 124px;
+    top: 816px;
+    position: absolute;
+    overflow: visible;
+    width: 78px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Format {
+    left: 34px;
+    top: 385px;
+    position: absolute;
+    overflow: visible;
+    width: 65px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#JPEG {
+    left: 182px;
+    top: 384px;
+    position: absolute;
+    overflow: visible;
+    width: 54px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#W_H {
+    left: 402px;
+    top: 385px;
+    position: absolute;
+    overflow: visible;
+    width: 44px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#VendorID {
+    left: 34px;
+    top: 481px;
+    position: absolute;
+    overflow: visible;
+    width: 83px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Aperture_v {
+    left: 402px;
+    top: 481px;
+    position: absolute;
+    overflow: visible;
+    width: 78px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Lens {
+    left: 34px;
+    top: 417px;
+    position: absolute;
+    overflow: visible;
+    width: 44px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Aperture_x {
+    left: 182px;
+    top: 416px;
+    position: absolute;
+    overflow: visible;
+    width: 84px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#Aperture_y {
+    left: 402px;
+    top: 417px;
+    position: absolute;
+    overflow: visible;
+    width: 78px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Manufacturer {
+    left: 34px;
+    top: 513px;
+    position: absolute;
+    overflow: visible;
+    width: 120px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Aperture_ {
+    left: 402px;
+    top: 513px;
+    position: absolute;
+    overflow: visible;
+    width: 78px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Model {
+    left: 34px;
+    top: 449px;
+    position: absolute;
+    overflow: visible;
+    width: 57px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#NIKON_D3100 {
+    left: 183px;
+    top: 448px;
+    position: absolute;
+    overflow: visible;
+    width: 131px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#ID1234 {
+    left: 183px;
+    top: 480px;
+    position: absolute;
+    overflow: visible;
+    width: 45px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#NIKON_D3100_ {
+    left: 183px;
+    top: 514px;
+    position: absolute;
+    overflow: visible;
+    width: 131px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#ID1920_1080 {
+    left: 508px;
+    top: 385px;
+    position: absolute;
+    overflow: visible;
+    width: 101px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#Aperture_ba {
+    left: 402px;
+    top: 449px;
+    position: absolute;
+    overflow: visible;
+    width: 78px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Aperture_bb {
+    left: 34px;
+    top: 545px;
+    position: absolute;
+    overflow: visible;
+    width: 78px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Aperture_bc {
+    left: 402px;
+    top: 545px;
+    position: absolute;
+    overflow: visible;
+    width: 78px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Group_2 {
+    position: absolute;
+    width: 929px;
+    height: 578px;
+    left: 784px;
+    top: 116px;
+    overflow: visible;
+}
+#Rectangle_5 {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5 {
+    position: absolute;
+    overflow: visible;
+    width: 929px;
+    height: 578px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1 {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1 {
+    overflow: hidden;
+    position: absolute;
+    width: 103px;
+    height: 91px;
+    left: 45px;
+    top: 224px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1 {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1 {
+    position: absolute;
+    overflow: visible;
+    width: 74px;
+    height: 75px;
+    left: 470px;
+    top: 105px;
+}
+#Rectangle_3 {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3 {
+    position: absolute;
+    overflow: visible;
+    width: 107px;
+    height: 106px;
+    left: 777px;
+    top: 437px;
+}
+#Group_3 {
+    position: absolute;
+    width: 140px;
+    height: 94px;
+    left: 728px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_bf {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(255,157,25,1);
+    stroke-width: 2px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_bf {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 94px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_bg {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(113,113,113,1);
+    stroke-width: 2px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_bg {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 32px;
+    left: 15px;
+    top: 29px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_bh {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(113,113,113,1);
+    stroke-width: 2px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_bh {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_bi {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(113,113,113,1);
+    stroke-width: 2px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_bi {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 37px;
+    left: 88px;
+    top: 46px;
+}
+#Group_4 {
+    position: absolute;
+    width: 140px;
+    height: 94px;
+    left: 877px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_bk {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_bk {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 94px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_bl {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_bl {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 31px;
+    left: 15px;
+    top: 30px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_bm {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_bm {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_bn {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_bn {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 37px;
+    left: 88px;
+    top: 46px;
+}
+#Group_5 {
+    position: absolute;
+    width: 140px;
+    height: 94px;
+    left: 1026px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_bp {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_bp {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 94px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_bq {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_bq {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 31px;
+    left: 15px;
+    top: 29px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_br {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_br {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_bs {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_bs {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 37px;
+    left: 88px;
+    top: 46px;
+}
+#Live_View {
+    left: 287px;
+    top: 64px;
+    position: absolute;
+    overflow: visible;
+    width: 85px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(255,157,25,1);
+}
+#Last_Image {
+    left: 1199px;
+    top: 64px;
+    position: absolute;
+    overflow: visible;
+    width: 100px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(255,157,25,1);
+}
+#f18 {
+    left: 121px;
+    top: 747px;
+    position: absolute;
+    overflow: visible;
+    width: 85px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 50px;
+    color: rgba(255,255,255,1);
+}
+#Shutter {
+    left: 274px;
+    top: 816px;
+    position: absolute;
+    overflow: visible;
+    width: 66px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#ID10s {
+    left: 259px;
+    top: 747px;
+    position: absolute;
+    overflow: visible;
+    width: 96px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 50px;
+    color: rgba(255,255,255,1);
+}
+#ISO {
+    left: 423px;
+    top: 816px;
+    position: absolute;
+    overflow: visible;
+    width: 34px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#ID400 {
+    left: 397px;
+    top: 747px;
+    position: absolute;
+    overflow: visible;
+    width: 84px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 50px;
+    color: rgba(255,255,255,1);
+}
+#Line_8 {
+    fill: transparent;
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Line_8 {
+    overflow: visible;
+    position: absolute;
+    width: 359px;
+    height: 1px;
+    left: 121.5px;
+    top: 720.5px;
+    transform: matrix(1,0,0,1,0,0);
+}
+.shooting_mode_highlighted {
+    top: 600px;
+    width: 53px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 60px;
+    color: rgba(255,255,255,1);
+}
+.shooting_mode_normal {
+    width: 14px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#M {
+    left: 147px;
+    top: 662px;
+    position: absolute;
+    overflow: visible;
+}
+#A {
+    left: 244px;
+    top: 662px;
+    position: absolute;
+    overflow: visible;
+}
+#S {
+    left: 341px;
+    top: 662px;
+    position: absolute;
+    overflow: visible;
+}
+#P {
+    left: 438px;
+    top: 662px;
+    position: absolute;
+    overflow: visible;
+}
+#Group_9 {
+    position: absolute;
+    width: 140px;
+    height: 94px;
+    left: 1175px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_b {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_b {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 94px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_b {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_b {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 32px;
+    left: 15px;
+    top: 29px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_b {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_b {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_b {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_b {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 37px;
+    left: 88px;
+    top: 46px;
+}
+#Group_7 {
+    position: absolute;
+    width: 140px;
+    height: 95px;
+    left: 1324px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_cb {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_cb {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 95px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_cc {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_cc {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 31px;
+    left: 15px;
+    top: 29px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_cd {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_cd {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_ce {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_ce {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 36px;
+    left: 88px;
+    top: 46px;
+}
+#Group_8 {
+    position: absolute;
+    width: 140px;
+    height: 94px;
+    left: 1473px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_cg {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_cg {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 94px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_ch {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_ch {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 32px;
+    left: 15px;
+    top: 29px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_ci {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_ci {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_cj {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_cj {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 37px;
+    left: 88px;
+    top: 46px;
+}
+#Rectangle_6 {
+    fill: transparent;
+}
+.Rectangle_6 {
+    position: absolute;
+    overflow: visible;
+    width: 167px;
+    height: 112px;
+    left: 1603px;
+    top: 816px;
+}
+#Group_15 {
+    position: absolute;
+    width: 140px;
+    height: 94px;
+    left: 1621px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_cm {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_cm {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 94px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_cn {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_cn {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 32px;
+    left: 15px;
+    top: 29px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_co {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_co {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_cp {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_cp {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 37px;
+    left: 88px;
+    top: 46px;
+}
+#Group_17 {
+    position: absolute;
+    width: 140px;
+    height: 94px;
+    left: 1770px;
+    top: 850px;
+    overflow: visible;
+}
+#Rectangle_5_cr {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_cr {
+    position: absolute;
+    overflow: visible;
+    width: 140px;
+    height: 94px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_cs {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_cs {
+    overflow: hidden;
+    position: absolute;
+    width: 35px;
+    height: 32px;
+    left: 15px;
+    top: 29px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_ct {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_ct {
+    position: absolute;
+    overflow: visible;
+    width: 25px;
+    height: 25px;
+    left: 63px;
+    top: 15px;
+}
+#Rectangle_3_cu {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_cu {
+    position: absolute;
+    overflow: visible;
+    width: 37px;
+    height: 37px;
+    left: 88px;
+    top: 46px;
+}
+#Group_16 {
+    position: absolute;
+    width: 350px;
+    height: 214px;
+    left: 160px;
+    top: 116px;
+    overflow: visible;
+}
+#Rectangle_5_cw {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_5_cw {
+    position: absolute;
+    overflow: visible;
+    width: 350px;
+    height: 214px;
+    left: 0px;
+    top: 0px;
+}
+#Polygon_1_cx {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_1_cx {
+    overflow: hidden;
+    position: absolute;
+    width: 103px;
+    height: 91px;
+    left: 65px;
+    top: 57px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Ellipse_1_cy {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Ellipse_1_cy {
+    position: absolute;
+    overflow: visible;
+    width: 74px;
+    height: 75px;
+    left: 153px;
+    top: 31px;
+}
+#Rectangle_3_cz {
+    fill: rgba(29,29,29,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_3_cz {
+    position: absolute;
+    overflow: visible;
+    width: 107px;
+    height: 106px;
+    left: 177px;
+    top: 77px;
+}
+#Line_9 {
+    fill: transparent;
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Line_9 {
+    overflow: visible;
+    position: absolute;
+    width: 1082px;
+    height: 1px;
+    left: 728.5px;
+    top: 963.5px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Rectangle_7 {
+    fill: rgba(255,157,25,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_7 {
+    position: absolute;
+    overflow: visible;
+    width: 223px;
+    height: 7px;
+    left: 729px;
+    top: 960px;
+}
+#Rectangle_8 {
+    fill: rgba(43,37,60,1);
+}
+.Rectangle_8 {
+    position: absolute;
+    overflow: visible;
+    width: 109px;
+    height: 121px;
+    left: 1811px;
+    top: 839px;
+}
+#Count {
+    left: 122px;
+    top: 885px;
+    position: absolute;
+    overflow: visible;
+    width: 55px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Delay {
+    left: 122px;
+    top: 921px;
+    position: absolute;
+    overflow: visible;
+    width: 51px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Rectangle_9 {
+    fill: rgba(105,105,105,0.282);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_9 {
+    position: absolute;
+    overflow: visible;
+    width: 77px;
+    height: 31px;
+    left: 205px;
+    top: 882px;
+}
+#Rectangle_10 {
+    fill: rgba(105,105,105,0.282);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_10 {
+    position: absolute;
+    overflow: visible;
+    width: 77px;
+    height: 31px;
+    left: 205px;
+    top: 918px;
+}
+#Stop_Time {
+    left: 323px;
+    top: 885px;
+    position: absolute;
+    overflow: visible;
+    width: 93px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Something {
+    left: 323px;
+    top: 921px;
+    position: absolute;
+    overflow: visible;
+    width: 118px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
+#Rectangle_11 {
+    fill: rgba(105,105,105,0.282);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_11 {
+    position: absolute;
+    overflow: visible;
+    width: 77px;
+    height: 31px;
+    left: 473px;
+    top: 882px;
+}
+#Rectangle_12 {
+    fill: rgba(105,105,105,0.282);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Rectangle_12 {
+    position: absolute;
+    overflow: visible;
+    width: 77px;
+    height: 31px;
+    left: 473px;
+    top: 918px;
+}
+#Line_10 {
+    fill: transparent;
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Line_10 {
+    overflow: visible;
+    position: absolute;
+    width: 251px;
+    height: 1px;
+    left: 34.5px;
+    top: 584.5px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Line_11 {
+    fill: transparent;
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Line_11 {
+    overflow: visible;
+    position: absolute;
+    width: 269px;
+    height: 1px;
+    left: 351.5px;
+    top: 584.5px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Group_20 {
+    position: absolute;
+    width: 22px;
+    height: 14px;
+    left: 302.5px;
+    top: 578.5px;
+    overflow: visible;
+}
+#Line_12 {
+    fill: transparent;
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Line_12 {
+    overflow: visible;
+    position: absolute;
+    width: 11.786px;
+    height: 14.618px;
+    left: 0px;
+    top: 0px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#Line_13 {
+    fill: transparent;
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Line_13 {
+    overflow: visible;
+    position: absolute;
+    width: 11.786px;
+    height: 14.618px;
+    left: 11px;
+    top: 0px;
+    transform: matrix(1,0,0,1,0,0);
+}
+#OpticNerve {
+    left: 28px;
+    top: 23px;
+    position: absolute;
+    overflow: visible;
+    width: 108px;
+    white-space: nowrap;
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+#Polygon_2 {
+    fill: rgba(255,255,255,1);
+    stroke: rgba(112,112,112,1);
+    stroke-width: 1px;
+    stroke-linejoin: miter;
+    stroke-linecap: butt;
+    stroke-miterlimit: 4;
+    shape-rendering: auto;
+}
+.Polygon_2 {
+    overflow: hidden;
+    position: absolute;
+    width: 33px;
+    height: 24px;
+    left: 149px;
+    top: 23px;
+    transform: matrix(1,0,0,1,0,0);
+}
