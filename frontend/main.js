@@ -13,7 +13,7 @@ function createWindow () {
     })
 
     // and load the index.html of the app.
-    mainWindow.loadFile('index.html')
+    mainWindow.loadFile('./dist/OpticNerve/index.html')
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
@@ -41,38 +41,38 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-function initPythonServer() {
-    console.log("called initPythonServer()");
+// function initPythonServer() {
+//     console.log("called initPythonServer()");
     
-    var { PythonShell } = require('python-shell');
+//     var { PythonShell } = require('python-shell');
 
-    let options = {
-	mode: 'text'
-    };
+//     let options = {
+// 	mode: 'text'
+//     };
     
-    PythonShell.run('../backend/server.py', options, function (err, results) {
-	if (err) throw err;
-	// results is an array consisting of messages collected during execution
-	console.log('response: ', results);
+//     PythonShell.run('../backend/server.py', options, function (err, results) {
+// 	if (err) throw err;
+// 	// results is an array consisting of messages collected during execution
+// 	console.log('response: ', results);
 
-    });
-}
+//     });
+// }
 
-function captureImage(){
-    console.log("called captureImage");
-    fetch(`http://127.0.0.1:5000/capture-image`).then((data)=>{      
-	return data.text();
+// function captureImage(){
+//     console.log("called captureImage");
+//     fetch(`http://127.0.0.1:5000/capture-image`).then((data)=>{      
+// 	return data.text();
 	
-    }).then((text)=>{
-	console.log("data: ", text);
-    }).catch(e=>{
-	console.log(e);
-    })
+//     }).then((text)=>{
+// 	console.log("data: ", text);
+//     }).catch(e=>{
+// 	console.log(e);
+//     })
 
-}
+// }
 
 // Init Python Flask server
-initPythonServer();
+// initPythonServer();
 
 
 // btn.addEventListener('click', () => {
