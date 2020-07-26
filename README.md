@@ -9,12 +9,9 @@ I decided to build this app even though there are some great existing applicatio
 * Angular
 
 #### What is the status of this project?
-Last Update: 7/22/2020
-* Really messy... nothing works
-* Working to build rough POC frontend to being hooking up pyptp commands
-    * Using Adobe XD to build the rough HTML and CSS for POC frontend
-* I don't have a DSLR that supports Live View, a popular feature, so this likley
-will be prioritized at a later date...
+Last Update: 7/25/2020
+* Frontend and backend working to support a simple initiate capture command.
+* Working to understand and hook up more UI elements to pyptp
 
 
 #### Where is this project going?
