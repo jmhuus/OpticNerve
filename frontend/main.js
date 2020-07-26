@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain} = require('electron');
+const path = require('path');
+const fetch = require("node-fetch");
 
 function createWindow () {
     // Create the browser window.
@@ -8,7 +9,8 @@ function createWindow () {
 	width: 800,
 	height: 600,
 	webPreferences: {
-	    preload: path.join(__dirname, 'preload.js')
+	    preload: path.join(__dirname, 'preload.js'),
+	    sandbox: false
 	}
     })
 
@@ -16,7 +18,7 @@ function createWindow () {
     mainWindow.loadFile('./dist/OpticNerve/index.html')
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -32,51 +34,69 @@ app.whenReady().then(() => {
     })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') app.quit()
+// Init Python Flask server to handle device communication
+function initPythonServer() {
+    console.log("called initPythonServer()");
+    
+    var { PythonShell } = require('python-shell');
+
+    let options = {
+	mode: 'text'
+    };
+    
+    PythonShell.run('../backend/server.py', options, function (err, results) {
+	if (err) throw err;
+	// results is an array consisting of messages collected during execution
+	console.log('response: ', results);
+
+    });
+}
+
+// Initiates the device to capture an image and return the result
+function captureImage_server(){
+    console.log("called captureImage");
+    fetch(`http://127.0.0.1:8080/capture-image`).then((data)=>{      
+	return data.text();
+	
+    }).then((text)=>{
+	console.log("data: ", text);
+    }).catch(e=>{
+	console.log(e);
+    })
+}
+
+// Endpoint to remotely shutdown the server
+function shutdownServer(){
+    console.log("called shutdownServer");
+    fetch(`http://127.0.0.1:8080/shutdown-server`).then((data)=>{      
+	return data.text();
+	
+    }).then((text)=>{
+	console.log("data: ", text);
+    }).catch(e=>{
+	console.log(e);
+    })
+}
+
+// Recieve asynchronous request from renderer
+ipcMain.on('test', (event, arg) => {
+    console.log("it's working!!! (from main.js).");
+    captureImage_server();
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-// function initPythonServer() {
-//     console.log("called initPythonServer()");
-    
-//     var { PythonShell } = require('python-shell');
-
-//     let options = {
-// 	mode: 'text'
-//     };
-    
-//     PythonShell.run('../backend/server.py', options, function (err, results) {
-// 	if (err) throw err;
-// 	// results is an array consisting of messages collected during execution
-// 	console.log('response: ', results);
-
-//     });
-// }
-
-// function captureImage(){
-//     console.log("called captureImage");
-//     fetch(`http://127.0.0.1:5000/capture-image`).then((data)=>{      
-// 	return data.text();
-	
-//     }).then((text)=>{
-// 	console.log("data: ", text);
-//     }).catch(e=>{
-// 	console.log(e);
-//     })
-
-// }
-
 // Init Python Flask server
-// initPythonServer();
+initPythonServer();
 
+// Any platform except MacOS shuts down the entire
+// program when all windows are closed
+app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') {
+	app.quit();
+    }
+})
 
-// btn.addEventListener('click', () => {
-//   onclick();
-// });
-
-// btn.dispatchEvent(new Event('click'))
+// When officially quitting the program, shut down
+// the server as well.
+app.on('before-quit', function () {
+    shutdownServer();
+})

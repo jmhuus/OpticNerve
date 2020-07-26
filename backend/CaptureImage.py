@@ -49,7 +49,7 @@ def capture_new_image(file=None):
         # Download newly added object
         if objectid != None:
             if file is None:
-                file = open("images/capture_%s.jpg" % recorded_time.strftime("%Y_%m_%d_%H_%M_%S"), "wb")
+                file = open("../frontend/src/assets/images/latest.jpg", "wb")
             ptpSession.GetObject(objectid, file)
             file.close()
             ptpSession.DeleteObject(objectid)

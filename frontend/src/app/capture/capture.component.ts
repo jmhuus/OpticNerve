@@ -1,35 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { Device } from './device';
+declare var window: Window;
+declare global {
+  interface Window {
+    process: any;
+    require: any;
+  }
+}
+
 
 @Component({
-  selector: 'app-capture',
-  templateUrl: './capture.component.html',
-  styleUrls: ['./capture.component.css']
+    selector: 'app-capture',
+    templateUrl: './capture.component.html',
+    styleUrls: ['./capture.component.css']
 })
 export class CaptureComponent implements OnInit {
 
-  device: Device;
+    device: Device;
 
-  constructor() { }
+    constructor() { }
 
-  ngOnInit(): void {
-    this.device = new Device('NIKON', 'D3100', 1234, 4321, 'A', 1.8, 123, 400);
-  }
-
-  getModeClass(mode: string): Object {
-    console.log("incoming mode: " + mode);
-    console.log("device mode: " + this.device.shooting_mode);
-
-    if (mode == this.device.shooting_mode) {
-      console.log("test 1");
-      return "shooting_mode_highlighted";
-    } else {
-      console.log("test 2");
-      return "shooting_mode_normal";
+    ngOnInit(): void {
+	this.device = new Device('NIKON', 'D3100', 1234, 4321, 'A', 1.8, 123, 400);
     }
-  }
 
-  captureImage(): void {
-    console.log("called captureImage()...");
-  }
+    getModeClass(mode: string): Object {
+	if (mode == this.device.shooting_mode) {
+	    return "shooting_mode_highlighted";
+	} else {
+	    return "shooting_mode_normal";
+	}
+    }
+
+    captureImage(): void {
+	console.log(window);	
+	var sendTest = window['sendTestMessage'];
+	sendTest();
+    }
 }
