@@ -5,6 +5,7 @@ export class Device {
   public iProduct: number;
   public iVendor: number;
   public live_view_image: string;
+  public image_latest_path: string;
 
   // User-specified settings
   public shooting_mode: string;
@@ -28,7 +29,7 @@ export class Device {
     this.aperture = aperture;
     this.shutter = shutter;
     this.iso = iso;
-    this.live_view_image = "assets/ubuntu_wallpaper_2.jpg";
+    this.image_latest_path = "assets/images/milky_way_image_pending.jpg";
   }
 
   /*

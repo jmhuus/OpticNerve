@@ -6,8 +6,8 @@ const fetch = require("node-fetch");
 function createWindow () {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-	width: 800,
-	height: 600,
+	width: 2000,
+	height: 1200,
 	webPreferences: {
 	    preload: path.join(__dirname, 'preload.js'),
 	    sandbox: false
@@ -53,35 +53,48 @@ function initPythonServer() {
 }
 
 // Initiates the device to capture an image and return the result
-function captureImage_server(){
-    console.log("called captureImage");
-    fetch(`http://127.0.0.1:8080/capture-image`).then((data)=>{      
-	return data.text();
-	
-    }).then((text)=>{
-	console.log("data: ", text);
-    }).catch(e=>{
-	console.log(e);
-    })
+async function captureImage_server(context){
+    const response = await fetch("http://127.0.0.1:8080/capture-image", {
+	method: "POST",
+	headers: {
+	    "Content-Type": "application/json"
+	},
+	body: JSON.stringify({"context": context})
+    });
+    return response.json();
 }
 
 // Endpoint to remotely shutdown the server
-function shutdownServer(){
-    console.log("called shutdownServer");
-    fetch(`http://127.0.0.1:8080/shutdown-server`).then((data)=>{      
-	return data.text();
-	
-    }).then((text)=>{
-	console.log("data: ", text);
-    }).catch(e=>{
-	console.log(e);
-    })
+function shutdown_server(){
+    fetch(`http://127.0.0.1:8080/shutdown-server`)
 }
 
 // Recieve asynchronous request from renderer
-ipcMain.on('test', (event, arg) => {
-    console.log("it's working!!! (from main.js).");
-    captureImage_server();
+ipcMain.on('main', (event, arg) => {
+
+    // console.log("event:");
+    // console.log(event);
+    
+    var context = {
+	"command": arg["command"],
+	"ipc-name": "main"
+    }
+
+    // Issue the specified command
+    switch(arg["command"]) {
+    case "captureImage_server":
+	captureImage_server(context).then(response => {
+	    event.reply("rendererListener", response);
+	});
+	break;
+	
+    case "shutdown_server":
+	shutdown_server();
+	break;
+	
+    default:
+	console.log("command: "+command+" not found.");
+    }
 })
 
 // Init Python Flask server
@@ -98,5 +111,5 @@ app.on('window-all-closed', function () {
 // When officially quitting the program, shut down
 // the server as well.
 app.on('before-quit', function () {
-    shutdownServer();
+    shutdown_server();
 })

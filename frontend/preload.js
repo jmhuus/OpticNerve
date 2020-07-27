@@ -15,16 +15,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 const ipcRenderer = require("electron").ipcRenderer;
-
-// Asynchronous send
-window.sendTestMessage = function(){
-    ipcRenderer.send("test", "it's working!!!");
-}
-
 window.ipc = ipcRenderer;
-
-// Asynchronous response
-ipcRenderer.on('test-response', (event, arg) => {
-  console.log("response from main.js:  " + arg);
-});
 

@@ -14,7 +14,7 @@ from datetime import datetime
 
 def capture_new_image(file=None):
     """Simple function to initiate camera capture and store the result into
-    the provided file object.n
+    the provided file object.
     
     Note:
         Callers should expect the image to have saved correctly if an exception was not

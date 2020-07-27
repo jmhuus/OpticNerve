@@ -2,7 +2,7 @@
 from .import PtpAbstractTransport
 import usb
 from usb.util import endpoint_type, endpoint_direction, ENDPOINT_TYPE_BULK, \
-    ENDPOINT_TYPE_INTR, ENDPOINT_IN, ENDPOINT_OUT, claim_interface
+    ENDPOINT_TYPE_INTR, ENDPOINT_IN, ENDPOINT_OUT, claim_interface, release_interface
 from usb.core import find, USBError
 import struct
 import time
@@ -41,6 +41,7 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
 
         # Open the USB device
         # self.__usb_handle.set_configuration(test)
+        print("claiming the interface")
         claim_interface(self.__device, self.__usb_interface)
         device_name = PtpUsbTransport.retrieve_device_name(self.__device)
         print(f"Connected to {device_name}.")
@@ -52,7 +53,9 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
         """Cleanup a PtpUsbTransport structure."""
         
         try:
-            self.__usb_handle.release_interface(self.__usb_interface)
+            print("releasing the interface")
+            release_interface(self.__device, self.__usb_interface)
+            # self.__usb_handle.release_interface(self.__usb_interface)
             del self.__usb_handle
         except:
             pass
