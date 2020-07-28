@@ -44,11 +44,11 @@ def set_exposure():
 
     try:
         # Set exposure time
-        set_exposure_time(10)
+        set_exposure_time(data["exposure-time"])
 
         return jsonify({
             "success": True,
-            "exposure-time": 10,
+            "exposure-time": data["exposure-time"],
             "context": data["context"]
         })
     except Exception as e:
