@@ -126,7 +126,6 @@ class PtpAbstractTransport:
 
         rx_data = None
         response = None
-        
         self.send_ptp_request(request)
         if tx_data != None:
             self.send_ptp_data(request, tx_data)

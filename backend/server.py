@@ -1,5 +1,5 @@
 from flask import Flask, request, abort, jsonify
-from CaptureImage import capture_new_image
+from CaptureImage import capture_new_image, set_exposure_time
 import os
 from datetime import datetime
 import time
@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route("/capture-image", methods=["POST"])
 def capture_image():
-    # Ensure context object
+    # Ensure body data
     # TODO(jordanhuus): change to decorator
     if "context" not in request.get_json().keys():
         abort(400, "Missing context object.")
@@ -29,6 +29,28 @@ def capture_image():
         })
 
     # TODO(jordanhuus): exception should remove newly created file
+    except Exception as e:
+        abort(500)
+
+@app.route("/set-exposure-time", methods=["POST"])
+def set_exposure():
+    data = request.get_json()
+
+    # Ensure body data
+    if "exposure-time" not in data.keys():
+        abort(400, "Missing 'exposure-time' object.")
+    elif "context" not in data.keys():
+        abort(400, "Missing context object.")
+
+    try:
+        # Set exposure time
+        set_exposure_time(10)
+
+        return jsonify({
+            "success": True,
+            "exposure-time": 10,
+            "context": data["context"]
+        })
     except Exception as e:
         abort(500)
 

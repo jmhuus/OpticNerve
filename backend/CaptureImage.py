@@ -125,3 +125,33 @@ def begin_timelapse(file, delay):
     # Close the session
     del ptpSession
     del ptpTransport
+
+
+
+def set_exposure_time(exposure_time):
+    """Changes the current exposure time when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
+
+    Args:
+        param1: float in milliseconds on how long the exposure will be open.
+    """
+    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    bulk_in, bulk_out, interrupt_in = \
+        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpSession = PtpSession(ptpTransport)
+    vendorId = PtpValues.Vendors.STANDARD
+
+    try:
+        # Open device session
+        ptpSession.OpenSession()
+        print(ptpSession.GetFormattedDeviceInfoString())
+        ptpSession.SetExposureTime(exposure_time)
+
+    except PtpException as e:
+        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+    except Exception as e:
+        print("An exception occurred: %s" % e)
+        traceback.print_exc()
+
+    # Close the session
+    del ptpSession
+    del ptpTransport

@@ -97,7 +97,7 @@ class PtpUnpacker:
 class PtpPacker:
     
     def __init__(self):
-        self.raw = ""
+        self.raw = b""
         
         if struct.pack('<h', 1) == struct.pack('=h', 1):
             self.endian = "L"
@@ -401,7 +401,6 @@ class PtpSession:
         """Set the value of a device property.
         
         Returns:"""
-        
         packer = PtpPacker()
         packer.pack_simpletype(is_array, fmt, value)
 

@@ -67,13 +67,13 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
         for p in request.params:
             buffer += struct.pack("<I", p)
 
-
-        testyy = self.__bulkout
         if self.__device.write(self.__bulkout, buffer, self.usb_write_timeout) != length:
             raise UsbException(usb.USBError)
 
     
     def send_ptp_data(self, request, data):
+        if request.opcode == 4118:
+            import pdb; pdb.set_trace()
         buffer = struct.pack("<IHHI", 12 + len(data), self.PTP_USB_CONTAINER_DATA, request.opcode, request.transactionid)
         buffer += data
 
