@@ -26,10 +26,15 @@ export class CaptureComponent implements OnInit {
 	
 	// Asynchronous response
 	this.ipc.on('rendererListener', (event, arg) => {
-	    // TODO(jordanhuus): add context to response request and data
-	    console.log(arg["image-path"]);
-	    this.device.image_latest_path = arg["image-path"];
-	    this.cdRef.detectChanges();
+	    switch(arg["context"]["command"]) {
+		case "captureImage_server":
+		    this.device.image_latest_path = arg["image-path"];
+		    this.cdRef.detectChanges();
+		    break;
+		    
+		case "setExposure_server":
+		    break;
+	    }
 	});
     }
 
@@ -58,9 +63,6 @@ export class CaptureComponent implements OnInit {
     }
 
     setShutter(): void {
-	console.log("setShutter: ");
-	console.log(this.device.shutter);
-	
 	// Asynchronous send
 	this.ipc.send("main", {
 	    "command": "setExposure_server",
