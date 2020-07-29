@@ -30,12 +30,11 @@ def capture_image():
 
     # TODO(jordanhuus): exception should remove newly created file
     except Exception as e:
-        abort(500)
+        abort(500, e)
 
 @app.route("/set-exposure-time", methods=["POST"])
 def set_exposure():
     data = request.get_json()
-
     # Ensure body data
     if "exposure-time" not in data.keys():
         abort(400, "Missing 'exposure-time' object.")
@@ -45,14 +44,13 @@ def set_exposure():
     try:
         # Set exposure time
         set_exposure_time(data["exposure-time"])
-
         return jsonify({
             "success": True,
             "exposure-time": data["exposure-time"],
             "context": data["context"]
         })
     except Exception as e:
-        abort(500)
+        abort(500, e)
 
 
 def shutdown():
@@ -66,11 +64,10 @@ def shutdown():
 def shutdown_server():
     print("Shutting down the Python server...")
     shutdown()
-    print("Done.")
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8080)
+    app.run(host="127.0.0.1", port=8080, debug=True)
 
 
 # Error Handling
@@ -110,7 +107,7 @@ def unauthorized_error(error):
         "message": message
     }), 401
 
-@app.errorhandler(500)
+o@app.errorhandler(500)
 def internal_server_error(error):
     message = str(error) if not None else "server error"
     return jsonify({

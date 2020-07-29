@@ -754,18 +754,20 @@
     color: rgba(112,112,112,1);
 }
 #ID10s {
-    left: 259px;
+    left: 220px;
     top: 747px;
     position: absolute;
     overflow: visible;
-    width: 96px;
+    width: 160px;
     white-space: nowrap;
-    text-align: left;
+    text-align: center;
     font-family: Helvetica Neue;
     font-style: normal;
     font-weight: normal;
     font-size: 50px;
     color: rgba(255,255,255,1);
+    background: transparent;
+    border: none;
 }
 #ISO {
     left: 423px;

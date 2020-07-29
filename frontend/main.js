@@ -64,6 +64,21 @@ async function captureImage_server(context){
     return response.json();
 }
 
+// Sends data to the device which sets the exposure time (milliseconds)
+async function setExposure_server(context, exposureTime){
+    const response = await fetch("http://127.0.0.1:8080/set-exposure-time", {
+	method: "POST",
+	headers: {
+	    "Content-Type": "application/json"
+	},
+	body: JSON.stringify({
+	    "context": context,
+	    "exposure-time": exposureTime
+	})
+    });
+    return response.json();
+}
+
 // Endpoint to remotely shutdown the server
 function shutdown_server(){
     fetch(`http://127.0.0.1:8080/shutdown-server`)
@@ -72,8 +87,8 @@ function shutdown_server(){
 // Recieve asynchronous request from renderer
 ipcMain.on('main', (event, arg) => {
 
-    // console.log("event:");
-    // console.log(event);
+    console.log("arg");
+    console.log(arg);
     
     var context = {
 	"command": arg["command"],
@@ -84,6 +99,14 @@ ipcMain.on('main', (event, arg) => {
     switch(arg["command"]) {
     case "captureImage_server":
 	captureImage_server(context).then(response => {
+	    event.reply("rendererListener", response);
+	});
+	break;
+
+
+	// TODO(jordanhuus): this is untested
+    case "setExposure_server":
+	setExposure_server(context, arg["exposure-time"]).then(response => {
 	    event.reply("rendererListener", response);
 	});
 	break;

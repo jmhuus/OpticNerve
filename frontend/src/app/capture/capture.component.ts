@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Device } from './device';
 declare var window: Window;
 declare global {
@@ -53,6 +54,17 @@ export class CaptureComponent implements OnInit {
 	// Asynchronous send
 	this.ipc.send("main", {
 	    "command": "captureImage_server"
+	});
+    }
+
+    setShutter(): void {
+	console.log("setShutter: ");
+	console.log(this.device.shutter);
+	
+	// Asynchronous send
+	this.ipc.send("main", {
+	    "command": "setExposure_server",
+	    "exposure-time": this.device.shutter
 	});
     }
 }

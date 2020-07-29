@@ -1,4 +1,4 @@
-<div id="Custom_Size__1">
+'<div id="Custom_Size__1">
   <div id="Group_1">
     <button id="capture-image-button" (click)="captureImage()">Capture Image</button>
   </div>
@@ -152,8 +152,8 @@
   <div id="Shutter">
     <span>Shutter</span>
   </div>
-  <div id="ID10s">
-    <span>{{device.shutter}}s</span>
+  <div>
+    <span><input id="ID10s" (change)="setShutter()" [(ngModel)]="device.shutter" type="number"></span>
   </div>
   <div id="ISO">
     <span>ISO</span>
