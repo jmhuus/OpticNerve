@@ -66,7 +66,7 @@ export class CaptureComponent implements OnInit {
 	// Asynchronous send
 	this.ipc.send("main", {
 	    "command": "setExposure_server",
-	    "exposure-time": this.device.shutter
+	    "exposure-time": (this.device.shutter * 10)
 	});
     }
 }

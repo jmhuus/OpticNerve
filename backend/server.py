@@ -46,7 +46,7 @@ def set_exposure():
         set_exposure_time(data["exposure-time"])
         return jsonify({
             "success": True,
-            "exposure-time": data["exposure-time"],
+            "exposure-time": int(data["exposure-time"]/10),
             "context": data["context"]
         })
     except Exception as e:

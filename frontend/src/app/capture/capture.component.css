@@ -740,7 +740,7 @@
     color: rgba(255,255,255,1);
 }
 #Shutter {
-    left: 274px;
+    left: 250px;
     top: 816px;
     position: absolute;
     overflow: visible;
@@ -754,7 +754,7 @@
     color: rgba(112,112,112,1);
 }
 #ID10s {
-    left: 220px;
+    left: 225px;
     top: 747px;
     position: absolute;
     overflow: visible;

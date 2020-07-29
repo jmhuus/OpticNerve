@@ -86,10 +86,6 @@ function shutdown_server(){
 
 // Recieve asynchronous request from renderer
 ipcMain.on('main', (event, arg) => {
-
-    console.log("arg");
-    console.log(arg);
-    
     var context = {
 	"command": arg["command"],
 	"ipc-name": "main"
