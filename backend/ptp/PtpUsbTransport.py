@@ -40,8 +40,6 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
             raise RuntimeError("Unable to find all required endpoints")
 
         # Open the USB device
-        # self.__usb_handle.set_configuration(test)
-        print("claiming the interface")
         claim_interface(self.__device, self.__usb_interface)
         device_name = PtpUsbTransport.retrieve_device_name(self.__device)
         print(f"Connected to {device_name}.")
@@ -53,9 +51,7 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
         """Cleanup a PtpUsbTransport structure."""
         
         try:
-            print("releasing the interface")
             release_interface(self.__device, self.__usb_interface)
-            # self.__usb_handle.release_interface(self.__usb_interface)
             del self.__usb_handle
         except:
             pass
@@ -64,6 +60,7 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
     def send_ptp_request(self, request):
         length = 12 + (len(request.params) * 4)
         buffer = struct.pack("<IHHI", length, self.PTP_USB_CONTAINER_COMMAND, request.opcode, request.transactionid)
+
         for p in request.params:
             buffer += struct.pack("<I", p)
 

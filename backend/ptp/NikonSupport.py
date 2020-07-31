@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import PtpSession
-import PtpValues
-import PtpAbstractTransport
+import ptp.PtpSession as PtpSession
+import ptp.PtpValues as PtpValues
+import ptp.PtpAbstractTransport as PtpAbstractTransport
 import struct
 
 
@@ -178,8 +178,16 @@ def GetLowLightIndicator(session):
 def GetMaxApertureAtMinFocalLength(session):
     return session.GetDevicePropValue(PtpValues.NikonProperties.MAX_AP_AT_MIN_FOCAL_LENGTH, False, "H")
 
-def GetMinApertureAtMaxFocalLength(session):
-    return session.GetDevicePropValue(PtpValues.NikonProperties.MIN_AP_AT_MAX_FOCAL_LENGTH, False, "H")
+def GetMaxApertureAtMaxFocalLength(session):
+    return session.GetDevicePropValue(PtpValues.NikonProperties.MAX_AP_AT_MAX_FOCAL_LENGTH, False, "H")
+
+# jordanhuus test; doesn't work...
+def GetLensDataMaxAperture(session):
+    return session.GetDevicePropValue(PtpValues.NikonProperties.NON_CPU_LENS_DATA_MAX_APERTURE, False, "L")
+
+# jordanhuus test; doesn't work...
+def GetLensId(session):
+    return session.GetDevicePropValue(PtpValues.NikonProperties.LENS_ID, False, "L")
 
 def GetCameraOrientation(session):
     return session.GetDevicePropValue(PtpValues.NikonProperties.CAMERA_ORIENTATION, False, "B")

@@ -1,5 +1,5 @@
 from flask import Flask, request, abort, jsonify
-from CaptureImage import capture_new_image, set_exposure_time
+from CaptureImage import capture_new_image, set_exposure_time, set_f_number, get_f_number, get_f_number_options
 import os
 from datetime import datetime
 import time
@@ -53,6 +53,52 @@ def set_exposure():
         abort(500, e)
 
 
+@app.route("/set-aperture", methods=["POST"])
+def set_aperture():
+    data = request.get_json()
+    # Ensure body data
+    if "f-number" not in data.keys():
+        abort(400, "Missing 'exposure-time' object.")
+    elif "context" not in data.keys():
+        abort(400, "Missing context object.")
+
+    try:
+        # Set exposure time
+        set_f_number(data["f-number"])
+        return jsonify({
+            "success": True,
+            "f-number": int(data["f-number"]/10),
+            "context": data["context"]
+        })
+    except Exception as e:
+        abort(500, e)
+
+
+@app.route("/get-aperture-options", methods=["GET"])
+def get_aperture_options():
+    try:
+        # Set exposure time
+        f_number_options = get_f_number_options()
+        return jsonify({
+            "success": True,
+            "f-number-options": "unimplemented"
+        })
+    except Exception as e:
+        abort(500, e)
+
+
+@app.route("/get-lens-id", methods=["GET"])
+def get_id_lens():
+    try:
+        # Set exposure time
+        f_number_options = get_lens_id()
+        return jsonify({
+            "success": True,
+            "lens-id": "unimplemented"
+        })
+    except Exception as e:
+        abort(500, e)
+        
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
@@ -107,7 +153,7 @@ def unauthorized_error(error):
         "message": message
     }), 401
 
-o@app.errorhandler(500)
+@app.errorhandler(500)
 def internal_server_error(error):
     message = str(error) if not None else "server error"
     return jsonify({

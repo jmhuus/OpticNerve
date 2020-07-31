@@ -290,7 +290,8 @@ class PtpSession:
 
     def CloseSession(self):
         """Close the PTP session."""
-        
+
+        print("Closing session")
         ptp_request = PtpRequest(PtpValues.StandardOperations.CLOSE_SESSION, self.sessionid, self.NewTransaction())
         (ptp_response, rx) = self.transport.ptp_simple_transaction(ptp_request)
         if ptp_response.respcode != PtpValues.StandardResponses.OK:

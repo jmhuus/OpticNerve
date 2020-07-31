@@ -18,7 +18,7 @@ function createWindow () {
     mainWindow.loadFile('./dist/OpticNerve/index.html')
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -36,8 +36,6 @@ app.whenReady().then(() => {
 
 // Init Python Flask server to handle device communication
 function initPythonServer() {
-    console.log("called initPythonServer()");
-    
     var { PythonShell } = require('python-shell');
 
     let options = {

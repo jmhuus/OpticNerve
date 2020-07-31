@@ -5,6 +5,7 @@ import sys
 import traceback
 from ptp.PtpUsbTransport import PtpUsbTransport
 from ptp.PtpSession import PtpSession, PtpException
+import ptp.NikonSupport as NikonSupport
 from ptp import PtpValues
 import time
 from datetime import datetime
@@ -132,7 +133,7 @@ def set_exposure_time(exposure_time):
     """Changes the current exposure time when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
 
     Args:
-        param1: float in milliseconds on how long the exposure will be open.
+        param1: (int) in milliseconds on how long the exposure will be open.
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
@@ -142,8 +143,9 @@ def set_exposure_time(exposure_time):
 
     try:
         # Open device session
+        print("open session")
         ptpSession.OpenSession()
-        print(ptpSession.GetFormattedDeviceInfoString())
+        print("setexposuretime")
         ptpSession.SetExposureTime(exposure_time)
 
     except PtpException as e:
@@ -155,3 +157,105 @@ def set_exposure_time(exposure_time):
     # Close the session
     del ptpSession
     del ptpTransport
+
+
+
+def set_f_number(f_number):
+    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
+
+    Args:
+        param1 (float): TODO(jordanhuus): determine unit of measurement
+    """
+    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    bulk_in, bulk_out, interrupt_in = \
+        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpSession = PtpSession(ptpTransport)
+    vendorId = PtpValues.Vendors.STANDARD
+
+    try:
+        # Open device session
+        ptpSession.OpenSession()
+
+        # TODO(jordanhuus): refactor into class that automatically sets available f-stop
+        # numbers
+        ptpSession.SetFNumber(1600)
+
+    except PtpException as e:
+        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+    except Exception as e:
+        print("An exception occurred: %s" % e)
+        traceback.print_exc()
+
+    # Close the session
+    del ptpSession
+    del ptpTransport
+
+
+def get_f_number():
+    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
+
+    Args:
+        param1 (float): TODO(jordanhuus): determine unit of measurement
+    """
+    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    bulk_in, bulk_out, interrupt_in = \
+        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpSession = PtpSession(ptpTransport)
+    vendorId = PtpValues.Vendors.STANDARD
+    f_number = None
+
+    try:
+        # Open device session
+        ptpSession.OpenSession()
+        f_number = ptpSession.GetFNumber()
+
+    except PtpException as e:
+        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+    except Exception as e:
+        print("An exception occurred: %s" % e)
+        traceback.print_exc()
+
+    # Close the session
+    del ptpSession
+    del ptpTransport
+    
+    return f_number
+
+
+def get_f_number_options():
+    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
+
+    Args:
+        param1 (float): TODO(jordanhuus): determine unit of measurement
+    """
+    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    bulk_in, bulk_out, interrupt_in = \
+        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpSession = PtpSession(ptpTransport)
+    vendorId = PtpValues.Vendors.STANDARD
+    max_aperture_at_min_focal = None
+
+    try:
+        # Open device session
+        ptpSession.OpenSession()
+
+        
+        # Doesn't work... PTP Exception: STANDARD:DEVICE_PROP_NOT_SUPPORTED
+        test1 = NikonSupport.GetMaxApertureAtMinFocalLength(ptpSession)
+        # Doesn't work... PTP Exception: STANDARD:DEVICE_PROP_NOT_SUPPORTED
+        test2 = NikonSupport.GetMaxApertureAtMaxFocalLength(ptpSession)
+        # Doesn't work... PTP Exception: STANDARD:DEVICE_PROP_NOT_SUPPORTED
+        test3 = NikonSupport.GetLensDataMaxAperture(ptpSession)
+        print("max_aperture_at_min_focal", max_aperture_at_min_focal)
+
+    except PtpException as e:
+        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+    except Exception as e:
+        print("An exception occurred: %s" % e)
+        traceback.print_exc()
+
+    # Close the session
+    del ptpSession
+    del ptpTransport
+    
+    return max_aperture_at_min_focal
