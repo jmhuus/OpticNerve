@@ -1,5 +1,5 @@
 from flask import Flask, request, abort, jsonify
-from CaptureImage import capture_new_image, set_exposure_time, set_f_number, get_f_number, get_f_number_options
+import CaptureImage
 import os
 from datetime import datetime
 import time
@@ -8,19 +8,38 @@ import time
 app = Flask(__name__)
 
 
+@app.route("/get-device-details", methods=["GET"])
+def device_details():
+    # Ensure body data
+    try:
+        device_details = CaptureImage.get_device_details()
+
+        return jsonify({
+            "success": True,
+            "device-details": device_details
+        })
+
+    # TODO(jordanhuus): exception should remove newly created file
+    except Exception as e:
+        abort(500, e)    
+
+
 @app.route("/capture-image", methods=["POST"])
 def capture_image():
+    import pdb; pdb.set_trace()
+    data = request.get_json()
     # Ensure body data
     # TODO(jordanhuus): change to decorator
-    if "context" not in request.get_json().keys():
+    if "context" not in data.keys():
         abort(400, "Missing context object.")
-            
+        context = data["context"]
+        
     try:
         # Capture new image
         base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
         image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         file = open(f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}", "wb")
-        capture_new_image(file)
+        CaptureImage.capture_new_image(context, file)
 
         return jsonify({
             "success": True,
@@ -29,6 +48,7 @@ def capture_image():
         })
 
     # TODO(jordanhuus): exception should remove newly created file
+    # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
 
@@ -40,15 +60,17 @@ def set_exposure():
         abort(400, "Missing 'exposure-time' object.")
     elif "context" not in data.keys():
         abort(400, "Missing context object.")
+        context = data["context"]
 
     try:
         # Set exposure time
-        set_exposure_time(data["exposure-time"])
+        CaptureImage.set_exposure_time(data["exposure-time"])
         return jsonify({
             "success": True,
             "exposure-time": int(data["exposure-time"]/10),
             "context": data["context"]
         })
+    # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
 
@@ -61,15 +83,17 @@ def set_aperture():
         abort(400, "Missing 'exposure-time' object.")
     elif "context" not in data.keys():
         abort(400, "Missing context object.")
+        context = data["context"]
 
     try:
         # Set exposure time
-        set_f_number(data["f-number"])
+        CaptureImage.set_f_number(data["f-number"])
         return jsonify({
             "success": True,
             "f-number": int(data["f-number"]/10),
             "context": data["context"]
         })
+    # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
 
@@ -78,11 +102,12 @@ def set_aperture():
 def get_aperture_options():
     try:
         # Set exposure time
-        f_number_options = get_f_number_options()
+        f_number_options = CaptureImage.get_f_number_options({"test": "TODO(jordanhuus): set context for GET requests"})
         return jsonify({
             "success": True,
-            "f-number-options": "unimplemented"
+            "f-number-options": f_number_options
         })
+    # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
 
@@ -91,11 +116,12 @@ def get_aperture_options():
 def get_id_lens():
     try:
         # Set exposure time
-        f_number_options = get_lens_id()
+        lens_id = CaptureImage.get_lens_id()
         return jsonify({
             "success": True,
             "lens-id": "unimplemented"
         })
+    # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
         
@@ -119,47 +145,42 @@ if __name__ == "__main__":
 # Error Handling
 @app.errorhandler(422)
 def unprocessable_error(error):
-    message = str(error) if not None else "unauthorized"
     return jsonify({
         "success": False,
         "error": 422,
-        "message": message
+        "message": error.description if not None else "unauthorized"
     }), 422
 
 @app.errorhandler(404)
 def page_not_found_error(error):
-    message = str(error) if not None else "unprocessable"
     return jsonify({
         "success": False,
         "error": 404,
-        "message": message
+        "message": error.description if not None else "unprocessable"
     }), 404
 
 @app.errorhandler(400)
 def bad_request_error(error):
-    message = str(error) if not None else "bad request"
     return jsonify({
         "success": False,
         "error": 400,
-        "message": message
+        "message": error.description if not None else "bad request"
     }), 400
 
 @app.errorhandler(401)
 def unauthorized_error(error):
-    message = str(error) if not None else "unauthorized"
     return jsonify({
         "success": False,
         "error": 401,
-        "message": message
+        "message": error.description if not None else "unauthorized"
     }), 401
 
 @app.errorhandler(500)
 def internal_server_error(error):
-    message = str(error) if not None else "server error"
     return jsonify({
         "success": False,
         "error": 500,
-        "message": message
+        "message": error.description if not None else "server error"
     }), 500
 
 @app.errorhandler(AuthError)

@@ -320,6 +320,34 @@ class PtpSession:
             raise PtpException(ptp_response.respcode)
         return PtpDeviceInfo(rx[1])
 
+    def GetDeviceInfoDict(self):
+        """Get dictionary representation of device info from a PTP device.
+        
+        Returns: dictionary of device info specs."""
+        device_info = self.GetDeviceInfo()
+        device_attributes = \
+            ["Manufacturer", "Model", "SerialNumber", "DeviceVersion", "VendorExtensionID", \
+             "OperationsSupported", "CaptureFormats"]
+        device_info_specs = {}
+
+        # Convert any operation codes to names
+        for attribute in device_attributes:
+            if attribute == "OperationsSupported":
+                operations_supported = []
+                for operation in device_info.__getattribute__(attribute):
+                    for key, value in PtpValues.StandardOperations.__dict__.items():
+                        if operation == value:
+                            operations_supported.append({key: str(value)})
+                device_info_specs["OperationsSupported"] = operations_supported
+            # TODO(jmhuus): retrieve capture format code mapping name
+            elif attribute == "CaptureFormats":
+                device_info_specs["CaptureFormats"] = str(device_info.__getattribute__(attribute))
+            else:
+                device_info_specs[attribute] = str(device_info.__getattribute__(attribute))
+                
+        return device_info_specs
+        
+
     def GetFormattedDeviceInfoString(self):
         """Get string representation of device info from a PTP device.
         
