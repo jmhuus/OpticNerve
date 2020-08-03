@@ -1,4 +1,4 @@
-'<div id="Custom_Size__1">
+<div id="Custom_Size__1">
   <div id="Group_1">
     <button id="capture-image-button" (click)="captureImage()">Capture Image</button>
   </div>
@@ -146,8 +146,10 @@
   <div id="Last_Image">
     <span>Last Image</span>
   </div>
-  <div id="f18">
-    <span>f{{device.aperture | number:'0.1'}}</span>
+  <div id="f-numbers">
+    <select id="f-number" (change)="setFNumber($event.target.value)">
+      <option *ngFor="let f_number of device.aperture_options" value="{{ f_number }}">f{{ f_number / 100 | number:'0.1' }}</option>
+    </select>
   </div>
   <div id="Shutter">
     <span>Shutter (ms)</span>

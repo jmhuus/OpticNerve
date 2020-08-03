@@ -10,6 +10,7 @@ export class Device {
   // User-specified settings
   public shooting_mode: string;
   public aperture: number;
+  public aperture_options: number[];
   public shutter: number;
   public iso: number;
 

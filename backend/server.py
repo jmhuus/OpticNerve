@@ -26,20 +26,18 @@ def device_details():
 
 @app.route("/capture-image", methods=["POST"])
 def capture_image():
-    import pdb; pdb.set_trace()
     data = request.get_json()
     # Ensure body data
     # TODO(jordanhuus): change to decorator
     if "context" not in data.keys():
         abort(400, "Missing context object.")
-        context = data["context"]
         
     try:
         # Capture new image
         base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
         image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         file = open(f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}", "wb")
-        CaptureImage.capture_new_image(context, file)
+        CaptureImage.capture_new_image(data["context"], file)
 
         return jsonify({
             "success": True,
@@ -60,11 +58,10 @@ def set_exposure():
         abort(400, "Missing 'exposure-time' object.")
     elif "context" not in data.keys():
         abort(400, "Missing context object.")
-        context = data["context"]
-
+        
     try:
         # Set exposure time
-        CaptureImage.set_exposure_time(data["exposure-time"])
+        CaptureImage.set_exposure_time(data["exposure-time"], data["context"])
         return jsonify({
             "success": True,
             "exposure-time": int(data["exposure-time"]/10),
@@ -98,21 +95,41 @@ def set_aperture():
         abort(500, e)
 
 
-@app.route("/get-aperture-options", methods=["GET"])
+@app.route("/set-aperture-f-stop", methods=["POST"])
+def set_aperture_f_stop():
+    data = request.get_json()
+    try:
+        # Set exposure time
+        f_number_options = CaptureImage.set_f_number(data["f-number"], data["context"])
+        return jsonify({
+            "success": True,
+            "f-number": data["f-number"],
+            "context": data["context"]
+        })
+    
+    # TODO(jordanhuus): exception handling should be more specific
+    except Exception as e:
+        abort(500, e)
+
+        
+@app.route("/get-aperture-options", methods=["POST"])
 def get_aperture_options():
+    data = request.get_json()
     try:
         # Set exposure time
         f_number_options = CaptureImage.get_f_number_options({"test": "TODO(jordanhuus): set context for GET requests"})
         return jsonify({
             "success": True,
-            "f-number-options": f_number_options
+            "f-number-options": f_number_options,
+            "context": data["context"]
         })
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
 
 
-@app.route("/get-lens-id", methods=["GET"])
+# TODO(jordanhuus): untested and unimplemented
+@app.route("/get-lens-id", methods=["POST"])
 def get_id_lens():
     try:
         # Set exposure time

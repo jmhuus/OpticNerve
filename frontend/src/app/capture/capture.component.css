@@ -725,12 +725,12 @@
     font-size: 20px;
     color: rgba(255,157,25,1);
 }
-#f18 {
-    left: 121px;
+#f-numbers {
+    left: 100px;
     top: 747px;
     position: absolute;
     overflow: visible;
-    width: 85px;
+    width: 120px;
     white-space: nowrap;
     text-align: left;
     font-family: Helvetica Neue;
@@ -738,6 +738,17 @@
     font-weight: normal;
     font-size: 50px;
     color: rgba(255,255,255,1);
+}
+#f-number {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 50px;
+    color: rgba(255,255,255,1);
+    background: transparent;
 }
 #Shutter {
     left: 250px;

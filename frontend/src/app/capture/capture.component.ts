@@ -21,6 +21,11 @@ export class CaptureComponent implements OnInit {
     ipc: any;
 
     constructor(private cdRef: ChangeDetectorRef) {
+    }
+
+    ngOnInit(): void {
+	this.device = new Device('NIKON', 'D3100', 1234, 4321, 'A', 1.8, 123, 400);
+	
 	// Retrieve ipcRenderer for electron
 	this.ipc = window["ipc"];
 	
@@ -33,13 +38,17 @@ export class CaptureComponent implements OnInit {
 		    break;
 		    
 		case "setExposure_server":
+		    // TODO(jordanhuus): notify user that exposure setting has been set
+		    break;
+
+		case "getFNumberOptions_server":
+		    this.device.aperture_options = arg["f-number-options"];
+		    this.cdRef.detectChanges();
 		    break;
 	    }
 	});
-    }
-
-    ngOnInit(): void {
-	this.device = new Device('NIKON', 'D3100', 1234, 4321, 'A', 1.8, 123, 400);
+	
+	this.getFNumberOptions();
     }
     
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -62,11 +71,27 @@ export class CaptureComponent implements OnInit {
 	});
     }
 
+    // Set the exposure time for
+    // Only available for manual (M) and shutter priority (S) modes
     setShutter(): void {
 	// Asynchronous send
 	this.ipc.send("main", {
 	    "command": "setExposure_server",
 	    "exposure-time": (this.device.shutter * 10)
+	});
+    }
+
+    setFNumber(f_number: string): void {
+	this.ipc.send("main", {
+	    "command": "setFNumber_server",
+	    "f-number": parseInt(f_number)
+	});
+    }
+
+    // Retrieve available f-stop numbers for the current camera lens
+    getFNumberOptions(): void {
+	this.ipc.send("main", {
+	    "command": "getFNumberOptions_server"
 	});
     }
 }

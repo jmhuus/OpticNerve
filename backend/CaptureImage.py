@@ -206,10 +206,7 @@ def set_f_number(f_number, context):
     try:
         # Open device session
         ptpSession.OpenSession()
-
-        # TODO(jordanhuus): refactor into class that automatically sets available f-stop
-        # numbers
-        ptpSession.SetFNumber(1600)
+        ptpSession.SetFNumber(f_number)
 
     except PtpException as e:
         print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
@@ -331,6 +328,8 @@ def get_f_number_options(context):
                     if not maximum_f_stop:
                         maximum_f_stop = f_number
                         f_stop_type_index = i
+                        break
+                    
                 except PtpException as ptpe:
                     if ptpe.args[0] == 8220:
                         continue

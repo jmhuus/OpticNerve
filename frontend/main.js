@@ -18,7 +18,7 @@ function createWindow () {
     mainWindow.loadFile('./dist/OpticNerve/index.html')
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -77,6 +77,35 @@ async function setExposure_server(context, exposureTime){
     return response.json();
 }
 
+// Sets f-stop value on the camera device
+async function setFNumber_server(context, f_number){
+    const response = await fetch("http://127.0.0.1:8080/set-aperture-f-stop", {
+    	method: "POST",
+    	headers: {
+    	    "Content-Type": "application/json"
+    	},
+    	body: JSON.stringify({
+    	    "context": context,
+	    "f-number": f_number
+    	})
+    });
+    return response.json();
+}
+
+// Retrieves available f-stop values from the camera device
+async function getFNumberOptions_server(context, exposureTime){
+    const response = await fetch("http://127.0.0.1:8080/get-aperture-options", {
+    	method: "POST",
+    	headers: {
+    	    "Content-Type": "application/json"
+    	},
+    	body: JSON.stringify({
+    	    "context": context
+    	})
+    });
+    return response.json();
+}
+
 // Endpoint to remotely shutdown the server
 function shutdown_server(){
     fetch(`http://127.0.0.1:8080/shutdown-server`)
@@ -97,10 +126,20 @@ ipcMain.on('main', (event, arg) => {
 	});
 	break;
 
-
-	// TODO(jordanhuus): this is untested
     case "setExposure_server":
 	setExposure_server(context, arg["exposure-time"]).then(response => {
+	    event.reply("rendererListener", response);
+	});
+	break;
+
+    case "getFNumberOptions_server":
+	getFNumberOptions_server(context, arg["f-number-options"]).then(response => {
+	    event.reply("rendererListener", response);
+	});
+	break;
+
+    case "setFNumber_server":
+	setFNumber_server(context, arg["f-number"]).then(response => {
 	    event.reply("rendererListener", response);
 	});
 	break;
