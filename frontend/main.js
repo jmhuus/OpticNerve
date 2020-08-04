@@ -2,6 +2,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
 const fetch = require("node-fetch");
+var webContents;
 
 function createWindow () {
     // Create the browser window.
@@ -19,6 +20,8 @@ function createWindow () {
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools()
+
+    webContents = mainWindow.webContents;
 }
 
 // This method will be called when Electron has finished
@@ -93,7 +96,7 @@ async function setFNumber_server(context, f_number){
 }
 
 // Retrieves available f-stop values from the camera device
-async function getFNumberOptions_server(context, exposureTime){
+async function getFNumberOptions_server(context){
     const response = await fetch("http://127.0.0.1:8080/get-aperture-options", {
     	method: "POST",
     	headers: {
@@ -127,15 +130,21 @@ ipcMain.on('main', (event, arg) => {
 	break;
 
     case "setExposure_server":
-	setExposure_server(context, arg["exposure-time"]).then(response => {
-	    event.reply("rendererListener", response);
-	});
+	setExposure_server(context, arg["exposure-time"])
+	    .then(response => {
+		event.reply("rendererListener", response);
+	    })
+	    .catch(error => {
+		displayErrorMessage(error, context);
+	    });
+	
 	break;
 
     case "getFNumberOptions_server":
-	getFNumberOptions_server(context, arg["f-number-options"]).then(response => {
-	    event.reply("rendererListener", response);
-	});
+	getFNumberOptions_server(context)
+	    .then(response => {
+		event.reply("rendererListener", response);
+	    });
 	break;
 
     case "setFNumber_server":
@@ -153,8 +162,15 @@ ipcMain.on('main', (event, arg) => {
     }
 })
 
+function displayErrorMessage(error, context) {
+    webContents.send("rendererListener", {
+	"error": error,
+	"context": context
+    });
+}
+
 // Init Python Flask server
-initPythonServer();
+// initPythonServer();
 
 // Any platform except MacOS shuts down the entire
 // program when all windows are closed

@@ -26,12 +26,11 @@ def get_device_details():
         # Open device session
         ptpSession.OpenSession()
         device_info = ptpSession.GetDeviceInfoDict()
-
+        
     except PtpException as e:
-        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
     except Exception as e:
-        print("An exception occurred: %s" % e)
-        traceback.print_exc()
+        raise Exception(e)
 
     # Close the session
     del ptpSession
@@ -61,7 +60,6 @@ def capture_new_image(context, file=None):
     try:
         # Open device session
         ptpSession.OpenSession()
-        print(ptpSession.GetFormattedDeviceInfoString())
         ptpSession.InitiateCapture(objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
         recorded_time = datetime.now()
 
@@ -82,12 +80,11 @@ def capture_new_image(context, file=None):
             ptpSession.GetObject(objectid, file)
             file.close()
             ptpSession.DeleteObject(objectid)
-
+            
     except PtpException as e:
-        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
     except Exception as e:
-        print("An exception occurred: %s" % e)
-        traceback.print_exc()
+        raise Exception(e)
 
     # Close the session
     del ptpSession
@@ -117,7 +114,6 @@ def begin_timelapse(file, delay, context):
     try:
         # Open device session
         ptpSession.OpenSession()
-        print(ptpSession.GetFormattedDeviceInfoString())
 
         # Initiate timelapse capture events
         id = 0
@@ -145,12 +141,10 @@ def begin_timelapse(file, delay, context):
 
             # Delay between shots
             time.sleep(delay)
-
     except PtpException as e:
-        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
     except Exception as e:
-        print("An exception occurred: %s" % e)
-        traceback.print_exc()
+        raise Exception(e)
 
     # Close the session
     del ptpSession
@@ -173,16 +167,13 @@ def set_exposure_time(exposure_time, context):
 
     try:
         # Open device session
-        print("open session")
         ptpSession.OpenSession()
-        print("setexposuretime")
         ptpSession.SetExposureTime(exposure_time)
 
     except PtpException as e:
-        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
     except Exception as e:
-        print("An exception occurred: %s" % e)
-        traceback.print_exc()
+        raise Exception(e)
 
     # Close the session
     del ptpSession
@@ -209,10 +200,9 @@ def set_f_number(f_number, context):
         ptpSession.SetFNumber(f_number)
 
     except PtpException as e:
-        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
     except Exception as e:
-        print("An exception occurred: %s" % e)
-        traceback.print_exc()
+        raise Exception(e)
 
     # Close the session
     del ptpSession
@@ -237,12 +227,11 @@ def get_f_number(context):
         # Open device session
         ptpSession.OpenSession()
         f_number = ptpSession.GetFNumber()
-
+        
     except PtpException as e:
-        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
     except Exception as e:
-        print("An exception occurred: %s" % e)
-        traceback.print_exc()
+        raise Exception(e)
 
     # Close the session
     del ptpSession
@@ -335,10 +324,9 @@ def get_f_number_options(context):
                         continue
 
     except PtpException as e:
-        print("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
     except Exception as e:
-        print("An exception occurred: %s" % e)
-        traceback.print_exc()
+        raise Exception(e)
 
     # Close the session
     del ptpSession

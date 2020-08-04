@@ -31,20 +31,27 @@ export class CaptureComponent implements OnInit {
 	
 	// Asynchronous response
 	this.ipc.on('rendererListener', (event, arg) => {
-	    switch(arg["context"]["command"]) {
-		case "captureImage_server":
-		    this.device.image_latest_path = arg["image-path"];
-		    this.cdRef.detectChanges();
-		    break;
+	    // Incoming error message?
+	    if ("error" in arg) {
+		console.log("handling error");
+		console.log(arg);
+	    } else {
+		// Handle normal request
+		switch(arg["context"]["command"]) {
+		    case "captureImage_server":
+			this.device.image_latest_path = arg["image-path"];
+			this.cdRef.detectChanges();
+			break;
 		    
-		case "setExposure_server":
-		    // TODO(jordanhuus): notify user that exposure setting has been set
-		    break;
+		    case "setExposure_server":
+		    
+			break;
 
-		case "getFNumberOptions_server":
-		    this.device.aperture_options = arg["f-number-options"];
-		    this.cdRef.detectChanges();
-		    break;
+		    case "getFNumberOptions_server":
+			this.device.aperture_options = arg["f-number-options"];
+			this.cdRef.detectChanges();
+			break;
+		}	
 	    }
 	});
 	
@@ -62,9 +69,6 @@ export class CaptureComponent implements OnInit {
 
     // Capture a new image
     captureImage(): void {
-	console.log('this.constructor.name');
-	console.log(this.constructor.name);
-	
 	// Asynchronous send
 	this.ipc.send("main", {
 	    "command": "captureImage_server"
