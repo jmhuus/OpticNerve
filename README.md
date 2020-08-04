@@ -9,10 +9,11 @@ I decided to build this app even though there are some great existing applicatio
 * Angular
 
 #### What is the status of this project?
-Last Update: 7/29/2020
+Last Update: 8/3/2020
 * InitiateCapture command is working
 * Retrieve and display image result working
 * Set shutter exposure time working
+* Set aperture f-stop 
 
 
 #### Where is this project going?
