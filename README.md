@@ -1,7 +1,7 @@
 ### Optic Nerve
 This is a simple desktop GUI to control a tethered camera device. This application is great for star gazing in the comfort of your car, tent, or otherwise.
 
-I decided to build this app even though there are some great existing applications (DarkTable) as a learning journey. Also, I'd like a more user-friendly UX to engage with when working at night - dark screen, preview of the last image taken, and easy to set capture settings.
+I decided to build this app even though there are some great existing applications (DarkTable, Capture One, Adobe Lightroom, etc) as a learning journey. Also, I'd like a more user-friendly UX to engage with when working at night - dark screen, preview of the last image taken, and easy to set capture settings.
 
 #### Tech Stack
 * jmhuus/pyptp to support sending PTP commands to DSLR using Python 3
