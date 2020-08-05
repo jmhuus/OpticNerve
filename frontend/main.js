@@ -170,7 +170,7 @@ function displayErrorMessage(error, context) {
 }
 
 // Init Python Flask server
-// initPythonServer();
+initPythonServer();
 
 // Any platform except MacOS shuts down the entire
 // program when all windows are closed

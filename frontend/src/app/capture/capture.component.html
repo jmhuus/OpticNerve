@@ -154,8 +154,10 @@
   <div id="Shutter">
     <span>Shutter (ms)</span>
   </div>
-  <div>
-    <span><input id="ID10s" (change)="setShutter()" [(ngModel)]="device.shutter" type="number"></span>
+  <div id="exposures">
+    <select id="exposure" (change)="setFNumber($event.target.value)">
+      <option *ngFor="let exposure_time of device.shutter_options" value="{{ exposure_time }}">{{ exposure_time | number:'0.3' }}s</option>
+    </select>
   </div>
   <div id="ISO">
     <span>ISO</span>

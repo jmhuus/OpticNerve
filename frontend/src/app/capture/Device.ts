@@ -12,6 +12,7 @@ export class Device {
   public aperture: number;
   public aperture_options: number[];
   public shutter: number;
+  public shutter_options: number[];
   public iso: number;
 
   public constructor(manufacturer: string,
