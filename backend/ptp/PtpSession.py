@@ -243,6 +243,7 @@ class PtpSession:
         self.transport = transport
         self.sessionid = 0
         self.__transactionid = 0
+        self.session_open_attempts = 0
 
     def __del__(self):
         """Cleanup a PtpSession structure (does not delete underlying transport)."""
@@ -286,6 +287,16 @@ class PtpSession:
         )
         (ptp_response, rx) = self.transport.ptp_simple_transaction(ptp_request)
         if ptp_response.respcode != PtpValues.StandardResponses.OK:
+
+            # Session already open, close it and try again
+            if ptp_response.respcode == PtpValues.StandardResponses.SESSION_ALREADY_OPEN and \
+               self.session_open_attempts < 4:
+                print("ptp session already open...\n\nattempting to close all sessions and try again")
+                self.session_open_attempts += 1
+                self.CloseAllSessions()
+                self.OpenSession()
+                return
+            
             raise PtpException(ptp_response.respcode)
 
     def CloseSession(self):
@@ -665,12 +676,20 @@ class PtpSession:
 
 class PtpException(Exception):
 
-    def __init__(self, responsecode):
+    def __init__(self, responsecode, ptpSession=None, ptpTransport=None):
+
+        print(responsecode, ptpSession, ptpTransport)
 
         # Remove any lasting PTP sessions
         if responsecode == PtpValues.StandardResponses.SESSION_ALREADY_OPEN:
             ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps()[0])
             ptpSession = PtpSession(ptpTransport)
             ptpSession.CloseAllSessions()
-        
+
+        if ptpSession:
+            ptpSession.__del__()
+
+        if ptpTransport:
+            ptpTransport.__del__()
+
         self.responsecode = responsecode

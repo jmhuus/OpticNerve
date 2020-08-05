@@ -28,7 +28,7 @@ def get_device_details():
         device_info = ptpSession.GetDeviceInfoDict()
         
     except PtpException as e:
-        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -82,7 +82,7 @@ def capture_new_image(context, file=None):
             ptpSession.DeleteObject(objectid)
             
     except PtpException as e:
-        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -142,7 +142,7 @@ def begin_timelapse(file, delay, context):
             # Delay between shots
             time.sleep(delay)
     except PtpException as e:
-        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -171,7 +171,7 @@ def set_exposure_time(exposure_time, context):
         ptpSession.SetExposureTime(exposure_time)
 
     except PtpException as e:
-        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -200,7 +200,7 @@ def set_f_number(f_number, context):
         ptpSession.SetFNumber(f_number)
 
     except PtpException as e:
-        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -229,7 +229,7 @@ def get_f_number(context):
         f_number = ptpSession.GetFNumber()
         
     except PtpException as e:
-        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -324,7 +324,7 @@ def get_f_number_options(context):
                         continue
 
     except PtpException as e:
-        raise Exception("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId))
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
