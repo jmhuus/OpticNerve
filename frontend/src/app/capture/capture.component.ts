@@ -19,8 +19,12 @@ export class CaptureComponent implements OnInit {
 
     device: Device;
     ipc: any;
+    action_pending: boolean;
+    action_pending_message: string;
 
     constructor(private cdRef: ChangeDetectorRef) {
+	this.action_pending = false;
+	this.action_pending_message = "";
     }
 
     ngOnInit(): void {
@@ -34,28 +38,29 @@ export class CaptureComponent implements OnInit {
 	];
 	
 	// Retrieve ipcRenderer for electron
-	this.ipc = window["ipc"];
+    	this.ipc = window["ipc"];
 	
-	// Asynchronous response
-	this.ipc.on('rendererListener', (event, arg) => {
-	    // Incoming error message?
-	    if ("error" in arg) {
-		console.log("handling error");
-		console.log(arg);
-	    } else {
-		// Handle normal request
-		switch(arg["context"]["command"]) {
-		    case "captureImage_server":
-			this.device.image_latest_path = arg["image-path"];
-			this.cdRef.detectChanges();
-			break;
+    	// Asynchronous response
+    	this.ipc.on('rendererListener', (event, arg) => {
+    	    // Incoming error message?
+    	    if ("error" in arg) {
+    		console.log("handling error");
+    		console.log(arg);
+    	    } else {
+    		// Handle normal request
+    		switch(arg["context"]["command"]) {
+    		    case "captureImage_server":
+			this.setActionPending(false, "");
+    			this.device.image_latest_path = arg["image-path"];
+    			this.cdRef.detectChanges();
+    			break;
 		    
-		}	
-	    }
-	});
-	this.setShutter(this.device.shutter_options[0]);
-	this.getFNumberOptions();
-	this.setFNumber(this.device.aperture_options[0]);
+    		}	
+    	    }
+    	});
+    	this.setShutter(this.device.shutter_options[0]);
+    	this.getFNumberOptions();
+    	this.setFNumber(this.device.aperture_options[0]);
     }
     
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -69,7 +74,7 @@ export class CaptureComponent implements OnInit {
 
     // Capture a new image
     captureImage(): void {
-	// Asynchronous send
+	this.setActionPending(true, "Camera Busy: capturing image...");
 	this.ipc.send("main", {
 	    "command": "captureImage_server"
 	});
@@ -85,18 +90,27 @@ export class CaptureComponent implements OnInit {
 	this.device.shutter = response["exposure-time"];
     }
 
-    setFNumber(f_number: number): void {
+    setFNumber(f_number: number): void {	
+	this.setActionPending(true, "Camera Busy: setting f-stop setting...");
 	this.ipc.sendSync("main", {
 	    "command": "setFNumber_server",
 	    "f-number": f_number
 	});
+	this.setActionPending(false, "");
     }
 
     // Retrieve available f-stop numbers for the current camera lens
     getFNumberOptions(): void {
+	this.setActionPending(true, "Camera Busy: retrieving available f-stop values...");
 	var response = this.ipc.sendSync("main", {
 	    "command": "getFNumberOptions_server"
 	});
 	this.device.aperture_options = response["f-number-options"];
+	this.setActionPending(false, "");
+    }
+
+    setActionPending(visible: boolean, message: string): void {
+	this.action_pending = visible;
+	this.action_pending_message = message;
     }
 }

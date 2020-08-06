@@ -345,4 +345,7 @@
     <path id="Polygon_2" d="M 16.5 0 L 33 24 L 0 24 Z">
     </path>
   </svg>
+  <div *ngIf="action_pending" id="action_message_pending">
+    <span>{{action_pending_message}}</span>
+  </div>
 </div>

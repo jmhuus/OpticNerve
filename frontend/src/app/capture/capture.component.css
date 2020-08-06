@@ -17,7 +17,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(43,37,60,1);
+    background-color: rgba(20, 20, 20, 1);
     overflow: hidden;
     --web-view-name: Custom Size – 1;
     --web-view-id: Custom_Size__1;
@@ -1384,7 +1384,7 @@
     top: 960px;
 }
 #Rectangle_8 {
-    fill: rgba(43,37,60,1);
+    fill: rgba(20, 20, 20, 1);
 }
 .Rectangle_8 {
     position: absolute;
@@ -1630,3 +1630,18 @@
     top: 23px;
     transform: matrix(1,0,0,1,0,0);
 }
+#action_message_pending {
+    left: 40px;
+    top: 620px;
+    height: 450px;
+    width: 570px;
+    position: absolute;
+    background-color: rgba(20, 20, 20, 0.85);
+    text-align: center;
+    padding-top: 225px;
+}
+#action_message_pending > span {
+	color: rgba(255,157,25,1);
+}
+
+
