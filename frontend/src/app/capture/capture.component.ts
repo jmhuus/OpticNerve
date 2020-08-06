@@ -50,19 +50,11 @@ export class CaptureComponent implements OnInit {
 			this.cdRef.detectChanges();
 			break;
 		    
-		    case "setExposure_server":
-		    
-			break;
-
-		    case "getFNumberOptions_server":
-			this.device.aperture_options = arg["f-number-options"];
-			this.cdRef.detectChanges();
-			break;
 		}	
 	    }
 	});
 	this.setShutter(this.device.shutter_options[0]);
-	// this.getFNumberOptions();
+	this.getFNumberOptions();
     }
     
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -101,8 +93,9 @@ export class CaptureComponent implements OnInit {
 
     // Retrieve available f-stop numbers for the current camera lens
     getFNumberOptions(): void {
-	this.ipc.send("main", {
+	var response = this.ipc.sendSync("main", {
 	    "command": "getFNumberOptions_server"
 	});
+	this.device.aperture_options = response["f-number-options"];
     }
 }

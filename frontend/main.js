@@ -157,7 +157,7 @@ ipcMain.on('main', (event, arg) => {
     case "getFNumberOptions_server":
 	getFNumberOptions_server(context)
 	    .then(response => {
-		event.reply("rendererListener", response);
+		event.returnValue = response;
 	    });
 	break;
 
