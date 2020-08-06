@@ -61,8 +61,8 @@ export class CaptureComponent implements OnInit {
 		}	
 	    }
 	});
-	
-	this.getFNumberOptions();
+	this.setShutter(this.device.shutter_options[0]);
+	// this.getFNumberOptions();
     }
     
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -85,11 +85,11 @@ export class CaptureComponent implements OnInit {
     // Set the exposure time for
     // Only available for manual (M) and shutter priority (S) modes
     setShutter(exposure_time: number): void {
-	// Asynchronous send
-	this.ipc.send("main", {
+	var response = this.ipc.sendSync("main", {
 	    "command": "setExposure_server",
 	    "exposure-time": exposure_time
 	});
+	this.device.shutter = response["exposure-time"];
     }
 
     setFNumber(f_number: string): void {

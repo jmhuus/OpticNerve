@@ -146,7 +146,7 @@ ipcMain.on('main', (event, arg) => {
     case "setExposure_server":
 	setExposure_server(context, arg["exposure-time"])
 	    .then(response => {
-		event.reply("rendererListener", response);
+		event.returnValue = response;
 	    })
 	    .catch(error => {
 		displayErrorMessage(error, context);
