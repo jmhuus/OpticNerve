@@ -55,6 +55,7 @@ export class CaptureComponent implements OnInit {
 	});
 	this.setShutter(this.device.shutter_options[0]);
 	this.getFNumberOptions();
+	this.setFNumber(this.device.aperture_options[0]);
     }
     
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -84,8 +85,8 @@ export class CaptureComponent implements OnInit {
 	this.device.shutter = response["exposure-time"];
     }
 
-    setFNumber(f_number: string): void {
-	this.ipc.send("main", {
+    setFNumber(f_number: number): void {
+	this.ipc.sendSync("main", {
 	    "command": "setFNumber_server",
 	    "f-number": f_number
 	});

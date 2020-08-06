@@ -163,7 +163,7 @@ ipcMain.on('main', (event, arg) => {
 
     case "setFNumber_server":
 	setFNumber_server(context, arg["f-number"]).then(response => {
-	    event.reply("rendererListener", response);
+	    event.returnValue = response;
 	});
 	break;
 	
