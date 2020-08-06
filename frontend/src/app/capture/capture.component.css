@@ -765,11 +765,11 @@
     color: rgba(112,112,112,1);
 }
 #exposures {
-    left: 220px;
+    left: 210px;
     top: 747px;
     position: absolute;
     overflow: visible;
-    width: 180px;
+    width: 200px;
     white-space: nowrap;
     text-align: left;
     font-family: Helvetica Neue;

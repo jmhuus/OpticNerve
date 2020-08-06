@@ -74,7 +74,21 @@ async function setExposure_server(context, exposureTime){
 	},
 	body: JSON.stringify({
 	    "context": context,
-	    "exposure-time": exposureTime
+	    "exposure-time": parseInt(exposureTime)
+	})
+    });
+    return response.json();
+}
+
+// Retrieves the device exposure time which sets the exposure time (milliseconds)
+async function getExposure_server(context, exposureTime){
+    const response = await fetch("http://127.0.0.1:8080/get-exposure-time", {
+	method: "POST",
+	headers: {
+	    "Content-Type": "application/json"
+	},
+	body: JSON.stringify({
+	    "context": context
 	})
     });
     return response.json();
@@ -89,7 +103,7 @@ async function setFNumber_server(context, f_number){
     	},
     	body: JSON.stringify({
     	    "context": context,
-	    "f-number": f_number
+	    "f-number": parseInt(f_number)
     	})
     });
     return response.json();

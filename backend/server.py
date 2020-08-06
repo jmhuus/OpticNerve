@@ -64,13 +64,33 @@ def set_exposure():
         CaptureImage.set_exposure_time(data["exposure-time"], data["context"])
         return jsonify({
             "success": True,
-            "exposure-time": int(data["exposure-time"]/10),
+            "exposure-time": data["exposure-time"],
             "context": data["context"]
         })
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
 
+        
+@app.route("/get-exposure-time", methods=["POST"])
+def get_exposure():
+    data = request.get_json()
+    # Ensure body data
+    if "context" not in data.keys():
+        abort(400, "Missing context object.")
+        
+    try:
+        # Set exposure time
+        exposure_time = CaptureImage.get_exposure_time(data["context"])
+        return jsonify({
+            "success": True,
+            "exposure-time": exposure_time,
+            "context": data["context"]
+        })
+    # TODO(jordanhuus): exception handling should be more specific
+    except Exception as e:
+        abort(500, e)
+        
 
 @app.route("/set-aperture", methods=["POST"])
 def set_aperture():

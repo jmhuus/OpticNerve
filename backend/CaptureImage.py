@@ -181,6 +181,33 @@ def set_exposure_time(exposure_time, context):
 
 
 
+def get_exposure_time(context):
+    """TODO(jordanhuus): set doc string.
+    """
+    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    bulk_in, bulk_out, interrupt_in = \
+        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpSession = PtpSession(ptpTransport)
+    vendorId = PtpValues.Vendors.STANDARD
+    exposure_time = None
+
+    try:
+        # Open device session
+        ptpSession.OpenSession()
+        exposure_time = ptpSession.GetExposureTime()
+
+    except PtpException as e:
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+    except Exception as e:
+        raise Exception(e)
+
+    # Close the session
+    del ptpSession
+    del ptpTransport
+
+    return exposure_time
+
+
 def set_f_number(f_number, context):
     """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
 
