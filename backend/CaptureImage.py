@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 import traceback
 from ptp.PtpUsbTransport import PtpUsbTransport
 from ptp.PtpSession import PtpSession, PtpException
@@ -9,6 +10,7 @@ import ptp.NikonSupport as NikonSupport
 from ptp import PtpValues
 import time
 from datetime import datetime
+from threading import Thread
 
 
 
@@ -39,7 +41,7 @@ def get_device_details():
     return device_info
 
 
-def capture_new_image(context, file=None):
+def capture_new_image(context):
     """Simple function to initiate camera capture and store the result into
     the provided file object.
     
@@ -51,6 +53,7 @@ def capture_new_image(context, file=None):
         param1: file object opened using 'wb' to result in <class '_io.BufferedWriter'>.
         param2: context about the currently connected device.
     """
+    # PTP Protocol Prep
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
         PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
@@ -61,7 +64,6 @@ def capture_new_image(context, file=None):
         # Open device session
         ptpSession.OpenSession()
         ptpSession.InitiateCapture(objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
-        recorded_time = datetime.now()
 
         # Check for new object added after capture
         objectid = None
@@ -74,11 +76,13 @@ def capture_new_image(context, file=None):
                 break
 
         # Download newly added object
-        if objectid != None:
-            if file is None:
-                file = open("../frontend/src/assets/images/latest.jpg", "wb")
-            ptpSession.GetObject(objectid, file)
-            file.close()
+        if objectid is not None:
+            base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
+            image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+            file_path = f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}"
+            with open(file_path, "wb") as file:
+                ptpSession.GetObject(objectid, file)
+            # TODO(jordanhuus): add context detail specifying whether to delete the object from the device
             ptpSession.DeleteObject(objectid)
             
     except PtpException as e:
@@ -89,7 +93,58 @@ def capture_new_image(context, file=None):
     # Close the session
     del ptpSession
     del ptpTransport
+    return file_path, image_file_name
 
+
+def multiple_captures(context, capture_count):
+
+    def capture_thread(capture_count):
+        print("capture_thread() called")
+        # PTP Protocol Prep
+        ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        bulk_in, bulk_out, interrupt_in = \
+            PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        ptpSession = PtpSession(ptpTransport)
+        vendorId = PtpValues.Vendors.STANDARD
+
+        try:
+            # Open device session
+            ptpSession.OpenSession()
+
+            for _ in range(capture_count):
+                # Capture new image
+                ptpSession.InitiateCapture(objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
+    
+                # Check for new object added after capture
+                objectid = None
+                while True:
+                    evt = ptpSession.CheckForEvent(None)
+                    if evt == None:
+                        raise Exception("Capture did not complete")
+                    if evt.eventcode == PtpValues.StandardEvents.OBJECT_ADDED:
+                        objectid = evt.params[0]
+                        break
+
+                # Download newly added object
+                if objectid is not None:
+                    base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
+                    image_file_name = "latest.jpg"
+                    file_path = f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}"
+                    with open(file_path, "wb") as file:
+                        ptpSession.GetObject(objectid, file)
+        
+        except PtpException as e:
+            raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        except Exception as e:
+            raise Exception(e)
+
+        # Close the session
+        del ptpSession
+        del ptpTransport
+
+    # Start new thread to capture images
+    t1 = Thread(target=capture_thread, kwargs={"capture_count": capture_count}, daemon=True)
+    t1.start()
 
 
 def begin_timelapse(file, delay, context):

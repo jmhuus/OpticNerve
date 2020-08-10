@@ -34,10 +34,7 @@ def capture_image():
         
     try:
         # Capture new image
-        base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
-        image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        file = open(f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}", "wb")
-        CaptureImage.capture_new_image(data["context"], file)
+        file_path, image_file_name = CaptureImage.capture_new_image(data["context"])
 
         return jsonify({
             "success": True,
@@ -49,6 +46,51 @@ def capture_image():
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
+
+
+@app.route("/multiple-captures-by-count", methods=["POST"])
+def capture_images_count():
+    data = request.get_json()
+    # Ensure body data
+    # TODO(jordanhuus): change to decorator
+    if "capture-count" not in data.keys():
+        abort(400, "Missing 'capture-count' data.")
+    elif "context" not in data.keys():
+        abort(400, "Missing context object.")
+        
+    try:
+        # Capture new image
+        CaptureImage.multiple_captures(data["context"], data["capture-count"])
+        
+        return jsonify({
+            "success": True,
+            "capture-count": data["capture-count"]
+        })
+    # TODO(jordanhuus): exception handling should be more specific
+    except Exception as e:
+        abort(500, e)
+
+
+@app.route("/get-camera-state", methods=["POST"])
+def get_camera_state():
+    data = request.get_json()
+    # Ensure body data
+    # TODO(jordanhuus): change to decorator
+    if "context" not in data.keys():
+        abort(400, "Missing context object.")
+        
+    try:
+        # Capture new image
+        CaptureImage.multiple_captures(data["context"], data["capture-count"])
+        
+        return jsonify({
+            "success": True,
+            "capture-count": data["capture-count"]
+        })
+    # TODO(jordanhuus): exception handling should be more specific
+    except Exception as e:
+        abort(500, e)
+        
 
 @app.route("/set-exposure-time", methods=["POST"])
 def set_exposure():
@@ -161,6 +203,7 @@ def get_id_lens():
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
+
         
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
