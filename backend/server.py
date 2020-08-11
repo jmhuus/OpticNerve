@@ -1,11 +1,20 @@
 from flask import Flask, request, abort, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from datetime import datetime
+from model import setup_db
 import CaptureImage
 import os
-from datetime import datetime
 import time
+from model import Camera
 
 
 app = Flask(__name__)
+
+
+# Set up database
+db = setup_db(app)
+migrate = Migrate(app, db)
 
 
 @app.route("/get-device-details", methods=["GET"])
@@ -13,6 +22,7 @@ def device_details():
     # Ensure body data
     try:
         device_details = CaptureImage.get_device_details()
+        CaptureImage.test()
 
         return jsonify({
             "success": True,
@@ -59,12 +69,19 @@ def capture_images_count():
         abort(400, "Missing context object.")
         
     try:
+        import pdb; pdb.set_trace()
+        camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
+        db.session.add(camera)
+        db.session.commit()
+        
         # Capture new image
-        CaptureImage.multiple_captures(data["context"], data["capture-count"])
+        # TODO(jordanhuus): refactor to a simpler parameter set
+        CaptureImage.multiple_captures(data["context"], data["capture-count"], camera.id, db)
         
         return jsonify({
             "success": True,
-            "capture-count": data["capture-count"]
+            "capture-count": data["capture-count"],
+            "camera-session-id": camera.id
         })
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
@@ -76,17 +93,25 @@ def get_camera_state():
     data = request.get_json()
     # Ensure body data
     # TODO(jordanhuus): change to decorator
-    if "context" not in data.keys():
+    if "camera-session-id" not in data.keys():
+        abort(400, "Missing 'camera-session-id' data.")
+    elif "context" not in data.keys():
         abort(400, "Missing context object.")
         
     try:
-        # Capture new image
-        CaptureImage.multiple_captures(data["context"], data["capture-count"])
+        # Check camera state
+        camera = Camera.query.get(data["camera-session-id"])
+        if camera.camera_state == Camera.STATE_COMPLETE:
+            return jsonify({
+                "success": True,
+                "camera-state": "complete"
+            })
+        elif camera.camera_state == Camera.STATE_PENDING_CAPTURE:
+            return jsonify({
+                "success": True,
+                "camera-state": "pending capture"
+            })
         
-        return jsonify({
-            "success": True,
-            "capture-count": data["capture-count"]
-        })
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -263,10 +288,10 @@ def internal_server_error(error):
         "message": error.description if not None else "server error"
     }), 500
 
-@app.errorhandler(AuthError)
-def not_authorized_error(error):
-    return jsonify({
-        "success": False,
-        "error": error.status_code,
-        "message": error.error
-    }), error.status_code
+# @app.errorhandler()
+# def not_authorized_error(error):
+#     return jsonify({
+#         "success": False,
+#         "error": error.status_code,
+#         "message": error.error
+#     }), error.status_code

@@ -11,7 +11,7 @@ from ptp import PtpValues
 import time
 from datetime import datetime
 from threading import Thread
-
+from model import Camera
 
 
 def get_device_details():
@@ -96,8 +96,20 @@ def capture_new_image(context):
     return file_path, image_file_name
 
 
-def multiple_captures(context, capture_count):
+def multiple_captures(context, capture_count, session_id, db):
+    """Initiates a series of captures based on the count and the current capture settings.
+    
+    Note:
+        Callers should observe begin polling the endpoing '/get-camera-state' in order to
+        determine when the device has completed it's series of capturing images.
 
+    Args:
+        param1: (integer) representing the number of images to be taken.
+    """
+
+
+    # TODO(jordanhuus): add threading Event() to allow the frontend to cancel the operation
+    #    - See .../computer_science/test_threading/main.py for examples
     def capture_thread(capture_count):
         print("capture_thread() called")
         # PTP Protocol Prep
@@ -112,7 +124,6 @@ def multiple_captures(context, capture_count):
             ptpSession.OpenSession()
 
             for _ in range(capture_count):
-                # Capture new image
                 ptpSession.InitiateCapture(objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
     
                 # Check for new object added after capture
@@ -141,6 +152,12 @@ def multiple_captures(context, capture_count):
         # Close the session
         del ptpSession
         del ptpTransport
+
+        # Set camera state to complete
+        camera = Camera.query.get(session_id)
+        camera.camera_state = Camera.STATE_COMPLETE
+        db.session.commit()
+
 
     # Start new thread to capture images
     t1 = Thread(target=capture_thread, kwargs={"capture_count": capture_count}, daemon=True)
