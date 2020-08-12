@@ -103,6 +103,9 @@ export class CaptureComponent implements OnInit {
 		this.setActionPending(false, "");
 		this.device.image_latest_path = response["image-path"];
     		this.cdRef.detectChanges();
+	    } else {
+		this.device.image_latest_path = response["image-path"];
+    		this.cdRef.detectChanges();	
 	    }
 	});
 

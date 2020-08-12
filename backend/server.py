@@ -110,7 +110,8 @@ def get_camera_state():
         elif camera.camera_state == Camera.STATE_PENDING_CAPTURE:
             return jsonify({
                 "success": True,
-                "camera-state": "pending capture"
+                "camera-state": "pending capture",
+                "image-path": f"assets/images/{camera.image_file_name}"
             })
         
     # TODO(jordanhuus): exception handling should be more specific

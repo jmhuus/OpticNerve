@@ -118,6 +118,7 @@ def multiple_captures(context, capture_count, session_id, db):
         ptpSession = PtpSession(ptpTransport)
         vendorId = PtpValues.Vendors.STANDARD
         image_file_name = None
+        camera = Camera.query.get(session_id)
 
         try:
             # Open device session
@@ -143,6 +144,8 @@ def multiple_captures(context, capture_count, session_id, db):
                     file_path = f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}"
                     with open(file_path, "wb") as file:
                         ptpSession.GetObject(objectid, file)
+                    camera.image_file_name = image_file_name
+                    db.session.commit()
         
         except PtpException as e:
             raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
@@ -154,9 +157,7 @@ def multiple_captures(context, capture_count, session_id, db):
         del ptpTransport
 
         # Set camera state to complete
-        camera = Camera.query.get(session_id)
         camera.camera_state = Camera.STATE_COMPLETE
-        camera.image_file_name = image_file_name
         db.session.commit()
 
 
