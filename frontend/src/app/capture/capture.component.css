@@ -1423,13 +1423,20 @@
     color: rgba(112,112,112,1);
 }
 #Rectangle_9 {
-    fill: rgba(105,105,105,0.282);
-    stroke: rgba(112,112,112,1);
+    background: rgba(105,105,105,0.282);
+    border: 2px solid rgba(100, 100, 100,1);
+    text-align: center;
+    color: rgb(255, 255, 255);
+    font-size: 20px;
     stroke-width: 1px;
     stroke-linejoin: miter;
     stroke-linecap: butt;
     stroke-miterlimit: 4;
     shape-rendering: auto;
+    width: 77px;
+    height: 31px;
+    left: 205px;
+    top: 882px;
 }
 .Rectangle_9 {
     position: absolute;

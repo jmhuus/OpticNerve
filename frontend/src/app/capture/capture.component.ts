@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Device } from './device';
+import { interval } from 'rxjs';
 declare var window: Window;
 declare global {
     interface Window {
@@ -21,6 +22,7 @@ export class CaptureComponent implements OnInit {
     ipc: any;
     action_pending: boolean;
     action_pending_message: string;
+    captureCount: number;
 
     constructor(private cdRef: ChangeDetectorRef) {
 	this.action_pending = false;
@@ -50,17 +52,22 @@ export class CaptureComponent implements OnInit {
     		// Handle normal request
     		switch(arg["context"]["command"]) {
     		    case "captureImage_server":
-			this.setActionPending(false, "");
-    			this.device.image_latest_path = arg["image-path"];
-    			this.cdRef.detectChanges();
-    			break;
-		    
+			if ("camera-session-id" in arg) {
+			    // Begin observing camera state for capture completion
+			    this.observeCameraStateUntilCompletion(arg["camera-session-id"]);
+			} else {
+			    this.setActionPending(false, "");
+    			    this.device.image_latest_path = arg["image-path"];
+    			    this.cdRef.detectChanges();
+			}
+			break;    
     		}	
     	    }
     	});
     	this.setShutter(this.device.shutter_options[0]);
     	this.getFNumberOptions();
     	this.setFNumber(this.device.aperture_options[0]);
+	this.captureCount = 1;
     }
     
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -75,9 +82,31 @@ export class CaptureComponent implements OnInit {
     // Capture a new image
     captureImage(): void {
 	this.setActionPending(true, "Camera Busy: capturing image...");
+
+	// TODO(jordanhuus): this will need to analyze 'this.captureCount'
+	// Likely just provide this on each and every call???? Not sure
 	this.ipc.send("main", {
-	    "command": "captureImage_server"
+	    "command": "captureImage_server",
+	    "capture-count": this.captureCount
 	});
+    }
+
+    // Used when taking a timelapse to confirm when the device is complete
+    observeCameraStateUntilCompletion(cameraSessionId): boolean {
+	let subscription = interval(1000).subscribe(x => {
+	    var response = this.ipc.sendSync("main", {
+	    	"command": "getCameraState_server",
+	    	"camera-session-id": cameraSessionId
+	    });
+	    if (response["camera-state"] == "complete") {
+		subscription.unsubscribe();
+		this.setActionPending(false, "");
+		this.device.image_latest_path = response["image-path"];
+    		this.cdRef.detectChanges();
+	    }
+	});
+
+	return true;
     }
 
     // Set the exposure time for
@@ -112,5 +141,12 @@ export class CaptureComponent implements OnInit {
     setActionPending(visible: boolean, message: string): void {
 	this.action_pending = visible;
 	this.action_pending_message = message;
+    }
+
+    checkCaptureCount(captureCount: number): void {
+	if (captureCount <= 0) {
+	    // TODO(jordanhuus): notify user that the value was invalid
+	    this.captureCount = 1;
+	}
     }
 }

@@ -19,6 +19,7 @@ def setup_db(app):
 class Camera(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     camera_state = db.Column(db.Integer, nullable=True)
+    image_file_name = db.Column(db.String, nullable=True)
     STATE_PENDING_CAPTURE = 1
     STATE_COMPLETE = 2
 

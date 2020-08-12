@@ -111,13 +111,13 @@ def multiple_captures(context, capture_count, session_id, db):
     # TODO(jordanhuus): add threading Event() to allow the frontend to cancel the operation
     #    - See .../computer_science/test_threading/main.py for examples
     def capture_thread(capture_count):
-        print("capture_thread() called")
         # PTP Protocol Prep
         ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
         bulk_in, bulk_out, interrupt_in = \
             PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
         ptpSession = PtpSession(ptpTransport)
         vendorId = PtpValues.Vendors.STANDARD
+        image_file_name = None
 
         try:
             # Open device session
@@ -139,7 +139,7 @@ def multiple_captures(context, capture_count, session_id, db):
                 # Download newly added object
                 if objectid is not None:
                     base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
-                    image_file_name = "latest.jpg"
+                    image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
                     file_path = f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}"
                     with open(file_path, "wb") as file:
                         ptpSession.GetObject(objectid, file)
@@ -156,6 +156,7 @@ def multiple_captures(context, capture_count, session_id, db):
         # Set camera state to complete
         camera = Camera.query.get(session_id)
         camera.camera_state = Camera.STATE_COMPLETE
+        camera.image_file_name = image_file_name
         db.session.commit()
 
 

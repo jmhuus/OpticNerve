@@ -37,7 +37,7 @@ app.whenReady().then(() => {
     })
 })
 
-// Init Python Flask server to handle device communication
+// Init Python Flask server to handle device nication
 function initPythonServer() {
     var { PythonShell } = require('python-shell');
 
@@ -54,14 +54,28 @@ function initPythonServer() {
 }
 
 // Initiates the device to capture an image and return the result
-async function captureImage_server(context){
-    const response = await fetch("http://127.0.0.1:8080/capture-image", {
-	method: "POST",
-	headers: {
-	    "Content-Type": "application/json"
-	},
-	body: JSON.stringify({"context": context})
-    });
+async function captureImage_server(context, captureCount){
+    var response;
+    if (captureCount == 1) {
+	response = await fetch("http://127.0.0.1:8080/capture-image", {
+	    method: "POST",
+	    headers: {
+		"Content-Type": "application/json"
+	    },
+	    body: JSON.stringify({"context": context})
+	});
+    } else {
+	response = await fetch("http://127.0.0.1:8080/multiple-captures-by-count", {
+	    method: "POST",
+	    headers: {
+		"Content-Type": "application/json"
+	    },
+	    body: JSON.stringify({
+		"context": context,
+		"capture-count": parseInt(captureCount)
+	    })
+	});
+    }
     return response.json();
 }
 
@@ -128,6 +142,21 @@ function shutdown_server(){
     fetch(`http://127.0.0.1:8080/shutdown-server`)
 }
 
+async function getCameraState_server(context, cameraSessionId) {
+    console.log("fetching camera state from endpoint");
+    var response = await fetch("http://127.0.0.1:8080/get-camera-state", {
+    	method: "POST",
+    	headers: {
+    	    "Content-Type": "application/json"
+    	},
+    	body: JSON.stringify({
+    	    "context": context,
+	    "camera-session-id": parseInt(cameraSessionId)
+    	})
+    });
+    return response.json();
+}
+
 // Recieve asynchronous request from renderer
 ipcMain.on('main', (event, arg) => {
     var context = {
@@ -138,9 +167,10 @@ ipcMain.on('main', (event, arg) => {
     // Issue the specified command
     switch(arg["command"]) {
     case "captureImage_server":
-	captureImage_server(context).then(response => {
+	console.log("calling captureImage_server");
+	captureImage_server(context, arg["capture-count"]).then(response => {
 	    event.reply("rendererListener", response);
-	});
+	});    
 	break;
 
     case "setExposure_server":
@@ -170,6 +200,16 @@ ipcMain.on('main', (event, arg) => {
     case "shutdown_server":
 	shutdown_server();
 	break;
+
+    case "getCameraState_server":
+	getCameraState_server(context, arg["camera-session-id"])
+	    .then(response => {
+	    	event.returnValue = response;
+	    })
+	    .catch(error => {
+	    	displayErrorMessage(error, context);
+	    })
+	break;
 	
     default:
 	console.log("command: "+command+" not found.");
@@ -184,7 +224,7 @@ function displayErrorMessage(error, context) {
 }
 
 // Init Python Flask server
-initPythonServer();
+// initPythonServer();
 
 // Any platform except MacOS shuts down the entire
 // program when all windows are closed

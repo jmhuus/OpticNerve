@@ -48,8 +48,8 @@ def capture_image():
 
         return jsonify({
             "success": True,
-            "image-path": f"assets/images/{image_file_name}",
-            "context": request.get_json()["context"]
+            "context": data["context"],
+            "image-path": f"assets/images/{image_file_name}"
         })
 
     # TODO(jordanhuus): exception should remove newly created file
@@ -69,7 +69,6 @@ def capture_images_count():
         abort(400, "Missing context object.")
         
     try:
-        import pdb; pdb.set_trace()
         camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
         db.session.add(camera)
         db.session.commit()
@@ -80,6 +79,7 @@ def capture_images_count():
         
         return jsonify({
             "success": True,
+            "context": data["context"],
             "capture-count": data["capture-count"],
             "camera-session-id": camera.id
         })
@@ -104,7 +104,8 @@ def get_camera_state():
         if camera.camera_state == Camera.STATE_COMPLETE:
             return jsonify({
                 "success": True,
-                "camera-state": "complete"
+                "camera-state": "complete",
+                "image-path": f"assets/images/{camera.image_file_name}"
             })
         elif camera.camera_state == Camera.STATE_PENDING_CAPTURE:
             return jsonify({

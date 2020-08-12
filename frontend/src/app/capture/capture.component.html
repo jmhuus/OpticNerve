@@ -298,10 +298,9 @@
   <div id="Delay">
     <span>Delay</span>
   </div>
-  <svg class="Rectangle_9">
-    <rect id="Rectangle_9" rx="0" ry="0" x="0" y="0" width="77" height="31">
-    </rect>
-  </svg>
+  <div class="Rectangle_9">
+    <input id="Rectangle_9" [(ngModel)]="captureCount" (change)="checkCaptureCount($event.target.value)">
+  </div>
   <svg class="Rectangle_10">
     <rect id="Rectangle_10" rx="0" ry="0" x="0" y="0" width="77" height="31">
     </rect>
