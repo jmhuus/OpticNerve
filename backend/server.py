@@ -17,6 +17,11 @@ db = setup_db(app)
 migrate = Migrate(app, db)
 
 
+@app.route("/")
+def home():
+    return "hello world"
+
+
 @app.route("/get-device-details", methods=["GET"])
 def device_details():
     # Ensure body data
@@ -231,6 +236,36 @@ def get_id_lens():
     except Exception as e:
         abort(500, e)
 
+
+@app.route("/get-iso-number", methods=["POST"])
+def get_iso_number():
+    data = request.get_json()
+    try:
+        # Set exposure time
+        iso_number = CaptureImage.get_iso_number(data["context"])
+        return jsonify({
+            "success": True,
+            "iso-number": iso_number
+        })
+    # TODO(jordanhuus): exception handling should be more specific
+    except Exception as e:
+        abort(500, e)
+
+
+@app.route("/set-iso-number", methods=["POST"])
+def set_iso_number():
+    data = request.get_json()
+    try:
+        # Set exposure time
+        CaptureImage.set_iso_number(data["context"], data["iso-number"])
+        return jsonify({
+            "success": True,
+            "iso-number": data["iso-number"]
+        })
+    # TODO(jordanhuus): exception handling should be more specific
+    except Exception as e:
+        abort(500, e)
+
         
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
@@ -289,11 +324,3 @@ def internal_server_error(error):
         "error": 500,
         "message": error.description if not None else "server error"
     }), 500
-
-# @app.errorhandler()
-# def not_authorized_error(error):
-#     return jsonify({
-#         "success": False,
-#         "error": error.status_code,
-#         "message": error.error
-#     }), error.status_code

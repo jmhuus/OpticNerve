@@ -311,7 +311,7 @@ def set_f_number(f_number, context):
 
 
 def get_f_number(context):
-    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
+    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work based on the current mode being used. Perhaps this app can override the shooting mode?
 
     Args:
         param1 (float): TODO(jordanhuus): determine unit of measurement
@@ -344,11 +344,7 @@ def get_f_number(context):
 # TODO(jordanhuus): attempt to query the device before trial and error proceedure
 # TODO(jordanhuus): ensure stop options that collide with other increments don't incorrectly
 def get_f_number_options(context):
-    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
-
-    Args:
-        param1 (float): TODO(jordanhuus): determine unit of measurement
-        param2: context about the currently connected device.
+    """TODO(jordanhuus): add doc string
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
@@ -437,3 +433,60 @@ def get_f_number_options(context):
                                       f_stops[f_stop_type_index].index(minimum_f_stop):\
                                       f_stops[f_stop_type_index].index(maximum_f_stop)+1
     ]
+
+
+
+def get_iso_number(context):
+    """TODO(jordanhuus): add doc string
+    """
+    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    bulk_in, bulk_out, interrupt_in = \
+        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpSession = PtpSession(ptpTransport)
+    vendorId = PtpValues.Vendors.STANDARD
+    iso_number = None
+
+    try:
+        # Open device session
+        ptpSession.OpenSession()
+        iso_number = ptpSession.GetExposureIndex()
+        
+
+        
+    except PtpException as e:
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+    except Exception as e:
+        raise Exception(e)
+
+    # Close the session
+    del ptpSession
+    del ptpTransport
+    
+    return iso_number
+
+
+def set_iso_number(context, iso_number):
+    """TODO(jordanhuus): add doc string
+    """
+    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    bulk_in, bulk_out, interrupt_in = \
+        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpSession = PtpSession(ptpTransport)
+    vendorId = PtpValues.Vendors.STANDARD
+
+    try:
+        # Open device session
+        import pdb; pdb.set_trace()
+        ptpSession.OpenSession()
+        ptpSession.SetExposureIndex(iso_number)
+        
+    except PtpException as e:
+        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+    except Exception as e:
+        raise Exception(e)
+
+    # Close the session
+    del ptpSession
+    del ptpTransport
+    
+    return iso_number

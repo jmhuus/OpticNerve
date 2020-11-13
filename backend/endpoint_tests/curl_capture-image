@@ -1,0 +1,6 @@
+curl --location --request POST 'http://127.0.0.1:8080/capture-image' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "context": "this is a test",
+  "camera-session-id": 35
+}'

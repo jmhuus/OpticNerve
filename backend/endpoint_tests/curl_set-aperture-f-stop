@@ -1,0 +1,6 @@
+curl --location --request POST 'http://localhost:8080/set-aperture-f-stop' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "context": "this is a test",
+  "f-number": 180
+}'
