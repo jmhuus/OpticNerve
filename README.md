@@ -19,10 +19,18 @@ Last Update: 8/3/2020
 
 
 #### Where is this project going?
-* Full-featured camera tether control of DSLR and other point-and-shoot hardware
-* Long-term
-    * Focus control.
-        * Unfortunately, fine-tune lens focus control is quite difficult because manufacturers don't support any features/API for this. Fortunately, some smart folks at MIT have outlined a hackable option [here](http://web.media.mit.edu/~bandy/invariant/move_lens.pdf).
-	* Focus control is essential for *complete* remote manipulation of a camera
-    * Pan/tilt
-        * This UI will ideally support pan/tilt functionality for the DSLR which will require a user to hook up an arduino or Raspberry Pi.
+* Full-featured camera tether control of DSLR using mobile or desktop UI
+* Pan/tilt
+    * This UI will ideally support pan/tilt functionality for the DSLR which will require a user to hook up an arduino or Raspberry Pi.
+
+
+### Setup Steps
+* Set up virtualenv
+* Download dependencies using pip install -r requirements.txt
+* (Optional) Using a Raspberry Pi to control DSLR wirelessly
+    * Must allow non-root user to access the DSLR USB device with the following steps
+    ```bash
+    target='SUBSYSTEM=="usb", ATTR{idVendor}=="0fcf", ATTR{idProduct}=="1008", MODE="666"'
+    echo "$target" | sudo tee --append /etc/udev/rules.d/99-usb_DSLR_ptp.rules
+    ```
+    
