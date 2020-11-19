@@ -30,7 +30,7 @@ Last Update: 8/3/2020
 * (Optional) Using a Raspberry Pi to control DSLR wirelessly
     * Must allow non-root user to access the DSLR USB device with the following steps
     ```bash
-    target='SUBSYSTEM=="usb", ATTR{idVendor}=="0fcf", ATTR{idProduct}=="1008", MODE="666"'
+    target='SUBSYSTEM=="usb", ATTR{idVendor}=="04b0", ATTR{idProduct}=="0427", MODE="666"'
     echo "$target" | sudo tee --append /etc/udev/rules.d/99-usb_DSLR_ptp.rules
     ```
     
