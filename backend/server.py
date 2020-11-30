@@ -3,11 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
 from model import setup_db
-import CaptureImage
 import os
 import time
 from model import Camera
-import packet_radio
+from minimodem import Minimodem
+import json
 
 
 app = Flask(__name__)
@@ -27,9 +27,13 @@ def home():
 def device_details():
     # Ensure body data
     try:
-        device_details = CaptureImage.get_device_details()
-        CaptureImage.test()
-
+        tx_data = {
+            "action": Minimodem.ACTION_GET_DEVICE_DETAILS,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
+        
         return jsonify({
             "success": True,
             "device-details": device_details
@@ -49,13 +53,20 @@ def capture_image():
         abort(400, "Missing context object.")
         
     try:
-        # Capture new image
-        file_path, image_file_name = CaptureImage.capture_new_image(data["context"])
+        tx_data = {
+            "action": Minimodem.ACTION_CAPTURE_IMAGE,
+            "data": data
+        }
+        modem = Minimodem()
+        response = modem.transmit(json.dumps(tx_data))
 
+        print("Response recieved")
+        print(response)
+        
         return jsonify({
-            "success": True,
-            "context": data["context"],
-            "image-path": f"assets/images/{image_file_name}"
+            "success": True
+            # "context": data["context"]
+            # "image-path": f"assets/images/{image_file_name}"
         })
 
     # TODO(jordanhuus): exception should remove newly created file
@@ -75,13 +86,12 @@ def capture_images_count():
         abort(400, "Missing context object.")
         
     try:
-        camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
-        db.session.add(camera)
-        db.session.commit()
-        
-        # Capture new image
-        # TODO(jordanhuus): refactor to a simpler parameter set
-        CaptureImage.multiple_captures(data["context"], data["capture-count"], camera.id, db)
+        tx_data = {
+            "action": Minimodem.ACTION_MULTIPLE_CAPTURES_BY_COUNT,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
         
         return jsonify({
             "success": True,
@@ -105,20 +115,13 @@ def get_camera_state():
         abort(400, "Missing context object.")
         
     try:
-        # Check camera state
-        camera = Camera.query.get(data["camera-session-id"])
-        if camera.camera_state == Camera.STATE_COMPLETE:
-            return jsonify({
-                "success": True,
-                "camera-state": "complete",
-                "image-path": f"assets/images/{camera.image_file_name}"
-            })
-        elif camera.camera_state == Camera.STATE_PENDING_CAPTURE:
-            return jsonify({
-                "success": True,
-                "camera-state": "pending capture",
-                "image-path": f"assets/images/{camera.image_file_name}"
-            })
+        tx_data = {
+            "action": Minimodem.ACTION_GET_CAMERA_STATE,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
+        
         
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
@@ -135,13 +138,12 @@ def set_exposure():
         abort(400, "Missing context object.")
         
     try:
-        # Set exposure time
-        CaptureImage.set_exposure_time(data["exposure-time"], data["context"])
-        return jsonify({
-            "success": True,
-            "exposure-time": data["exposure-time"],
-            "context": data["context"]
-        })
+        tx_data = {
+            "action": Minimodem.ACTION_SET_CAMERA_STATE,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -155,13 +157,12 @@ def get_exposure():
         abort(400, "Missing context object.")
         
     try:
-        # Set exposure time
-        exposure_time = CaptureImage.get_exposure_time(data["context"])
-        return jsonify({
-            "success": True,
-            "exposure-time": exposure_time,
-            "context": data["context"]
-        })
+        tx_data = {
+            "action": Minimodem.ACTION_GET_CAMERA_STATE,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -178,13 +179,12 @@ def set_aperture():
         context = data["context"]
 
     try:
-        # Set exposure time
-        CaptureImage.set_f_number(data["f-number"])
-        return jsonify({
-            "success": True,
-            "f-number": int(data["f-number"]/10),
-            "context": data["context"]
-        })
+        tx_data = {
+            "action": Minimodem.ACTION_SET_APERTURE,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -194,14 +194,12 @@ def set_aperture():
 def set_aperture_f_stop():
     data = request.get_json()
     try:
-        # Set exposure time
-        f_number_options = CaptureImage.set_f_number(data["f-number"], data["context"])
-        return jsonify({
-            "success": True,
-            "f-number": data["f-number"],
-            "context": data["context"]
-        })
-    
+        tx_data = {
+            "action": Minimodem.ACTION_SET_APERTURE_F_STOP,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -211,13 +209,12 @@ def set_aperture_f_stop():
 def get_aperture_options():
     data = request.get_json()
     try:
-        # Set exposure time
-        f_number_options = CaptureImage.get_f_number_options({"test": "TODO(jordanhuus): set context for GET requests"})
-        return jsonify({
-            "success": True,
-            "f-number-options": f_number_options,
-            "context": data["context"]
-        })
+        tx_data = {
+            "action": Minimodem.ACTION_GET_APERTURE_OPTIONS,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -227,12 +224,12 @@ def get_aperture_options():
 @app.route("/get-lens-id", methods=["POST"])
 def get_id_lens():
     try:
-        # Set exposure time
-        lens_id = CaptureImage.get_lens_id()
-        return jsonify({
-            "success": True,
-            "lens-id": "unimplemented"
-        })
+        tx_data = {
+            "action": Minimodem.ACTION_GET_LENS_ID,
+            "data": None
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -242,12 +239,12 @@ def get_id_lens():
 def get_iso_number():
     data = request.get_json()
     try:
-        # Set exposure time
-        iso_number = CaptureImage.get_iso_number(data["context"])
-        return jsonify({
-            "success": True,
-            "iso-number": iso_number
-        })
+        tx_data = {
+            "action": Minimodem.ACTION_GET_ISO_NUMBER,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
@@ -257,12 +254,12 @@ def get_iso_number():
 def set_iso_number():
     data = request.get_json()
     try:
-        # Set exposure time
-        CaptureImage.set_iso_number(data["context"], data["iso-number"])
-        return jsonify({
-            "success": True,
-            "iso-number": data["iso-number"]
-        })
+        tx_data = {
+            "action": Minimodem.ACTION_SET_ISO_NUMBER,
+            "data": data
+        }
+        modem = Minimodem()
+        modem.transmit(json.dumps(tx_data))
     # TODO(jordanhuus): exception handling should be more specific
     except Exception as e:
         abort(500, e)
