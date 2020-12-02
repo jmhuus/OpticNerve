@@ -1,1 +1,0 @@
-{"action": "capture-image", "data": {"context": {"name": "jordan"}}}end

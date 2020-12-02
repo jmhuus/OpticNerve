@@ -1,6 +1,6 @@
 import subprocess
 import os
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 
 
 
@@ -24,10 +24,10 @@ class Minimodem:
         self.tx_data = None
         self.rx_data = None
 
-        # Set up GPIO pins
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+        # # Set up GPIO pins
+        # GPIO.setwarnings(False)
+        # GPIO.setmode(GPIO.BOARD)
+        # GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
 
         
     def transmit(self, data):
@@ -35,15 +35,11 @@ class Minimodem:
         
         try:
             # Send
-            print("sending data...")
-            self.send(self.tx_data + "end")
-            print("complete.")
+            self.send(self.tx_data + "~~~~\n\n\n")
 
-    #        # Recieve
-    #        print("waiting response")
-    #        self.rx_data = self.recieve("end")
-    #        print("response: ", self.rx_data)
-            
+            # Recieve
+            self.rx_data = self.recieve("end")
+           
         finally:
             if self.rx_data:
                 return self.rx_data
@@ -60,8 +56,8 @@ class Minimodem:
             )
             for stdout_line in  iter(popen.stdout.readline, ""):
                 yield stdout_line 
-            popen.stdout.close()
-            return_code = popen.wait()
+                popen.stdout.close()
+                return_code = popen.wait()
             if return_code:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
@@ -70,7 +66,7 @@ class Minimodem:
             if terminate_statement:
                 if terminate_statement in path:
                     break
-            response += path
+                response += path
 
         return response
 
@@ -87,6 +83,6 @@ class Minimodem:
             "cat tmp_data.txt|minimodem --tx 75 -f {}".format(tmp_sound_filename),
             shell=True
         )
-        GPIO.output(3, GPIO.HIGH)
+        # GPIO.output(3, GPIO.HIGH)
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
-        GPIO.output(3, GPIO.LOW)
+        # GPIO.output(3, GPIO.LOW)
