@@ -1,5 +1,6 @@
 import subprocess
 import os
+import RPi.GPIO as GPIO
 
 
 
@@ -23,6 +24,11 @@ class Minimodem:
         self.tx_data = None
         self.rx_data = None
 
+        # Set up GPIO pins
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+
         
     def transmit(self, data):
         self.tx_data = data
@@ -30,13 +36,13 @@ class Minimodem:
         try:
             # Send
             print("sending data...")
-            self.send(self.tx_data)
+            self.send(self.tx_data + "end")
             print("complete.")
 
-            # Recieve
-            print("waiting response")
-            self.rx_data = self.recieve("end")
-            print("response: ", self.rx_data)
+    #        # Recieve
+    #        print("waiting response")
+    #        self.rx_data = self.recieve("end")
+    #        print("response: ", self.rx_data)
             
         finally:
             if self.rx_data:
@@ -81,4 +87,6 @@ class Minimodem:
             "cat tmp_data.txt|minimodem --tx 75 -f {}".format(tmp_sound_filename),
             shell=True
         )
+        GPIO.output(3, GPIO.HIGH)
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
+        GPIO.output(3, GPIO.LOW)

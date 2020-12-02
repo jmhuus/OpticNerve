@@ -1,1 +1,1 @@
-{"action": "capture-image", "data": {"context": {"test": "jordan"}}}
+{"action": "capture-image", "data": {"context": {"name": "jordan"}}}end
