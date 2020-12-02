@@ -55,7 +55,7 @@ def capture_image():
     try:
         tx_data = {
             "action": Minimodem.ACTION_CAPTURE_IMAGE,
-            "data": data
+p            "data": data
         }
         modem = Minimodem()
         response = modem.transmit(json.dumps(tx_data))

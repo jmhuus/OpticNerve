@@ -3,9 +3,8 @@ from minimodem import Minimodem
 import json
 
 
-def process_data(modem, data):
-    import pdb; pdb.set_trace()
-    data = clean_data(data)
+def process_data(modem, data, terminate_statement):
+    data = clean_data(data, terminate_statement)
     data = json.loads(data)
     action = data["action"]
     data = data["data"] 
@@ -16,7 +15,7 @@ def process_data(modem, data):
         CaptureImage.test()
     elif action == Minimodem.ACTION_CAPTURE_IMAGE:
         # Capture new image
-        CaptureImage.capture_new_image(data["context"])
+        # CaptureImage.capture_new_image(data["context"])
         modem.send(json.dumps({"success": True}))
     elif action == Minimodem.ACTION_MULTIPLE_CAPTURES_BY_COUNT:
         camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
@@ -108,14 +107,17 @@ def process_data(modem, data):
         print("ERROR: Action not found...")
 
 
-def clean_data(data):
-    return data.replace(".", "").replace("\n", "")
+def clean_data(data, terminate_statement):
+    data = data.replace(".", "")
+    data = data.replace("\n", "")
+    data = data.replace(terminate_statement, "")
+    return data
     
     
 
 data = None
 modem = Minimodem()
 while True:
-    data = modem.recieve("end")
+    data = modem.recieve("~")
     if data:
-        process_data(modem, data)
+        process_data(modem, data, "~")

@@ -39,7 +39,7 @@ class Minimodem:
 
             # Recieve
             self.rx_data = self.recieve("end")
-           
+
         finally:
             if self.rx_data:
                 return self.rx_data
@@ -54,19 +54,19 @@ class Minimodem:
                 stdout=subprocess.PIPE,
                 universal_newlines=True
             )
-            for stdout_line in  iter(popen.stdout.readline, ""):
-                yield stdout_line 
-                popen.stdout.close()
-                return_code = popen.wait()
+            for stdout_line in iter(popen.stdout.readline, ""):
+                yield stdout_line
+            popen.stdout.close()
+            return_code = popen.wait()
             if return_code:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
         response = ""
         for path in execute(["minimodem", "--rx", "75", "-q", "--print-filter"]):
-            if terminate_statement:
+            response += path
+            if terminate_statement is not None:
                 if terminate_statement in path:
-                    break
-                response += path
+                    return response
 
         return response
 
@@ -83,6 +83,6 @@ class Minimodem:
             "cat tmp_data.txt|minimodem --tx 75 -f {}".format(tmp_sound_filename),
             shell=True
         )
-        # GPIO.output(3, GPIO.HIGH)
-        subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
-        # GPIO.output(3, GPIO.LOW)
+        GPIO.output(3, GPIO.HIGH)
+        subprocess.run("afplay {}".format(tmp_sound_filename), shell=True)
+        GPIO.output(3, GPIO.LOW)
