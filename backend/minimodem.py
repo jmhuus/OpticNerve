@@ -35,14 +35,10 @@ class Minimodem:
         
         try:
             # Send
-            print("sending data...")
             self.send(self.tx_data + "end")
-            print("complete.")
 
-    #        # Recieve
-    #        print("waiting response")
-    #        self.rx_data = self.recieve("end")
-    #        print("response: ", self.rx_data)
+            # Recieve
+            self.rx_data = self.recieve("end")
             
         finally:
             if self.rx_data:
@@ -58,8 +54,8 @@ class Minimodem:
                 stdout=subprocess.PIPE,
                 universal_newlines=True
             )
-            for stdout_line in  iter(popen.stdout.readline, ""):
-                yield stdout_line 
+            for stdout_line in iter(popen.stdout.readline, ""):
+                yield stdout_line
             popen.stdout.close()
             return_code = popen.wait()
             if return_code:
@@ -67,10 +63,10 @@ class Minimodem:
 
         response = ""
         for path in execute(["minimodem", "--rx", "75", "-q", "--print-filter"]):
-            if terminate_statement:
-                if terminate_statement in path:
-                    break
             response += path
+            if terminate_statement is not None:
+                if terminate_statement in path:
+                    return response
 
         return response
 
@@ -88,5 +84,5 @@ class Minimodem:
             shell=True
         )
         GPIO.output(3, GPIO.HIGH)
-        subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
+        subprocess.run("afplay {}".format(tmp_sound_filename), shell=True)
         GPIO.output(3, GPIO.LOW)
