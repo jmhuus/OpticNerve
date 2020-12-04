@@ -39,7 +39,7 @@ class Minimodem:
 
             # Recieve
             self.rx_data = self.recieve("~")
-            
+
         finally:
             if self.rx_data:
                 return self.rx_data
