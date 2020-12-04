@@ -5,6 +5,7 @@ import json
 
 def process_data(modem, data, terminate_statement):
     data = clean_data(data, terminate_statement)
+    print("about to load the following JSON data: ", data)
     data = json.loads(data)
     action = data["action"]
     data = data["data"] 
@@ -16,7 +17,8 @@ def process_data(modem, data, terminate_statement):
     elif action == Minimodem.ACTION_CAPTURE_IMAGE:
         # Capture new image
         # CaptureImage.capture_new_image(data["context"])
-        modem.send(json.dumps({"success": True}))
+        json_string = json.dumps({"success": True, "test": "hello world from jordan"}) + "~~~~\n\n\n"
+        modem.send(json_string)
     elif action == Minimodem.ACTION_MULTIPLE_CAPTURES_BY_COUNT:
         camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
         db.session.add(camera)

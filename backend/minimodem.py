@@ -1,6 +1,7 @@
 import subprocess
 import os
-# import RPi.GPIO as GPIO
+import time
+import RPi.GPIO as GPIO
 
 
 
@@ -24,10 +25,10 @@ class Minimodem:
         self.tx_data = None
         self.rx_data = None
 
-        # # Set up GPIO pins
-        # GPIO.setwarnings(False)
-        # GPIO.setmode(GPIO.BOARD)
-        # GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+        # Set up GPIO pins
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
 
         
     def transmit(self, data):
@@ -38,7 +39,7 @@ class Minimodem:
             self.send(self.tx_data + "~~~~\n\n\n")
 
             # Recieve
-            self.rx_data = self.recieve("end")
+            self.rx_data = self.recieve("~")
 
         finally:
             if self.rx_data:
@@ -62,10 +63,11 @@ class Minimodem:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
         response = ""
-        for path in execute(["minimodem", "--rx", "75", "-q", "--print-filter"]):
+        for path in execute(["minimodem", "--rx", "200", "-q", "--print-filter"]):
             response += path
             if terminate_statement is not None:
                 if terminate_statement in path:
+                    time.sleep(1)
                     return response
 
         return response
@@ -80,9 +82,9 @@ class Minimodem:
         path = os.path.dirname(os.path.realpath(__file__))
         tmp_sound_filename = path+"/tmp_send_audio_file.wav"
         subprocess.run(
-            "cat tmp_data.txt|minimodem --tx 75 -f {}".format(tmp_sound_filename),
+            "cat tmp_data.txt|minimodem --tx 200 -f {}".format(tmp_sound_filename),
             shell=True
         )
         GPIO.output(3, GPIO.HIGH)
-        subprocess.run("afplay {}".format(tmp_sound_filename), shell=True)
+        subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
         GPIO.output(3, GPIO.LOW)
