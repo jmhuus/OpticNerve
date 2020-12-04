@@ -59,10 +59,6 @@ def capture_image():
         }
         modem = Minimodem()
         response = modem.transmit(json.dumps(tx_data))
-
-        print("Response recieved")
-        print(response)
-        
         return jsonify({
             "success": True
             # "context": data["context"]

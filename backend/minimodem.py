@@ -4,7 +4,6 @@ import time
 import RPi.GPIO as GPIO
 
 
-
 class Minimodem:
 
     ACTION_GET_DEVICE_DETAILS = "get-device-details"
@@ -40,7 +39,7 @@ class Minimodem:
 
             # Recieve
             self.rx_data = self.recieve("~")
-
+            
         finally:
             if self.rx_data:
                 return self.rx_data
