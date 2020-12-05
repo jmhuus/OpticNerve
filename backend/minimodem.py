@@ -1,6 +1,10 @@
 import subprocess
 import os
 import time
+from hamming_code_ecc import \
+    encode_data_to_hamming_binary_array, \
+    decode_hamming_code_binary_array_to_string
+import re
 import RPi.GPIO as GPIO
 
 
@@ -35,11 +39,11 @@ class Minimodem:
         
         try:
             # Send
-            self.send(self.tx_data + "~~~~\n\n\n")
+            self.send(self.tx_data)
 
             # Recieve
             self.rx_data = self.recieve("~")
-
+            
         finally:
             if self.rx_data:
                 return self.rx_data
@@ -61,29 +65,50 @@ class Minimodem:
             if return_code:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
-        response = ""
-        for path in execute(["minimodem", "--rx", "200", "-q", "--print-filter"]):
-            response += path
+        request = ""
+        for path in execute(["minimodem", "--rx", "500", "-q", "--print-filter"]):
+            # Filter out incoming noise; proper data should be strictly binary
+            if "0" in path or "1" in path:
+                request += path
             if terminate_statement is not None:
                 if terminate_statement in path:
+                    request = request.split("--")
+                    request = [i.replace(" ", "0") for i in request]
+                    request = [re.sub('[^0-1]', '', i) for i in request]
+                    request = decode_hamming_code_binary_array_to_string(
+                        request,
+                        4
+                    )
+                    request = self.clean_data(request, terminate_statement)
                     time.sleep(1)
-                    return response
+                    return request
 
-        return response
+        return request
 
 
     def send(self, json_data):
+        # Convert data to hamming code binary
+        data = encode_data_to_hamming_binary_array(json_data)
+        data = "--".join(i for i in data) + "~~~~\n\n\n"
+        
         # Write JSON data to tmp_data.txt
         with open("tmp_data.txt", "w") as f:
-            f.write(json_data)
+            f.write(data)
 
         # Transmit
         path = os.path.dirname(os.path.realpath(__file__))
         tmp_sound_filename = path+"/tmp_send_audio_file.wav"
         subprocess.run(
-            "cat tmp_data.txt|minimodem --tx 200 -f {}".format(tmp_sound_filename),
+            "cat tmp_data.txt|minimodem --tx 500 -f {}".format(tmp_sound_filename),
             shell=True
         )
         GPIO.output(3, GPIO.HIGH)
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
         GPIO.output(3, GPIO.LOW)
+
+
+    def clean_data(self, data, terminate_statement):
+        data = data.replace(".", "")
+        data = data.replace("\n", "")
+        data = data.replace(terminate_statement, "")
+        return data

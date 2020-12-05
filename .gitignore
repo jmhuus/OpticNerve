@@ -3,4 +3,6 @@ frontend/OpticNerve/node_modules/
 frontend/dist/
 .DS_Store
 backend/env_backend
+backend/tmp_data.txt
+backend/tmp_send_audio_file.wav
 __pycache__

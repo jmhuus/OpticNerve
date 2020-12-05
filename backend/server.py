@@ -59,11 +59,7 @@ def capture_image():
         }
         modem = Minimodem()
         response = modem.transmit(json.dumps(tx_data))
-        return jsonify({
-            "success": True
-            # "context": data["context"]
-            # "image-path": f"assets/images/{image_file_name}"
-        })
+        return jsonify(response)
 
     # TODO(jordanhuus): exception should remove newly created file
     # TODO(jordanhuus): exception handling should be more specific

@@ -476,7 +476,6 @@ def set_iso_number(context, iso_number):
 
     try:
         # Open device session
-        import pdb; pdb.set_trace()
         ptpSession.OpenSession()
         ptpSession.SetExposureIndex(iso_number)
         
