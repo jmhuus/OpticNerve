@@ -5,6 +5,7 @@ from hamming_code_ecc import \
     encode_data_to_hamming_binary_array, \
     decode_hamming_code_binary_array_to_string
 import re
+import json
 import RPi.GPIO as GPIO
 
 
@@ -83,7 +84,7 @@ class Minimodem:
                     time.sleep(1)
                     return request
 
-        return request
+        return None
 
 
     def send(self, json_data):
@@ -105,7 +106,7 @@ class Minimodem:
         GPIO.output(3, GPIO.HIGH)
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
         GPIO.output(3, GPIO.LOW)
-
+ 
 
     def clean_data(self, data, terminate_statement):
         data = data.replace(".", "")

@@ -143,7 +143,6 @@ function shutdown_server(){
 }
 
 async function getCameraState_server(context, cameraSessionId) {
-    console.log("fetching camera state from endpoint");
     var response = await fetch("http://127.0.0.1:8080/get-camera-state", {
     	method: "POST",
     	headers: {
@@ -167,7 +166,6 @@ ipcMain.on('main', (event, arg) => {
     // Issue the specified command
     switch(arg["command"]) {
     case "captureImage_server":
-	console.log("calling captureImage_server");
 	captureImage_server(context, arg["capture-count"]).then(response => {
 	    event.reply("rendererListener", response);
 	});    
@@ -224,7 +222,7 @@ function displayErrorMessage(error, context) {
 }
 
 // Init Python Flask server
-// initPythonServer();
+initPythonServer();
 
 // Any platform except MacOS shuts down the entire
 // program when all windows are closed
