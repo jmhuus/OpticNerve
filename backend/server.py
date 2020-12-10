@@ -9,6 +9,7 @@ from model import Camera
 from minimodem import Minimodem
 import json
 import CaptureImage
+import action_request_pb2
 
 
 app = Flask(__name__)
@@ -24,13 +25,15 @@ def home():
     return "hello world"
 
 
-@app.route("/get-device-details", methods=["GET"])
+@app.route("/get-device-details", methods=["POST"])
 def device_details():
     """
     JSON requirements:
      - context
      - device-type
     """
+    
+    data = request.get_json()
 
     if data["context"]["device-type"] == "local":
         try:
@@ -47,16 +50,25 @@ def device_details():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_GET_DEVICE_DETAILS,
-                "data": data
-            }
+            # Construct protobuf request
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_DEVICE_DETAILS
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Deconstruct protobuf response
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
+            import pdb; pdb.set_trace()
             return jsonify({
-                "success": True,
-                "device-details": response["device-details"]
+                "success": action_response.response_successful,
+                "device-details": {
+                    "capture_formats": action_response.device_details.capture_formats,
+                    "device_version": action_response.device_details.device_version,
+                    "manufacturer": action_response.device_details.manufacturer,
+                    "model": action_response.device_details.model,
+                    "context": data["context"]
+                }
             })
 
         except Exception as e:
@@ -71,7 +83,7 @@ def device_details():
 @app.route("/capture-image", methods=["POST"])
 def capture_image():
     """
-    JSON requirements:
+    HTTP JSON request requirements:
      - context
      - device-type
     """
@@ -97,15 +109,19 @@ def capture_image():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_CAPTURE_IMAGE,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
+                "success": action_response.response_successful,
                 "context": data["context"]
             })
 
@@ -162,18 +178,22 @@ def capture_images_count():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_MULTIPLE_CAPTURES_BY_COUNT,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_MULTIPLE_CAPTURES_BY_COUNT
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
+                "success": action_response.response_successful,
                 "context": data["context"]
             })
-
+        
         except Exception as e:
             abort(500, e)
     else:
@@ -216,16 +236,20 @@ def get_camera_state():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_GET_CAMERA_STATE,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_CAMERA_STATE
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
-                "camera-state": response["camera-state"],
+                "success": action_response.response_successful,
+                "camera-state": action_response.camera_state,
                 "context": data["context"]
             })
 
@@ -270,17 +294,23 @@ def set_exposure():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_SET_EXPOSURE_TIME,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_SET_EXPOSURE_TIME
+            action_request.exposure_time = data["exposure-time"]
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
+                "success": action_response.response_successful,
                 "context": data["context"]
             })
+
         except Exception as e:
             abort(500, e)
     else:
@@ -319,16 +349,20 @@ def gete_exposure():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_GET_EXPOSURE_TIME,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_EXPOSURE_TIME
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
-                "exposure-time": response["exposure-time"],
+                "success": action_response.response_successful,
+                "expsure-time": action_response.exposure_time,
                 "context": data["context"]
             })
 
@@ -341,7 +375,7 @@ def gete_exposure():
         )
 
 
-@app.route("/set-aperture", methods=["POST"])
+@app.route("/set-aperture-f-stop", methods=["POST"])
 def set_aperture():
     """
     JSON requirements:
@@ -365,7 +399,6 @@ def set_aperture():
             CaptureImage.set_f_number(data["f-number"])
             return jsonify({
                 "success": True,
-                "f-number": int(data["f-number"]/10),
                 "context": data["context"]
             })
         except Exception as e:
@@ -374,15 +407,20 @@ def set_aperture():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_SET_APERTURE,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_SET_APERTURE_F_STOP
+            action_request.aperture = data["aperture"]
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
+                "success": action_response.response_successful,
                 "context": data["context"]
             })
 
@@ -395,7 +433,7 @@ def set_aperture():
         )
 
 
-@app.route("/set-aperture-f-stop", methods=["POST"])
+@app.route("/get-aperture-f-stop", methods=["POST"])
 def set_aperture_f_stop():
     """
     JSON requirements:
@@ -410,9 +448,10 @@ def set_aperture_f_stop():
     if data["context"]["device-type"] == "local":
         try:
             # Set exposure time
-            f_number_options = CaptureImage.set_f_number(data["f-number"], data["context"])
+            f_number = CaptureImage.get_f_number(data["context"])
             return jsonify({
                 "success": True,
+                "f-number": f_number,
                 "context": data["context"]
             })
         except Exception as e:
@@ -421,15 +460,20 @@ def set_aperture_f_stop():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_SET_APERTURE_F_STOP,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_APERTURE_F_STOP
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
+                "success": action_response.response_successful,
+                "aperture": action_response.aperture,
                 "context": data["context"]
             })
 
@@ -469,16 +513,20 @@ def get_aperture_options():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_GET_APERTURE_OPTIONS,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_APERTURE_OPTIONS
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
-                "aperture-options": response["aperture-options"],
+                "success": action_response.response_successful,
+                "aperture-options": action_response.aperture_options,
                 "context": data["context"]
             })
         
@@ -501,17 +549,37 @@ def get_id_lens():
     """
     
     data = request.get_json()
-    
-    try:
-        tx_data = {
-            "action": Minimodem.ACTION_GET_LENS_ID,
-            "data": None
-        }
+
+    if data["context"]["device-type"] == "local":
+        try:
+            tx_data = {
+                "action": Minimodem.ACTION_GET_LENS_ID,
+                "data": None
+            }
+            modem = Minimodem()
+            modem.transmit(json.dumps(tx_data))
+            
+        # TODO(jordanhuus): exception handling should be more specific
+        except Exception as e:
+            abort(500, e)
+            
+    elif data["context"]["device-type"] == "radio":
+        # Serialize data into protobuf
+        action_request = action_request_pb2.ActionRequest()
+        action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_LENS_ID
+        action_context = action_request_pb2.Context()
+        action_request.context.CopyFrom(action_context)
         modem = Minimodem()
-        modem.transmit(json.dumps(tx_data))
-    # TODO(jordanhuus): exception handling should be more specific
-    except Exception as e:
-        abort(500, e)
+        response = modem.transmit(action_request.SerializeToString().hex())
+        
+        # Desrialize data from protobuf
+        action_response = action_request_pb2.ActionRequest()
+        action_response.ParseFromString(bytes.fromhex(response))
+        return jsonify({
+            "success": action_response.response_successful,
+            "lens-id": action_response.lens_id,
+            "context": data["context"]
+        })
 
 
 @app.route("/get-iso-number", methods=["POST"])
@@ -540,16 +608,20 @@ def get_iso_number():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_GET_ISO_NUMBER,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_ISO_NUMBER
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+            
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": True,
-                "iso-number": response["iso-number"],
+                "success": action_response.response_successful,
+                "iso-number": action_response.iso_number,
                 "context": data["context"]
             })
 
@@ -588,14 +660,22 @@ def set_iso_number():
     # Remote communication via packet radio
     elif data["context"]["device-type"] == "radio":
         try:
-            tx_data = {
-                "action": Minimodem.ACTION_CAPTURE_IMAGE,
-                "data": data
-            }
+            # Serialize data into protobuf
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_CAPTURE_IMAGE
+            action_request.iso_number = data["iso-number"]
+            action_context = action_request_pb2.Context()
+            action_request.context.CopyFrom(action_context)
             modem = Minimodem()
-            response = modem.transmit(json.dumps(tx_data))
-            response = json.loads(response)
-            return jsonify(response)
+            response = modem.transmit(action_request.SerializeToString().hex())
+            
+            # Desrialize data from protobuf
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))
+            return jsonify({
+                "success": action_response.response_successful,
+                "context": data["context"]
+            })
 
         except Exception as e:
             abort(500, e)

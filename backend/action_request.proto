@@ -1,0 +1,51 @@
+syntax = "proto2";
+
+package backend;
+
+message Context {
+  optional int32 device_id = 1;
+  optional int32 session_id = 2;
+}
+
+message DeviceDetails {
+  repeated int32 capture_formats = 1;
+  optional string device_version = 2;
+  optional string manufacturer = 3;
+  optional string model = 4;
+}
+
+message ActionRequest {
+
+  enum Action {
+    ACTION_GET_DEVICE_DETAILS = 1;
+    ACTION_CAPTURE_IMAGE = 2;
+    ACTION_MULTIPLE_CAPTURES_BY_COUNT = 3;
+    ACTION_GET_CAMERA_STATE = 4;
+    ACTION_GET_EXPOSURE_TIME = 5;
+    ACTION_SET_EXPOSURE_TIME = 6;
+    ACTION_SET_APERTURE_F_STOP = 7;
+    ACTION_GET_APERTURE_F_STOP = 8;
+    ACTION_GET_APERTURE_OPTIONS = 9;
+    ACTION_GET_LENS_ID = 10;
+    ACTION_GET_ISO_NUMBER = 11;
+    ACTION_SET_ISO_NUMBER = 12;
+  }
+
+  enum CameraState {
+    COMPLETE = 1;
+    PENDING_CAPTURE = 2;
+  }
+
+  optional Action action = 1;
+  optional Context context = 2;
+  optional bool response_successful = 3 [default = false];
+  optional int32 capture_count = 4;
+  optional string camera_state = 5;
+  optional int32 exposure_time = 6;
+  optional int32 aperture = 7;
+  repeated int32 aperture_options = 8;
+  optional int32 lens_id = 9;
+  optional int32 iso_number = 10;
+  optional CameraState camera_state_ = 11;
+  optional DeviceDetails device_details = 12;
+}

@@ -1,141 +1,148 @@
 import CaptureImage
 from minimodem import Minimodem
 import json
+import action_request_pb2
+import re
 
 
 def process_data(modem, data, terminate_statement):
     data = Minimodem.clean_data(Minimodem, data, terminate_statement)
-    data = json.loads(data)
-    action = data["action"]
-    data = data["data"] 
+    action_request = action_request_pb2.ActionRequest()
+    action_request.ParseFromString(bytes.fromhex(data))
 
-    if action == Minimodem.ACTION_GET_DEVICE_DETAILS:
+    if action_request.action == action_request_pb2.ActionRequest.ACTION_GET_DEVICE_DETAILS:
+        action_response = action_request_pb2.ActionRequest()
         try:
             device_details = CaptureImage.get_device_details()
-            response = {
-                "success": True,
-                "device-details": device_details
-            }
-        except Exception as e:
-            response = {
-                "success": False
-            }
-        modem.send(json.dumps(response))
-        
-    elif action == Minimodem.ACTION_CAPTURE_IMAGE:
-        try:
-            CaptureImage.capture_new_image(data["context"])
-            response = {
-                "success": True
-            }
-        except Exception as e:
-            response = {
-                "success": False
-            }
+
+            # Go through each device detail and add to protobuf
+            device_details_proto = action_request_pb2.DeviceDetails()
+
+            # Clean up and add the capture formats; originally a string representing a tuple
+            capture_formats = re.sub('[^0-9,]', '', device_details["CaptureFormats"]).split(",")
+            for format in capture_formats:
+                format_to_set = device_details_proto.capture_formats.append(int(format))
+            device_details_proto.device_version = device_details["DeviceVersion"]
+            device_details_proto.model = device_details["Model"]
+            action_response.response_successful = True
+            action_response.device_details.CopyFrom(device_details_proto)
             
-        modem.send(json.dumps(response))
+        except Exception as e:
+            print("ERROR: ", str(e))
+            action_response.response_successful = False
+            
+        modem.send(action_response.SerializeToString().hex())
         
-    elif action == Minimodem.ACTION_MULTIPLE_CAPTURES_BY_COUNT:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE:
+        action_response = action_request_pb2.ActionRequest()
+        try:
+            CaptureImage.capture_new_image({"name": "jordan"})  # TODO(jordanhuus): remove hardcoded placeholder data
+            action_response.response_successful = True
+        except Exception as e:
+            action_response.response_successful = False
+            
+        modem.send(action_response.SerializeToString().hex())
+        
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_MULTIPLE_CAPTURES_BY_COUNT:
+        action_response = action_request_pb2.ActionRequest()
         try:
             camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
             db.session.add(camera)
             db.session.commit()
         
-            # Capture new image
             # TODO(jordanhuus): refactor to a simpler parameter set
-            CaptureImage.multiple_captures(data["context"], data["capture-count"], camera.id, db)
-            response = {
-                "success": True,
-                "camera-id": camera.id
-            }
+            CaptureImage.multiple_captures({"name": "jordan"}, action_request.capture_count, camera.id, db)
+            action_response.response_successful = True
+            context.device_id = camera.id
+            action_response.context.CopyFrom(context)
+            
         except Exception as e:
-            response = {
-                "success": False
-            }
-        modem.send(json.dumps(response))
+            action_response.response_successful = False
+            
+        modem.send(action_response.SerializeToString().hex())
         
-    elif action == Minimodem.ACTION_GET_CAMERA_STATE:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_CAMERA_STATE:
+        action_response = action_request_pb2.ActionRequest()
         try:
-            camera = Camera.query.get(data["camera-session-id"])
+            camera = Camera.query.get(action_request.device_id)
             if camera.camera_state == Camera.STATE_COMPLETE:
-                response ={
-                    "success": True,
-                    "camera-state": "complete"
-                }
-            elif camera.camera_state == Camera.STATE_PENDING_CAPTURE:
-                response = {
-                    "success": True,
-                    "camera-state": "pending capture"
-                }
-        except Exception as e:
-            response = {
-                "success": False
-            }
-        modem.send(json.dumps(response))
+                action_response.response_successful = True
+                action_response.camera_state = action_request_pb2.ActionRequest.COMPLETE
+                action_response.context.CopyFrom(context)
 
-    elif action == Minimodem.ACTION_SET_EXPOSURE_TIME:
-        try:
-            CaptureImage.set_exposure_time(data["exposure-time"], data["context"])
-            response = {
-                "success": True
-            }
+            elif camera.camera_state == Camera.STATE_PENDING_CAPTURE:
+                action_response.response_successful = True
+                action_response.camera_state = action_request_pb2.ActionRequest.PENDING_CAPTURE
+                action_response.context.CopyFrom(context)
+
         except Exception as e:
-            response = {
-                "success": False
-            }
-        modem.send(json.dumps(response))
+            action_response.response_successful = False
+
+        modem.send(action_response.SerializeToString().hex())
+
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_EXPOSURE_TIME:
+        action_response = action_request_pb2.ActionRequest()
+        try:
+            CaptureImage.set_exposure_time(action_request.exposure_time, {"name": "jordan"})
+            action_response.response_successful = True
+            action_response.camera_state = action_request_pb2.ActionRequest.COMPLETE
+
+        except Exception as e:
+            action_response.response_successful = False
+
+        modem.send(action_response.SerializeToString().hex())
     
-    elif action == Minimodem.ACTION_GET_EXPOSURE_TIME:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_EXPOSURE_TIME:
+        action_response = action_request_pb2.ActionRequest()
         try:
-            exposure_time = CaptureImage.get_exposure_time(data["context"])
-            response ={
-                "success": True,
-                "exposure-time": exposure_time
-            }
+            exposure_time = CaptureImage.get_exposure_time({"name": "jordan"})
+            action_response.response_successful = True
+            action_response.exposure_time = exposure_time
+
         except Exception as e:
-            response ={
-                "success": False
-            }
-        modem.send(json.dumps(response))
+            action_response.response_successful = False
+            
+        modem.send(action_response.SerializeToString().hex())
         
-    elif action == Minimodem.ACTION_SET_APERTURE:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_APERTURE:
+        action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_f_number(data["f-number"])
-            response = {
-                "success": True
-            }
+            CaptureImage.set_f_number(action_request.aperture)
+            action_response.response_successful = True
+
         except Exception as e:
-            response = {
-                "success": False
-            }
-        modem.send(json.dumps(response))
+            action_response.response_successful = False
+
+        modem.send(action_response.SerializeToString().hex())
     
-    elif action == Minimodem.ACTION_SET_APERTURE_F_STOP:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_APERTURE_F_STOP:
+        action_response = action_request_pb2.ActionRequest()
         try:
-            f_number_options = CaptureImage.set_f_number(data["f-number"], data["context"])
-            response = {
-                "success": True
-            }
+            f_number_options = CaptureImage.set_f_number(action_request.aperture, {"name": "jordan"})
+            action_response.response_successful = True
+            
+
         except Exception as e:
-            response = {
-                "success": False
-            }
-        modem.send(json.dumps(response))
+            action_response.response_successful = False
+            
+        modem.send(action_response.SerializeToString().hex())
         
-    elif action == Minimodem.ACTION_GET_APERTURE_OPTIONS:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_APERTURE_OPTIONS:
+        action_response = action_request_pb2.ActionRequest()
         try:
             f_number_options = CaptureImage.get_f_number_options({"test": "TODO(jordanhuus): set context for GET requests"})
-            response = {
-                "success": True,
-                "f-number-options": f_number_options
-            }
+            action_response.response_successful = True
+            for num in f_number_options:
+                num_to_set = action_response.aperture_options.append(num)
+
         except Exception as e:
             response = {
                 "success": False
             }
-        modem.send(json.dumps(response))
+        modem.send(action_response.SerializeToString().hex())
         
-    elif action == Minimodem.ACTION_GET_LENS_ID:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_LENS_ID:
+        action_response = action_request_pb2.ActionRequest()
         try:
             lens_id = CaptureImage.get_lens_id()
             response = {
@@ -146,11 +153,12 @@ def process_data(modem, data, terminate_statement):
             response = {
                 "success": False
             }
-        modem.send(json.dumps(response))
+        modem.send(action_response.SerializeToString().hex())
         
-    elif action == Minimodem.ACTION_GET_ISO_NUMBER:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_ISO_NUMBER:
+        action_response = action_request_pb2.ActionRequest()
         try:
-            iso_number = CaptureImage.get_iso_number(data["context"])
+            iso_number = CaptureImage.get_iso_number({"name": "jordan"})
             response = {
                 "success": True,
                 "iso-number": iso_number
@@ -159,26 +167,26 @@ def process_data(modem, data, terminate_statement):
             response = {
                 "success": False
             }
-        modem.send(json.dumps(response))
+        modem.send(action_response.SerializeToString().hex())
                    
-    elif action == Minimodem.ACTION_SET_ISO_NUMBER:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_ISO_NUMBER:
+        action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_iso_number(data["context"], data["iso-number"])
+            CaptureImage.set_iso_number({"name": "jordan"}, action_request.iso_number)
             response = {
                 "success": True,
-                "iso-number": data["iso-number"]
+                "iso-number": action_request.iso_number
             }
         except Exception as e:
             response = {
                 "success": False
             }
-        modem.send(json.dumps(response))
-        
-    elif action == "hello_world":
-        modem.send("well hello!")
+        modem.send(action_response.SerializeToString().hex())
         
     else:
-        print("ERROR: Action not found...")
+        raise Exception(
+            "ERROR: Action with index of {} does not exist or there is a problem locating it".format(action_request.action)
+        )
     
 
 data = None
