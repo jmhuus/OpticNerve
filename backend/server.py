@@ -59,11 +59,10 @@ def device_details():
             # Deconstruct protobuf response
             action_response = action_request_pb2.ActionRequest()
             action_response.ParseFromString(bytes.fromhex(response))
-            import pdb; pdb.set_trace()
             return jsonify({
                 "success": action_response.response_successful,
                 "device-details": {
-                    "capture_formats": action_response.device_details.capture_formats,
+                    "capture_formats": [i for i in action_response.device_details.capture_formats],
                     "device_version": action_response.device_details.device_version,
                     "manufacturer": action_response.device_details.manufacturer,
                     "model": action_response.device_details.model,
@@ -270,7 +269,7 @@ def set_exposure():
      - device-type
      - exposure-time
     """
-    
+
     data = request.get_json()
     
     # Ensure body data
@@ -296,7 +295,7 @@ def set_exposure():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_SET_EXPOSURE_TIME
+            action_request.action = action_request_pb2.ActionRequest.ACTION_SET_EXPOSURE_TIME
             action_request.exposure_time = data["exposure-time"]
             action_context = action_request_pb2.Context()
             action_request.context.CopyFrom(action_context)
@@ -351,7 +350,7 @@ def gete_exposure():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_EXPOSURE_TIME
+            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_EXPOSURE_TIME
             action_context = action_request_pb2.Context()
             action_request.context.CopyFrom(action_context)
             modem = Minimodem()
@@ -396,7 +395,7 @@ def set_aperture():
     # Connected via USB
     if data["context"]["device-type"] == "local":
         try:
-            CaptureImage.set_f_number(data["f-number"])
+            CaptureImage.set_f_number(data["f-number"], {"name": "jordan"}) # TODO(jordanhuus): remove hard coded
             return jsonify({
                 "success": True,
                 "context": data["context"]
@@ -409,8 +408,8 @@ def set_aperture():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_SET_APERTURE_F_STOP
-            action_request.aperture = data["aperture"]
+            action_request.action = action_request_pb2.ActionRequest.ACTION_SET_APERTURE_F_STOP
+            action_request.f_number = data["f-number"]
             action_context = action_request_pb2.Context()
             action_request.context.CopyFrom(action_context)
             modem = Minimodem()
@@ -439,7 +438,6 @@ def set_aperture_f_stop():
     JSON requirements:
      - context
      - device-type
-     - f-number
     """
     
     data = request.get_json()
@@ -462,7 +460,7 @@ def set_aperture_f_stop():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_APERTURE_F_STOP
+            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_APERTURE_F_STOP
             action_context = action_request_pb2.Context()
             action_request.context.CopyFrom(action_context)
             modem = Minimodem()
@@ -473,7 +471,7 @@ def set_aperture_f_stop():
             action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
                 "success": action_response.response_successful,
-                "aperture": action_response.aperture,
+                "f-number": action_response.f_number,
                 "context": data["context"]
             })
 
@@ -515,7 +513,7 @@ def get_aperture_options():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_APERTURE_OPTIONS
+            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_APERTURE_OPTIONS
             action_context = action_request_pb2.Context()
             action_request.context.CopyFrom(action_context)
             modem = Minimodem()
@@ -526,7 +524,7 @@ def get_aperture_options():
             action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
                 "success": action_response.response_successful,
-                "aperture-options": action_response.aperture_options,
+                "aperture-options": [i for i in action_response.aperture_options],
                 "context": data["context"]
             })
         
@@ -566,7 +564,7 @@ def get_id_lens():
     elif data["context"]["device-type"] == "radio":
         # Serialize data into protobuf
         action_request = action_request_pb2.ActionRequest()
-        action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_LENS_ID
+        action_request.action = action_request_pb2.ActionRequest.ACTION_GET_LENS_ID
         action_context = action_request_pb2.Context()
         action_request.context.CopyFrom(action_context)
         modem = Minimodem()
@@ -610,7 +608,7 @@ def get_iso_number():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_ISO_NUMBER
+            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_ISO_NUMBER
             action_context = action_request_pb2.Context()
             action_request.context.CopyFrom(action_context)
             modem = Minimodem()

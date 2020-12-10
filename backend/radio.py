@@ -22,11 +22,11 @@ def process_data(modem, data, terminate_statement):
             capture_formats = re.sub('[^0-9,]', '', device_details["CaptureFormats"]).split(",")
             for format in capture_formats:
                 format_to_set = device_details_proto.capture_formats.append(int(format))
-            device_details_proto.device_version = device_details["DeviceVersion"]
-            device_details_proto.model = device_details["Model"]
-            action_response.response_successful = True
-            action_response.device_details.CopyFrom(device_details_proto)
-            
+                device_details_proto.device_version = device_details["DeviceVersion"]
+                device_details_proto.model = device_details["Model"]
+                action_response.response_successful = True
+                action_response.device_details.CopyFrom(device_details_proto)
+                
         except Exception as e:
             print("ERROR: ", str(e))
             action_response.response_successful = False
@@ -49,7 +49,7 @@ def process_data(modem, data, terminate_statement):
             camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
             db.session.add(camera)
             db.session.commit()
-        
+            
             # TODO(jordanhuus): refactor to a simpler parameter set
             CaptureImage.multiple_captures({"name": "jordan"}, action_request.capture_count, camera.id, db)
             action_response.response_successful = True
@@ -83,7 +83,7 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_exposure_time(action_request.exposure_time, {"name": "jordan"})
+            CaptureImage.set_exposure_time(action_request.exposure_time, {"name": "jordan"})  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
             action_response.camera_state = action_request_pb2.ActionRequest.COMPLETE
 
@@ -91,11 +91,11 @@ def process_data(modem, data, terminate_statement):
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
-    
+        
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            exposure_time = CaptureImage.get_exposure_time({"name": "jordan"})
+            exposure_time = CaptureImage.get_exposure_time({"name": "jordan"})  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
             action_response.exposure_time = exposure_time
 
@@ -104,23 +104,23 @@ def process_data(modem, data, terminate_statement):
             
         modem.send(action_response.SerializeToString().hex())
         
-    elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_APERTURE:
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_APERTURE_F_STOP:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_f_number(action_request.aperture)
+            CaptureImage.set_f_number(action_request.f_number, {"name": "jordan"})  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
 
         except Exception as e:
             action_response.response_successful = False
-
-        modem.send(action_response.SerializeToString().hex())
-    
-    elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_APERTURE_F_STOP:
+            o
+            modem.send(action_response.SerializeToString().hex())
+            
+    elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_APERTURE_F_STOP:
         action_response = action_request_pb2.ActionRequest()
         try:
-            f_number_options = CaptureImage.set_f_number(action_request.aperture, {"name": "jordan"})
+            f_number = CaptureImage.get_f_number({"name": "jordan"})  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
-            
+            action_response.f_number = f_number
 
         except Exception as e:
             action_response.response_successful = False
@@ -136,53 +136,51 @@ def process_data(modem, data, terminate_statement):
                 num_to_set = action_response.aperture_options.append(num)
 
         except Exception as e:
-            response = {
-                "success": False
-            }
+            action_response.response_successful = False
+
         modem.send(action_response.SerializeToString().hex())
-        
-    elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_LENS_ID:
-        action_response = action_request_pb2.ActionRequest()
-        try:
-            lens_id = CaptureImage.get_lens_id()
-            response = {
-                "success": True,
-                "lens-id": "unimplemented"
-            }
-        except Exception as E:
-            response = {
-                "success": False
-            }
-        modem.send(action_response.SerializeToString().hex())
+
+    # TODO(jordanhuus): implement or remove
+    # elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_LENS_ID:
+    #     action_response = action_request_pb2.ActionRequest()
+    #     try:
+    #         lens_id = CaptureImage.get_lens_id()
+    #         action_response.response_successful = True
+    #         action_response.lens_id = lens_id
+
+    #     except Exception as E:
+    #         action_response.response_successful = False
+
+    #     modem.send(action_response.SerializeToString().hex())
         
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_ISO_NUMBER:
         action_response = action_request_pb2.ActionRequest()
         try:
             iso_number = CaptureImage.get_iso_number({"name": "jordan"})
-            response = {
-                "success": True,
-                "iso-number": iso_number
-            }
+            action_response.response_successful = True
+            action_response.iso_number = iso_number
+
         except Exception as e:
-            response = {
-                "success": False
-            }
+            action_response.response_successful = False
+
         modem.send(action_response.SerializeToString().hex())
-                   
+        
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_ISO_NUMBER:
         action_response = action_request_pb2.ActionRequest()
         try:
             CaptureImage.set_iso_number({"name": "jordan"}, action_request.iso_number)
+            action_response.response_successful = True
             response = {
                 "success": True,
                 "iso-number": action_request.iso_number
             }
         except Exception as e:
+            action_response.response_successful = False
             response = {
                 "success": False
             }
-        modem.send(action_response.SerializeToString().hex())
-        
+            modem.send(action_response.SerializeToString().hex())
+            
     else:
         raise Exception(
             "ERROR: Action with index of {} does not exist or there is a problem locating it".format(action_request.action)

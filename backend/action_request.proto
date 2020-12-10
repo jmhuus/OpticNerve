@@ -40,12 +40,11 @@ message ActionRequest {
   optional Context context = 2;
   optional bool response_successful = 3 [default = false];
   optional int32 capture_count = 4;
-  optional string camera_state = 5;
+  optional CameraState camera_state = 5;
   optional int32 exposure_time = 6;
-  optional int32 aperture = 7;
+  optional int32 f_number = 7;
   repeated int32 aperture_options = 8;
   optional int32 lens_id = 9;
   optional int32 iso_number = 10;
-  optional CameraState camera_state_ = 11;
   optional DeviceDetails device_details = 12;
 }
