@@ -86,7 +86,7 @@ def capture_image():
      - context
      - device-type
     """
-    
+
     data = request.get_json()
 
     # Ensure body data

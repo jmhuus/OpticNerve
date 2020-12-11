@@ -56,13 +56,15 @@ function initPythonServer() {
 // Initiates the device to capture an image and return the result
 async function captureImage_server(context, captureCount){
     var response;
-    if (captureCount == 1) {
+    if (captureCount <= 1) {
 	response = await fetch("http://127.0.0.1:8080/capture-image", {
 	    method: "POST",
 	    headers: {
 		"Content-Type": "application/json"
 	    },
-	    body: JSON.stringify({"context": context})
+	    body: JSON.stringify({
+		"context": context
+	    })
 	});
     } else {
 	response = await fetch("http://127.0.0.1:8080/multiple-captures-by-count", {
@@ -160,15 +162,22 @@ async function getCameraState_server(context, cameraSessionId) {
 ipcMain.on('main', (event, arg) => {
     var context = {
 	"command": arg["command"],
-	"ipc-name": "main"
+	"device-type": "local"
     }
 
     // Issue the specified command
     switch(arg["command"]) {
     case "captureImage_server":
-	captureImage_server(context, arg["capture-count"]).then(response => {
-	    event.reply("rendererListener", response);
-	});    
+	captureImage_server(context, arg["capture-count"])
+	    .then(response => {
+		event.reply("rendererListener", response);
+	    })
+	    .catch(error => {
+		response = {};
+		response["context"] = context;
+		response["success"] = false;
+		console.log("Error occured when calling "+arg["command"]);
+	    });
 	break;
 
     case "setExposure_server":
@@ -186,13 +195,20 @@ ipcMain.on('main', (event, arg) => {
 	getFNumberOptions_server(context)
 	    .then(response => {
 		event.returnValue = response;
+	    })
+	    .catch(error => {
+		console.log("Error occured when calling "+arg["command"]);
 	    });
 	break;
 
     case "setFNumber_server":
-	setFNumber_server(context, arg["f-number"]).then(response => {
-	    event.returnValue = response;
-	});
+	setFNumber_server(context, arg["f-number"])
+	    .then(response => {
+		event.returnValue = response;
+	    })
+	    .catch(error => {
+		console.log("Error occured when calling "+arg["command"]);
+	    });
 	break;
 	
     case "shutdown_server":
@@ -205,8 +221,8 @@ ipcMain.on('main', (event, arg) => {
 	    	event.returnValue = response;
 	    })
 	    .catch(error => {
-	    	displayErrorMessage(error, context);
-	    })
+		console.log("Error occured when calling "+arg["command"]);
+	    });
 	break;
 	
     default:
