@@ -54,7 +54,7 @@ function initPythonServer() {
 }
 
 // Initiates the device to capture an image and return the result
-async function captureImage_server(context, captureCount){
+async function captureImage_server(captureCount, device_type){
     var response;
     if (captureCount <= 1) {
 	response = await fetch("http://127.0.0.1:8080/capture-image", {
@@ -63,7 +63,7 @@ async function captureImage_server(context, captureCount){
 		"Content-Type": "application/json"
 	    },
 	    body: JSON.stringify({
-		"context": context
+		"device-type": device_type
 	    })
 	});
     } else {
@@ -73,8 +73,8 @@ async function captureImage_server(context, captureCount){
 		"Content-Type": "application/json"
 	    },
 	    body: JSON.stringify({
-		"context": context,
-		"capture-count": parseInt(captureCount)
+		"capture-count": parseInt(captureCount),
+		"device-type": device_type
 	    })
 	});
     }
@@ -82,59 +82,59 @@ async function captureImage_server(context, captureCount){
 }
 
 // Sends data to the device which sets the exposure time (milliseconds)
-async function setExposure_server(context, exposureTime){
+async function setExposure_server(exposureTime, device_type){
     const response = await fetch("http://127.0.0.1:8080/set-exposure-time", {
 	method: "POST",
 	headers: {
 	    "Content-Type": "application/json"
 	},
 	body: JSON.stringify({
-	    "context": context,
-	    "exposure-time": parseInt(exposureTime)
+	    "exposure-time": parseInt(exposureTime),
+	    "device-type": device_type
 	})
     });
     return response.json();
 }
 
 // Retrieves the device exposure time which sets the exposure time (milliseconds)
-async function getExposure_server(context, exposureTime){
+async function getExposure_server(device_type){
     const response = await fetch("http://127.0.0.1:8080/get-exposure-time", {
 	method: "POST",
 	headers: {
 	    "Content-Type": "application/json"
 	},
 	body: JSON.stringify({
-	    "context": context
+	    "device-type": device_type
 	})
     });
     return response.json();
 }
 
 // Sets f-stop value on the camera device
-async function setFNumber_server(context, f_number){
+async function setFNumber_server(f_number, device_type){
     const response = await fetch("http://127.0.0.1:8080/set-aperture-f-stop", {
     	method: "POST",
     	headers: {
     	    "Content-Type": "application/json"
     	},
     	body: JSON.stringify({
-    	    "context": context,
-	    "f-number": parseInt(f_number)
+	    "f-number": parseInt(f_number),
+	    "device-type": device_type
     	})
     });
     return response.json();
 }
 
 // Retrieves available f-stop values from the camera device
-async function getFNumberOptions_server(context){
+async function getFNumberOptions_server(device_type){
     const response = await fetch("http://127.0.0.1:8080/get-aperture-options", {
     	method: "POST",
     	headers: {
     	    "Content-Type": "application/json"
     	},
-    	body: JSON.stringify({
-    	    "context": context
-    	})
+	body: JSON.stringify({
+	    "device-type": device_type
+	})
     });
     return response.json();
 }
@@ -144,15 +144,15 @@ function shutdown_server(){
     fetch(`http://127.0.0.1:8080/shutdown-server`)
 }
 
-async function getCameraState_server(context, cameraSessionId) {
+async function getCameraState_server(cameraSessionId, device_type) {
     var response = await fetch("http://127.0.0.1:8080/get-camera-state", {
     	method: "POST",
     	headers: {
     	    "Content-Type": "application/json"
     	},
     	body: JSON.stringify({
-    	    "context": context,
-	    "camera-session-id": parseInt(cameraSessionId)
+	    "camera-session-id": parseInt(cameraSessionId),
+	    "device-type": device_type
     	})
     });
     return response.json();
@@ -160,39 +160,34 @@ async function getCameraState_server(context, cameraSessionId) {
 
 // Recieve asynchronous request from renderer
 ipcMain.on('main', (event, arg) => {
-    var context = {
-	"command": arg["command"],
-	"device-type": "local"
-    }
-
     // Issue the specified command
     switch(arg["command"]) {
     case "captureImage_server":
-	captureImage_server(context, arg["capture-count"])
+	captureImage_server(arg["capture-count"], arg["device-type"])
 	    .then(response => {
+		response["command"] = arg["command"];
 		event.reply("rendererListener", response);
 	    })
 	    .catch(error => {
 		response = {};
-		response["context"] = context;
 		response["success"] = false;
 		console.log("Error occured when calling "+arg["command"]);
 	    });
 	break;
 
     case "setExposure_server":
-	setExposure_server(context, arg["exposure-time"])
+	setExposure_server(arg["exposure-time"], arg["device-type"])
 	    .then(response => {
 		event.returnValue = response;
 	    })
 	    .catch(error => {
-		displayErrorMessage(error, context);
+		displayErrorMessage(error);
 	    });
 	
 	break;
 
     case "getFNumberOptions_server":
-	getFNumberOptions_server(context)
+	getFNumberOptions_server(arg["device-type"])
 	    .then(response => {
 		event.returnValue = response;
 	    })
@@ -202,7 +197,7 @@ ipcMain.on('main', (event, arg) => {
 	break;
 
     case "setFNumber_server":
-	setFNumber_server(context, arg["f-number"])
+	setFNumber_server(arg["f-number"], arg["device-type"])
 	    .then(response => {
 		event.returnValue = response;
 	    })
@@ -216,7 +211,7 @@ ipcMain.on('main', (event, arg) => {
 	break;
 
     case "getCameraState_server":
-	getCameraState_server(context, arg["camera-session-id"])
+	getCameraState_server(arg["camera-session-id"], arg["device-type"])
 	    .then(response => {
 	    	event.returnValue = response;
 	    })
@@ -230,15 +225,14 @@ ipcMain.on('main', (event, arg) => {
     }
 })
 
-function displayErrorMessage(error, context) {
+function displayErrorMessage(error) {
     webContents.send("rendererListener", {
-	"error": error,
-	"context": context
+	"error": error
     });
 }
 
 // Init Python Flask server
-initPythonServer();
+// initPythonServer();
 
 // Any platform except MacOS shuts down the entire
 // program when all windows are closed

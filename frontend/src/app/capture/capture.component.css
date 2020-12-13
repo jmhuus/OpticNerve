@@ -18,7 +18,8 @@
     width: 100%;
     height: 100%;
     background-color: rgba(20, 20, 20, 1);
-    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: auto;
     --web-view-name: Custom Size – 1;
     --web-view-id: Custom_Size__1;
     --web-scale-on-resize: true;

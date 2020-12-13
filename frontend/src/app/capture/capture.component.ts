@@ -30,7 +30,7 @@ export class CaptureComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.device = new Device('NIKON', 'D3100', 1234, 4321, 'A', 1.8, 100, 400);
+        this.device = new Device('NIKON', 'D3100', 1234, 4321, 'A', 1.8, 100, 400, 'local');
         this.device.shutter_options = [
             2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 31, 40, 50, 62, 80, 100,
             125, 166, 200, 250, 333, 400, 500, 666, 769, 1000, 1250,
@@ -39,36 +39,38 @@ export class CaptureComponent implements OnInit {
             80000, 100000, 130000, 150000, 200000, 250000, 300000
         ];
 
-        // Retrieve ipcRenderer for electron
-        this.ipc = window["ipc"];
+        // // Retrieve ipcRenderer for electron
+        // this.ipc = window["ipc"];
 
-        // Asynchronous response
-        this.ipc.on('rendererListener', (event, arg) => {
-            console.log(arg);
-            // Incoming error message?
-            if ("error" in arg) {
-                console.log("handling error");
-                console.log(arg);
-            } else {
-                // Handle normal request
-                switch (arg["context"]["command"]) {
-                    case "captureImage_server":
-                        if ("camera-session-id" in arg) {
-                            // Begin observing camera state for capture completion
-                            this.observeCameraStateUntilCompletion(arg["camera-session-id"]);
-                        } else {
-                            this.setActionPending(false, "");
-                            this.device.image_latest_path = arg["image-path"];
-                            this.cdRef.detectChanges();
-                        }
-                        break;
-                }
-            }
-        });
-        this.setShutter(this.device.shutter_options[0]);
-        this.getFNumberOptions();
-        this.setFNumber(this.device.aperture_options[0]);
-        this.captureCount = 1;
+        // // Asynchronous response
+        // this.ipc.on('rendererListener', (event, arg) => {
+        //     // Incoming error message?
+        //     if ("error" in arg) {
+        //         console.log("handling error");
+        //         console.log(arg);
+        //     } else {
+        //         // Handle normal request
+        //         console.log(arg);
+        //         switch (arg["command"]) {
+        //             case "captureImage_server":
+        //                 if ("camera-session-id" in arg) {
+        //                     // Begin observing camera state for capture completion
+        //                     this.observeCameraStateUntilCompletion(arg["camera-session-id"]);
+        //                 } else {
+        //                     this.setActionPending(false, "");
+        //                     this.device.image_latest_path = arg["image-path"];
+        //                     this.cdRef.detectChanges();
+        //                 }
+        //                 break;
+        //         }
+        //     }
+        // });
+
+        // // Init default values
+        // this.captureCount = 1;
+        // this.setShutter(this.device.shutter_options[0]);
+        // this.getFNumberOptions();
+        // this.setFNumber(this.device.aperture_options[0]);
     }
 
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -88,7 +90,8 @@ export class CaptureComponent implements OnInit {
         // Likely just provide this on each and every call???? Not sure
         this.ipc.send("main", {
             "command": "captureImage_server",
-            "capture-count": this.captureCount
+            "capture-count": this.captureCount,
+            "device-type": this.device.device_type
         });
     }
 
@@ -97,7 +100,8 @@ export class CaptureComponent implements OnInit {
         let subscription = interval(1000).subscribe(x => {
             var response = this.ipc.sendSync("main", {
                 "command": "getCameraState_server",
-                "camera-session-id": cameraSessionId
+                "camera-session-id": cameraSessionId,
+                "device-type": this.device.device_type
             });
             if (response["camera-state"] == "complete") {
                 subscription.unsubscribe();
@@ -118,7 +122,8 @@ export class CaptureComponent implements OnInit {
     setShutter(exposure_time: number): void {
         var response = this.ipc.sendSync("main", {
             "command": "setExposure_server",
-            "exposure-time": exposure_time
+            "exposure-time": exposure_time,
+            "device-type": this.device.device_type
         });
         this.device.shutter = response["exposure-time"];
     }
@@ -127,7 +132,8 @@ export class CaptureComponent implements OnInit {
         this.setActionPending(true, "Camera Busy: setting f-stop setting...");
         this.ipc.sendSync("main", {
             "command": "setFNumber_server",
-            "f-number": f_number
+            "f-number": f_number,
+            "device-type": this.device.device_type
         });
         this.setActionPending(false, "");
     }
@@ -136,7 +142,8 @@ export class CaptureComponent implements OnInit {
     getFNumberOptions(): void {
         this.setActionPending(true, "Camera Busy: retrieving available f-stop values...");
         var response = this.ipc.sendSync("main", {
-            "command": "getFNumberOptions_server"
+            "command": "getFNumberOptions_server",
+            "device-type": this.device.device_type
         });
         this.device.aperture_options = response["f-number-options"];
         this.setActionPending(false, "");
@@ -152,5 +159,5 @@ export class CaptureComponent implements OnInit {
             // TODO(jordanhuus): notify user that the value was invalid
             this.captureCount = 1;
         }
-    }
+    } o
 }

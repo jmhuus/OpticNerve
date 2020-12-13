@@ -41,7 +41,7 @@ def get_device_details():
     return device_info
 
 
-def capture_new_image(context):
+def capture_new_image(save_path, delete_from_device=False):
     """Simple function to initiate camera capture and store the result into
     the provided file object.
     
@@ -51,7 +51,6 @@ def capture_new_image(context):
 
     Args:
         param1: file object opened using 'wb' to result in <class '_io.BufferedWriter'>.
-        param2: context about the currently connected device.
     """
     # PTP Protocol Prep
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
@@ -77,12 +76,8 @@ def capture_new_image(context):
 
         # Download newly added object
         if objectid is not None:
-            base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
-            image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-            file_path = f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}"
-            with open(file_path, "wb") as file:
+            with open(save_path, "wb") as file:
                 ptpSession.GetObject(objectid, file)
-            # TODO(jordanhuus): add context detail specifying whether to delete the object from the device
             ptpSession.DeleteObject(objectid)
             
     except PtpException as e:
@@ -93,10 +88,9 @@ def capture_new_image(context):
     # Close the session
     del ptpSession
     del ptpTransport
-    return file_path, image_file_name
 
 
-def multiple_captures(context, capture_count, session_id, db):
+def multiple_captures(capture_count, session_id, db):
     """Initiates a series of captures based on the count and the current capture settings.
     
     Note:
@@ -166,7 +160,7 @@ def multiple_captures(context, capture_count, session_id, db):
     t1.start()
 
 
-def begin_timelapse(file, delay, context):
+def begin_timelapse(file, delay):
     """Simple function to initiate camera capture and store the result into
     the provided file object.n
     
@@ -177,7 +171,6 @@ def begin_timelapse(file, delay, context):
     Args:
         param1: file object opened using 'wb' to result in <class '_io.BufferedWriter'>
         param2: delay between captures. In milliseconds.
-        param3: context about the currenntly conntected device.
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
@@ -226,12 +219,11 @@ def begin_timelapse(file, delay, context):
 
 
 
-def set_exposure_time(exposure_time, context):
+def set_exposure_time(exposure_time):
     """Changes the current exposure time when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
 
     Args:
         param1: (int) in milliseconds on how long the exposure will be open.
-        param2: context about the currently connected device.
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
@@ -255,7 +247,7 @@ def set_exposure_time(exposure_time, context):
 
 
 
-def get_exposure_time(context):
+def get_exposure_time():
     """TODO(jordanhuus): set doc string.
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
@@ -282,12 +274,11 @@ def get_exposure_time(context):
     return exposure_time
 
 
-def set_f_number(f_number, context):
+def set_f_number(f_number):
     """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
 
     Args:
         param1 (float): TODO(jordanhuus): determine unit of measurement
-        param2: context about the currently connected device.
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
@@ -310,12 +301,11 @@ def set_f_number(f_number, context):
     del ptpTransport
 
 
-def get_f_number(context):
+def get_f_number():
     """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work based on the current mode being used. Perhaps this app can override the shooting mode?
 
     Args:
         param1 (float): TODO(jordanhuus): determine unit of measurement
-        param2: context about the currently connected device.
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
@@ -343,7 +333,7 @@ def get_f_number(context):
 
 # TODO(jordanhuus): attempt to query the device before trial and error proceedure
 # TODO(jordanhuus): ensure stop options that collide with other increments don't incorrectly
-def get_f_number_options(context):
+def get_f_number_options():
     """TODO(jordanhuus): add doc string
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
@@ -436,7 +426,7 @@ def get_f_number_options(context):
 
 
 
-def get_iso_number(context):
+def get_iso_number():
     """TODO(jordanhuus): add doc string
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
@@ -465,7 +455,7 @@ def get_iso_number(context):
     return iso_number
 
 
-def set_iso_number(context, iso_number):
+def set_iso_number(iso_number):
     """TODO(jordanhuus): add doc string
     """
     ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))

@@ -75,8 +75,6 @@ def detectError(arr, nr):
 
 
 # Convert data into binary
-
-import pdb; pdb.set_trace()
 data = '111111111'
 # Calculate the number of Redundant Bits Required
 m = len(data)
