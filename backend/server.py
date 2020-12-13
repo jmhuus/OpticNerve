@@ -134,6 +134,7 @@ def capture_images_count():
     """
     
     data = request.get_json()
+    import pdb; pdb.set_trace()
     
     # Ensure body data
     # TODO(jordanhuus): change to decorator
@@ -353,7 +354,7 @@ def set_aperture():
     # Connected via USB
     if data["device-type"] == "local":
         try:
-            CaptureImage.set_f_number(data["f-number"], {"name": "jordan"}) # TODO(jordanhuus): remove hard coded
+            CaptureImage.set_f_number(data["f-number"])
             return jsonify({
                 "success": True
             })
@@ -442,7 +443,6 @@ def get_aperture_options():
     """
     
     data = request.get_json()
-    import pdb; pdb.set_trace()
 
     # Connected via USB
     if data["device-type"] == "local":

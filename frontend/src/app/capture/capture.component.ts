@@ -39,38 +39,38 @@ export class CaptureComponent implements OnInit {
             80000, 100000, 130000, 150000, 200000, 250000, 300000
         ];
 
-        // // Retrieve ipcRenderer for electron
-        // this.ipc = window["ipc"];
+        // Retrieve ipcRenderer for electron
+        this.ipc = window["ipc"];
 
-        // // Asynchronous response
-        // this.ipc.on('rendererListener', (event, arg) => {
-        //     // Incoming error message?
-        //     if ("error" in arg) {
-        //         console.log("handling error");
-        //         console.log(arg);
-        //     } else {
-        //         // Handle normal request
-        //         console.log(arg);
-        //         switch (arg["command"]) {
-        //             case "captureImage_server":
-        //                 if ("camera-session-id" in arg) {
-        //                     // Begin observing camera state for capture completion
-        //                     this.observeCameraStateUntilCompletion(arg["camera-session-id"]);
-        //                 } else {
-        //                     this.setActionPending(false, "");
-        //                     this.device.image_latest_path = arg["image-path"];
-        //                     this.cdRef.detectChanges();
-        //                 }
-        //                 break;
-        //         }
-        //     }
-        // });
+        // Asynchronous response
+        this.ipc.on('rendererListener', (event, arg) => {
+            // Incoming error message?
+            if ("error" in arg) {
+                console.log("handling error");
+                console.log(arg);
+            } else {
+                // Handle normal request
+                console.log(arg);
+                switch (arg["command"]) {
+                    case "captureImage_server":
+                        if ("camera-session-id" in arg) {
+                            // Begin observing camera state for capture completion
+                            this.observeCameraStateUntilCompletion(arg["camera-session-id"]);
+                        } else {
+                            this.setActionPending(false, "");
+                            this.device.image_latest_path = arg["image-path"];
+                            this.cdRef.detectChanges();
+                        }
+                        break;
+                }
+            }
+        });
 
-        // // Init default values
-        // this.captureCount = 1;
-        // this.setShutter(this.device.shutter_options[0]);
-        // this.getFNumberOptions();
-        // this.setFNumber(this.device.aperture_options[0]);
+        // Init default values
+        this.captureCount = 1;
+        this.setShutter(this.device.shutter_options[0]);
+        this.getFNumberOptions();
+        this.setFNumber(this.device.aperture_options[0]);
     }
 
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
