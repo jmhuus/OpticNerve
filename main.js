@@ -1,8 +1,16 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
+const { spawn } = require('child_process');
+const { sleep }  = require('sleep');
 var webContents;
+var child;
+
+// Init Python Flask server
+initPythonServer();
+sleep(1);
+
 
 function createWindow () {
     // Create the browser window.
@@ -30,6 +38,7 @@ function createWindow () {
 app.whenReady().then(() => {
     createWindow()
     
+
     app.on('activate', function () {
 	// On macOS it's common to re-create a window in the app when the
 	// dock icon is clicked and there are no other windows open.
@@ -39,18 +48,7 @@ app.whenReady().then(() => {
 
 // Init Python Flask server to handle device nication
 function initPythonServer() {
-    var { PythonShell } = require('python-shell');
-
-    let options = {
-	mode: 'text'
-    };
-    
-    PythonShell.run('../backend/server.py', options, function (err, results) {
-	if (err) throw err;
-	// results is an array consisting of messages collected during execution
-	console.log('response: ', results);
-
-    });
+    child = spawn(path.join(__dirname, "./backend/dist/server/server"));
 }
 
 // Initiates the device to capture an image and return the result
@@ -158,6 +156,33 @@ async function getCameraState_server(cameraSessionId, device_type) {
     return response.json();
 }
 
+async function getIso_server(device_type) {
+    var response = await fetch("http://127.0.0.1:8080/get-iso-number", {
+    	method: "POST",
+    	headers: {
+    	    "Content-Type": "application/json"
+    	},
+    	body: JSON.stringify({
+	    "device-type": device_type
+    	})
+    });
+    return response.json();
+}
+
+async function setIso_server(iso_number, device_type) {
+    var response = await fetch("http://127.0.0.1:8080/set-iso-number", {
+    	method: "POST",
+    	headers: {
+    	    "Content-Type": "application/json"
+    	},
+    	body: JSON.stringify({
+	    "device-type": device_type,
+	    "iso-number": parseInt(iso_number)
+    	})
+    });
+    return response.json();
+}
+
 // Recieve asynchronous request from renderer
 ipcMain.on('main', (event, arg) => {
     // Issue the specified command
@@ -171,7 +196,7 @@ ipcMain.on('main', (event, arg) => {
 	    .catch(error => {
 		response = {};
 		response["success"] = false;
-		console.log("Error occured when calling "+arg["command"]);
+		displayErrorMessage(error);
 	    });
 	break;
 
@@ -192,7 +217,7 @@ ipcMain.on('main', (event, arg) => {
 		event.returnValue = response;
 	    })
 	    .catch(error => {
-		console.log("Error occured when calling "+arg["command"]);
+		displayErrorMessage(error);
 	    });
 	break;
 
@@ -202,12 +227,8 @@ ipcMain.on('main', (event, arg) => {
 		event.returnValue = response;
 	    })
 	    .catch(error => {
-		console.log("Error occured when calling "+arg["command"]);
+		displayErrorMessage(error);
 	    });
-	break;
-	
-    case "shutdown_server":
-	shutdown_server();
 	break;
 
     case "getCameraState_server":
@@ -216,8 +237,32 @@ ipcMain.on('main', (event, arg) => {
 	    	event.returnValue = response;
 	    })
 	    .catch(error => {
-		console.log("Error occured when calling "+arg["command"]);
+		displayErrorMessage(error);
 	    });
+	break;
+
+    case "getIso_server":
+	getIso_server(arg["device-type"])
+	    .then(response => {
+	    	event.returnValue = response;
+	    })
+	    .catch(error => {
+		displayErrorMessage(error);
+	    });
+	break;
+
+    case "setIso_server":
+	setIso_server(arg["iso-number"], arg["device-type"])
+	    .then(response => {
+	    	event.returnValue = response;
+	    })
+	    .catch(error => {
+		displayErrorMessage(error);
+	    });
+	break;
+
+    case "shutdown_server":
+	shutdown_server();
 	break;
 	
     default:
@@ -226,13 +271,11 @@ ipcMain.on('main', (event, arg) => {
 })
 
 function displayErrorMessage(error) {
+    console.log(error);
     webContents.send("rendererListener", {
 	"error": error
     });
 }
-
-// Init Python Flask server
-// initPythonServer();
 
 // Any platform except MacOS shuts down the entire
 // program when all windows are closed

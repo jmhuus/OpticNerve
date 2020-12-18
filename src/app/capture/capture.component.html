@@ -162,8 +162,10 @@
   <div id="ISO">
     <span>ISO</span>
   </div>
-  <div id="ID400">
-    <span>{{device.iso}}</span>
+  <div>
+    <select id="iso-number" (change)="setIsoNumber($event.target.value)">
+      <option *ngFor="let iso_number of device.iso_options" value="{{ iso_number }}">{{ iso_number }}</option>
+    </select>
   </div>
   <svg class="Line_8" viewBox="0 0 359 1">
     <path id="Line_8" d="M 0 0 L 359 0">

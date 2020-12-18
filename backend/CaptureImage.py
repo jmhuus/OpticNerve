@@ -133,12 +133,12 @@ def multiple_captures(capture_count, session_id, db):
 
                 # Download newly added object
                 if objectid is not None:
-                    base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
+                    base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-3])
                     image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-                    file_path = f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}"
+                    file_path = f"{base_path}/dist/OpticNerve/assets/images/{image_file_name}"
                     with open(file_path, "wb") as file:
                         ptpSession.GetObject(objectid, file)
-                    camera.image_file_name = image_file_name
+                    camera.image_file_name = file_path
                     db.session.commit()
         
         except PtpException as e:
@@ -153,7 +153,6 @@ def multiple_captures(capture_count, session_id, db):
         # Set camera state to complete
         camera.camera_state = Camera.STATE_COMPLETE
         db.session.commit()
-
 
     # Start new thread to capture images
     t1 = Thread(target=capture_thread, kwargs={"capture_count": capture_count}, daemon=True)

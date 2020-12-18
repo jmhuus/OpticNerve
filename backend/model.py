@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 
 
-database_path = "postgresql://jordanhuus@localhost:5432/optic_nerve"
+database_path = "sqlite:////tmp/optic-nerve.db"
 db = SQLAlchemy()
 
 

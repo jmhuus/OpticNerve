@@ -804,12 +804,12 @@
     font-size: 20px;
     color: rgba(112,112,112,1);
 }
-#ID400 {
+#iso-number {
     left: 440px;
     top: 747px;
     position: absolute;
     overflow: visible;
-    width: 84px;
+    width: 120px;
     white-space: nowrap;
     text-align: left;
     font-family: Helvetica Neue;
@@ -817,6 +817,7 @@
     font-weight: normal;
     font-size: 50px;
     color: rgba(255,255,255,1);
+    background-color: rgba(112,112,112,0);
 }
 #Line_8 {
     fill: transparent;

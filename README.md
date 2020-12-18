@@ -1,36 +1,27 @@
-### Optic Nerve
-This is a simple desktop GUI to control a tethered camera device. This application is great for star gazing in the comfort of your car, tent, or otherwise.
+# OpticNerve
 
-I decided to build this app even though there are some great existing applications (DarkTable, Capture One, Adobe Lightroom, etc) as a learning journey. Also, I'd like a more user-friendly UX to engage with when working at night - dark screen, preview of the last image taken, and easy to set capture settings.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.1.
 
-![Optic Nerve DSLR Tether](/example_screenshot.png)
+## Development server
 
-#### Tech Stack
-* jmhuus/pyptp to support sending PTP commands to DSLR using Python 3
-* ElectronJS
-* Angular
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-#### What is the status of this project?
-Last Update: 8/3/2020
-* InitiateCapture command is working
-* Retrieve and display image result working
-* Set shutter exposure time working
-* Set aperture f-stop 
+## Code scaffolding
 
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-#### Where is this project going?
-* Full-featured camera tether control of DSLR using mobile or desktop UI
-* Pan/tilt
-    * This UI will ideally support pan/tilt functionality for the DSLR which will require a user to hook up an arduino or Raspberry Pi.
+## Build
 
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-### Setup Steps
-* Set up virtualenv
-* Download dependencies using pip install -r requirements.txt
-* (Optional) Using a Raspberry Pi to control DSLR wirelessly
-    * Must allow non-root user to access the DSLR USB device with the following steps
-    ```bash
-    target='SUBSYSTEM=="usb", ATTR{idVendor}=="04b0", ATTR{idProduct}=="0427", MODE="666"'
-    echo "$target" | sudo tee --append /etc/udev/rules.d/99-usb_DSLR_ptp.rules
-    ```
-    
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

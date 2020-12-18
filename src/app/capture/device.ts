@@ -6,13 +6,14 @@ export class Device {
     public iVendor: number;
     public live_view_image: string;
     public image_latest_path: string;
+    public aperture_options: number[];
+    public shutter_options: number[];
+    public iso_options: number[];
 
     // User-specified settings
     public shooting_mode: string;
     public aperture: number;
-    public aperture_options: number[];
     public shutter: number;
-    public shutter_options: number[];
     public iso: number;
     public device_type: string;
 

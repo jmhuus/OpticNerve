@@ -43,7 +43,10 @@ def device_details():
                 "device-details": device_details
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -68,12 +71,15 @@ def device_details():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
         
 
 @app.route("/capture-image", methods=["POST"])
@@ -89,16 +95,19 @@ def capture_image():
     if data["device-type"] == "local":
         try:
             # Capture new image
-            base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
+            base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/"))
             image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-            output_path = f"{base_path}/frontend/dist/OpticNerve/assets/images/{image_file_name}"
+            output_path = f"{base_path}/dist/OpticNerve/assets/images/{image_file_name}"
             CaptureImage.capture_new_image(save_path=output_path)
             return jsonify({
                 "success": True,
                 "image-path": output_path
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -117,12 +126,15 @@ def capture_image():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
 
 
 @app.route("/multiple-captures-by-count", methods=["POST"])
@@ -134,7 +146,6 @@ def capture_images_count():
     """
     
     data = request.get_json()
-    import pdb; pdb.set_trace()
     
     # Ensure body data
     # TODO(jordanhuus): change to decorator
@@ -157,10 +168,14 @@ def capture_images_count():
             )
 
             return jsonify({
-                "success": True
+                "success": True,
+                "camera-session-id": camera.id
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -179,13 +194,16 @@ def capture_images_count():
             })
         
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(["device-type"])
-        )
-
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(["device-type"])
+        })
+    
 
 @app.route("/get-camera-state", methods=["POST"])
 def get_camera_state():
@@ -208,10 +226,14 @@ def get_camera_state():
             camera = Camera.query.get(data["camera-session-id"])
             return jsonify({
                 "success": True,
-                "camera-state": camera.camera_state
+                "camera-state": "complete" if camera.camera_state==2 else "pending",
+                "image-path": camera.image_file_name
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -232,12 +254,15 @@ def get_camera_state():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+                "success": False,
+                "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
 
 
 @app.route("/set-exposure-time", methods=["POST"])
@@ -263,7 +288,10 @@ def set_exposure():
                 "success": True
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -283,12 +311,15 @@ def set_exposure():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
 
         
 @app.route("/get-exposure-time", methods=["POST"])
@@ -309,7 +340,10 @@ def gete_exposure():
                 "exposure-time": exposure_time
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -329,12 +363,15 @@ def gete_exposure():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
 
 
 @app.route("/set-aperture-f-stop", methods=["POST"])
@@ -359,7 +396,10 @@ def set_aperture():
                 "success": True
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -379,12 +419,15 @@ def set_aperture():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
 
 
 @app.route("/get-aperture-f-stop", methods=["POST"])
@@ -406,7 +449,10 @@ def set_aperture_f_stop():
                 "f-number": f_number
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -426,12 +472,15 @@ def set_aperture_f_stop():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
 
         
 @app.route("/get-aperture-options", methods=["POST"])
@@ -454,7 +503,10 @@ def get_aperture_options():
                 "f-number-options": f_number_options
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -474,12 +526,15 @@ def get_aperture_options():
             })
         
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
 
         
 # TODO(jordanhuus): untested and unimplemented
@@ -503,7 +558,10 @@ def get_id_lens():
             
         # TODO(jordanhuus): exception handling should be more specific
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
             
     elif data["device-type"] == "radio":
         # Serialize data into protobuf
@@ -540,7 +598,10 @@ def get_iso_number():
                 "iso-number": iso_number
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -560,12 +621,15 @@ def get_iso_number():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
     
 
 @app.route("/set-iso-number", methods=["POST"])
@@ -573,7 +637,7 @@ def set_iso_number():
     """
     JSON requirements:
      - device-type
-     - f-number
+     - iso-number
     """
     
     data = request.get_json()
@@ -588,7 +652,10 @@ def set_iso_number():
                 "iso-number": data["iso-number"]
             })
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
 
     # Remote communication via packet radio
     elif data["device-type"] == "radio":
@@ -608,13 +675,17 @@ def set_iso_number():
             })
 
         except Exception as e:
-            abort(500, e)
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            })
     else:
-        abort(
-            500,
-            "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
-        )
-        
+        return jsonify({
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+        })
+    
+    
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:

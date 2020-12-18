@@ -38,6 +38,7 @@ export class CaptureComponent implements OnInit {
             13000, 16000, 20000, 25000, 30000, 40000, 50000, 60000,
             80000, 100000, 130000, 150000, 200000, 250000, 300000
         ];
+        this.device.iso_options = [100, 200, 400, 800, 1600, 3200];
 
         // Retrieve ipcRenderer for electron
         this.ipc = window["ipc"];
@@ -50,7 +51,6 @@ export class CaptureComponent implements OnInit {
                 console.log(arg);
             } else {
                 // Handle normal request
-                console.log(arg);
                 switch (arg["command"]) {
                     case "captureImage_server":
                         if ("camera-session-id" in arg) {
@@ -71,6 +71,7 @@ export class CaptureComponent implements OnInit {
         this.setShutter(this.device.shutter_options[0]);
         this.getFNumberOptions();
         this.setFNumber(this.device.aperture_options[0]);
+        this.setIsoNumber(this.device.iso_options[0]);
     }
 
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -120,21 +121,32 @@ export class CaptureComponent implements OnInit {
     // Set the exposure time for
     // Only available for manual (M) and shutter priority (S) modes
     setShutter(exposure_time: number): void {
+        this.setActionPending(true, "Camera Busy: setting shutter exposure setting...");
         var response = this.ipc.sendSync("main", {
             "command": "setExposure_server",
             "exposure-time": exposure_time,
             "device-type": this.device.device_type
         });
-        this.device.shutter = response["exposure-time"];
+        if (response["success"]) {
+            this.device.shutter = response["exposure-time"];
+        } else {
+            console.log("There was an error calling setShutter: " + response["error"]);
+        }
+        this.setActionPending(false, "");
     }
 
     setFNumber(f_number: number): void {
         this.setActionPending(true, "Camera Busy: setting f-stop setting...");
-        this.ipc.sendSync("main", {
+        var response = this.ipc.sendSync("main", {
             "command": "setFNumber_server",
             "f-number": f_number,
             "device-type": this.device.device_type
         });
+        if (response["success"]) {
+
+        } else {
+            console.log("There was an error calling setShutter: " + response["error"]);
+        }
         this.setActionPending(false, "");
     }
 
@@ -145,7 +157,42 @@ export class CaptureComponent implements OnInit {
             "command": "getFNumberOptions_server",
             "device-type": this.device.device_type
         });
-        this.device.aperture_options = response["f-number-options"];
+        if (response["success"]) {
+            this.device.aperture_options = response["f-number-options"];
+        } else {
+            console.log("There was an error calling getFNubmerOptions: " + response["error"]);
+        }
+        this.setActionPending(false, "");
+    }
+
+    // Retrieve current device ISO number
+    getIsoNumber(): void {
+        this.setActionPending(true, "Camera Busy: retrieving device ISO number...");
+        var response = this.ipc.sendSync("main", {
+            "command": "getIso_server",
+            "device-type": this.device.device_type
+        });
+        if (response["success"]) {
+            this.device.iso = response["iso-number"];
+        } else {
+            console.log("There was an error calling getIsoNumber: " + response["error"]);
+        }
+        this.setActionPending(false, "");
+    }
+
+    // Set device ISO number
+    setIsoNumber(isoNumber: number): void {
+        this.setActionPending(true, "Camera Busy: setting ISO number...");
+        var response = this.ipc.sendSync("main", {
+            "command": "setIso_server",
+            "device-type": this.device.device_type,
+            "iso-number": isoNumber
+        });
+        if (response["success"]) {
+            this.device.iso = response["iso-number"];
+        } else {
+            console.log("There was an error calling setIsoNumber: " + response["error"]);
+        }
         this.setActionPending(false, "");
     }
 
@@ -159,5 +206,5 @@ export class CaptureComponent implements OnInit {
             // TODO(jordanhuus): notify user that the value was invalid
             this.captureCount = 1;
         }
-    } o
+    }
 }
