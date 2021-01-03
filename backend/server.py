@@ -25,6 +25,22 @@ def home():
     return "hello world"
 
 
+@app.route("/get-ptp-device-ids")
+def get_ptp_devices():
+    try:
+        device_ids = CaptureImage.get_usb_device_ids()
+        return jsonify({
+            "success": True,
+            "device-ids": device_ids
+        })
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
+    
+
+
 @app.route("/get-device-details", methods=["POST"])
 def device_details():
     """

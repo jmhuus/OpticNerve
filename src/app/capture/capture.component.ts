@@ -2,13 +2,8 @@ import { Component, OnInit, ChangeDetectorRef, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Device } from './device';
 import { interval } from 'rxjs';
-declare var window: Window;
-declare global {
-    interface Window {
-        process: any;
-        require: any;
-    }
-}
+import { ElectronService } from 'ngx-electron';
+import { NgxSpinnerService } from "ngx-spinner";
 
 
 @Component({
@@ -18,33 +13,26 @@ declare global {
 })
 export class CaptureComponent implements OnInit {
 
-    device: Device;
-    ipc: any;
-    action_pending: boolean;
-    action_pending_message: string;
-    captureCount: number;
+    devices: Array<Device>;
+    chosenDevice: Device;
+    actionPending: boolean;
+    actionPendingMessage: string;
+    public electronService: ElectronService;
+    deviceTableColumns: string[] = ["device", "serialNumber"];
 
-    constructor(private cdRef: ChangeDetectorRef) {
-        this.action_pending = false;
-        this.action_pending_message = "";
+    constructor(
+        private cdRef: ChangeDetectorRef,
+        private _electronService: ElectronService,
+        private spinner: NgxSpinnerService
+    ) {
+        this.actionPending = false;
+        this.actionPendingMessage = "";
+        this.electronService = _electronService;
     }
 
     ngOnInit(): void {
-        this.device = new Device('NIKON', 'D3100', 1234, 4321, 'A', 1.8, 100, 400, 'local');
-        this.device.shutter_options = [
-            2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 31, 40, 50, 62, 80, 100,
-            125, 166, 200, 250, 333, 400, 500, 666, 769, 1000, 1250,
-            1666, 2000, 2500, 3333, 4000, 5000, 6250, 7692, 10000,
-            13000, 16000, 20000, 25000, 30000, 40000, 50000, 60000,
-            80000, 100000, 130000, 150000, 200000, 250000, 300000
-        ];
-        this.device.iso_options = [100, 200, 400, 800, 1600, 3200];
-
-        // Retrieve ipcRenderer for electron
-        this.ipc = window["ipc"];
-
         // Asynchronous response
-        this.ipc.on('rendererListener', (event, arg) => {
+        this.electronService.ipcRenderer.on('rendererListener', (event, arg) => {
             // Incoming error message?
             if ("error" in arg) {
                 console.log("handling error");
@@ -58,7 +46,7 @@ export class CaptureComponent implements OnInit {
                             this.observeCameraStateUntilCompletion(arg["camera-session-id"]);
                         } else {
                             this.setActionPending(false, "");
-                            this.device.image_latest_path = arg["image-path"];
+                            this.devices[0].imageLatestPath = arg["image-path"];
                             this.cdRef.detectChanges();
                         }
                         break;
@@ -67,50 +55,38 @@ export class CaptureComponent implements OnInit {
         });
 
         // Init default values
-        this.captureCount = 1;
-        this.setShutter(this.device.shutter_options[0]);
-        this.getFNumberOptions();
-        this.setFNumber(this.device.aperture_options[0]);
-        this.setIsoNumber(this.device.iso_options[0]);
+        this.devices = this.getConnectedDevices();
+        this.chosenDevice = this.devices[0];
     }
 
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
     getModeClass(mode: string): Object {
-        if (mode == this.device.shooting_mode) {
+        if (!this.chosenDevice) {
+            return;
+        }
+
+        if (mode == this.devices[0].shooting_mode) {
             return "shooting_mode_highlighted";
         } else {
             return "shooting_mode_normal";
         }
     }
 
-    // Capture a new image
-    captureImage(): void {
-        this.setActionPending(true, "Camera Busy: capturing image...");
-
-        // TODO(jordanhuus): this will need to analyze 'this.captureCount'
-        // Likely just provide this on each and every call???? Not sure
-        this.ipc.send("main", {
-            "command": "captureImage_server",
-            "capture-count": this.captureCount,
-            "device-type": this.device.device_type
-        });
-    }
-
-    // Used when taking a timelapse to confirm when the device is complete
+    // Used when taking a timelapse to confirm when the device is comple, this.electronServicete
     observeCameraStateUntilCompletion(cameraSessionId): boolean {
         let subscription = interval(1000).subscribe(x => {
-            var response = this.ipc.sendSync("main", {
+            var response = this.electronService.ipcRenderer.sendSync("main", {
                 "command": "getCameraState_server",
                 "camera-session-id": cameraSessionId,
-                "device-type": this.device.device_type
+                "device-type": this.devices[0].deviceType
             });
             if (response["camera-state"] == "complete") {
                 subscription.unsubscribe();
                 this.setActionPending(false, "");
-                this.device.image_latest_path = response["image-path"];
+                this.devices[0].imageLatestPath = response["image-path"];
                 this.cdRef.detectChanges();
             } else {
-                this.device.image_latest_path = response["image-path"];
+                this.devices[0].imageLatestPath = response["image - path"];
                 this.cdRef.detectChanges();
             }
         });
@@ -118,93 +94,55 @@ export class CaptureComponent implements OnInit {
         return true;
     }
 
-    // Set the exposure time for
-    // Only available for manual (M) and shutter priority (S) modes
-    setShutter(exposure_time: number): void {
-        this.setActionPending(true, "Camera Busy: setting shutter exposure setting...");
-        var response = this.ipc.sendSync("main", {
-            "command": "setExposure_server",
-            "exposure-time": exposure_time,
-            "device-type": this.device.device_type
+    // Retrieve connected devices connected via USB
+    getConnectedDevices(): Array<Device> {
+        let devices: Array<Device> = [];
+        let response = this.electronService.ipcRenderer.sendSync("main", {
+            "command": "getConnectedDevices_server"
         });
         if (response["success"]) {
-            this.device.shutter = response["exposure-time"];
+            for (const [key, value] of Object.entries(response["device-ids"])) {
+                devices.push(new Device(key, parseInt(String(value)), this.electronService, this));
+            }
+            console.log(devices.length);
+            console.log(devices[0]);
+            return devices;
         } else {
-            console.log("There was an error calling setShutter: " + response["error"]);
+            console.log("There was an error calling getConnectedDevices()");
+            console.log(response["error"]);
+            return devices;
         }
-        this.setActionPending(false, "");
     }
 
-    setFNumber(f_number: number): void {
-        this.setActionPending(true, "Camera Busy: setting f-stop setting...");
-        var response = this.ipc.sendSync("main", {
-            "command": "setFNumber_server",
-            "f-number": f_number,
-            "device-type": this.device.device_type
-        });
-        if (response["success"]) {
-
-        } else {
-            console.log("There was an error calling setShutter: " + response["error"]);
-        }
-        this.setActionPending(false, "");
+    delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // Retrieve available f-stop numbers for the current camera lens
-    getFNumberOptions(): void {
-        this.setActionPending(true, "Camera Busy: retrieving available f-stop values...");
-        var response = this.ipc.sendSync("main", {
-            "command": "getFNumberOptions_server",
-            "device-type": this.device.device_type
-        });
-        if (response["success"]) {
-            this.device.aperture_options = response["f-number-options"];
-        } else {
-            console.log("There was an error calling getFNubmerOptions: " + response["error"]);
-        }
-        this.setActionPending(false, "");
-    }
-
-    // Retrieve current device ISO number
-    getIsoNumber(): void {
-        this.setActionPending(true, "Camera Busy: retrieving device ISO number...");
-        var response = this.ipc.sendSync("main", {
-            "command": "getIso_server",
-            "device-type": this.device.device_type
-        });
-        if (response["success"]) {
-            this.device.iso = response["iso-number"];
-        } else {
-            console.log("There was an error calling getIsoNumber: " + response["error"]);
-        }
-        this.setActionPending(false, "");
-    }
-
-    // Set device ISO number
-    setIsoNumber(isoNumber: number): void {
-        this.setActionPending(true, "Camera Busy: setting ISO number...");
-        var response = this.ipc.sendSync("main", {
-            "command": "setIso_server",
-            "device-type": this.device.device_type,
-            "iso-number": isoNumber
-        });
-        if (response["success"]) {
-            this.device.iso = response["iso-number"];
-        } else {
-            console.log("There was an error calling setIsoNumber: " + response["error"]);
-        }
-        this.setActionPending(false, "");
-    }
-
+    // Notify user that an action is pending
     setActionPending(visible: boolean, message: string): void {
-        this.action_pending = visible;
-        this.action_pending_message = message;
+        // setTimeout(() => {
+        //     /** spinner ends after 5 seconds */
+        //     this.spinner.hide();
+        // }, 5000);
+
+        // this.actionPending = visible;
+        // this.actionPendingMessage = message;
     }
 
-    checkCaptureCount(captureCount: number): void {
-        if (captureCount <= 0) {
-            // TODO(jordanhuus): notify user that the value was invalid
-            this.captureCount = 1;
-        }
+    // User connecting to a specific device
+    chooseDevice(device: Device): void {
+        this.chosenDevice = device;
+        this.spinner.show();
+        setTimeout(() => {
+            this.chosenDevice.initConnectionDetails()
+                .then((value) => {
+                    this.setActionPending(false, "");
+                })
+                .catch((error) => {
+                    console.log("There was an error connecting to the device...");
+                })
+            this.spinner.hide();
+        }, 3000);
+
     }
 }

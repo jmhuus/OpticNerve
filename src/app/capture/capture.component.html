@@ -1,7 +1,80 @@
 <div id="Custom_Size__1">
-  <div id="Group_1">
-    <button id="capture-image-button" (click)="captureImage()">Capture Image</button>
+  <ngx-spinner></ngx-spinner>
+  <div id="OpticNerve">
+    <span>OpticNerve</span>
   </div>
+  <svg class="Polygon_2" viewBox="0 0 33 24">
+    <path id="Polygon_2" d="M 16.5 0 L 33 24 L 0 24 Z">
+    </path>
+  </svg>
+  <span>{{devices.length}}</span>
+  <table id="devices-list" mat-table [dataSource]="devices" class="mat-elevation-z8">
+
+    <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Device Column -->
+    <ng-container matColumnDef="device">
+      <th mat-header-cell *matHeaderCellDef> Device </th>
+      <td mat-cell *matCellDef="let element">{{element.model}}</td>
+    </ng-container>
+
+    <!-- Serial Number Column -->
+    <ng-container matColumnDef="serialNumber">
+      <th mat-header-cell *matHeaderCellDef> Serial Number </th>
+      <td mat-cell *matCellDef="let element">{{element.serialNumber}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="deviceTableColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: deviceTableColumns;" (click)="chooseDevice(row)"></tr>
+  </table>
+  <div id="Group_1">
+    <button *ngIf="chosenDevice" id="capture-image-button" (click)="chosenDevice.captureImage()">Capture Image</button>
+  </div>
+  <span id="devices_title" >Devices: </span>
+  <div class="Rectangle_9">
+    <input *ngIf="chosenDevice" id="Rectangle_9" [(ngModel)]="chosenDevice.captureCount" (change)="chosenDevice.checkCaptureCount()">
+  </div>
+  <!-- <div *ngIf="actionPending" id="action_message_pending"> -->
+    <!--   <span>{{actionPendingMessage}}</span> -->
+    <!-- </div> -->
+  <div class="disable-background" *ngIf="actionPending"></div>
+  <div id="Group_20">
+  </div>
+  <div id="Stop_Time">
+    <span>Stop Time</span>
+  </div>
+  <svg class="Rectangle_10">
+    <rect id="Rectangle_10" rx="0" ry="0" x="0" y="0" width="77" height="31">
+    </rect>
+  </svg>
+  <div id="Something">
+    <span>Something…</span>
+  </div>
+  <svg class="Rectangle_11">
+    <rect id="Rectangle_11" rx="0" ry="0" x="0" y="0" width="77" height="31">
+    </rect>
+  </svg>
+  <svg class="Rectangle_12">
+    <rect id="Rectangle_12" rx="0" ry="0" x="0" y="0" width="77" height="31">
+    </rect>
+  </svg>
+  <svg class="Line_11" viewBox="0 0 269 1">
+    <path id="Line_11" d="M 0 0 L 269 0">
+    </path>
+  </svg>
+  <svg class="Line_12" viewBox="0 0 11 14">
+    <path id="Line_12" d="M 0 0 L 11 14">
+    </path>
+  </svg>
+  <svg class="Line_13" viewBox="0 0 11 14">
+    <path id="Line_13" d="M 11 0 L 0 14">
+    </path>
+  </svg>
+  <svg class="Line_10" viewBox="0 0 251 1">
+    <path id="Line_10" d="M 0 0 L 251 0">
+    </path>
+  </svg>
   <div id="Group_18">
     <svg class="Rectangle_1_k">
       <rect id="Rectangle_1_k" rx="10" ry="10" x="0" y="0" width="162" height="36">
@@ -20,46 +93,46 @@
       <span>Open Image</span>
     </div>
   </div>
-  <svg class="Line_1" viewBox="0 0 1 931">
-    <path id="Line_1" d="M 0 0 L 0 931">
+  <svg class="Line_1" viewBox="0 0 1 700">
+    <path id="Line_1" d="M 0 0 L 0 700">
     </path>
   </svg>
-  <div id="Aperture">
+  <div id="Aperture" class="minor-text">
     <span>Aperture</span>
   </div>
-  <div id="Format">
-    <span>Format</span>
-  </div>
-  <div id="JPEG">
+  <div id="JPEG" class="major-text">
     <span>JPEG</span>
   </div>
-  <div id="W_H">
-    <span>W, H</span>
+
+  <!-- Device Values -->
+  <div id="device_lens" class="major-text">
+    <span>awesome lens</span>
   </div>
-  <div id="VendorID">
-    <span>VendorID</span>
+  
+  <!-- Titles -->
+  <div id="format_title" class="minor-text">
+    <span>Format</span>
   </div>
-  <div id="Aperture_v">
-    <span>Aperture</span>
-  </div>
-  <div id="Lens">
+  <div id="lens_title" class="minor-text">
     <span>Lens</span>
   </div>
-  <div id="Aperture_x">
-    <span>Aperture</span>
-  </div>
-  <div id="Aperture_y">
-    <span>Aperture</span>
-  </div>
-  <div id="Manufacturer">
-    <span>Manufacturer</span>
-  </div>
-  <div id="Aperture_">
-    <span>Aperture</span>
-  </div>
-  <div id="Model">
+  <div id="model_title" class="minor-text">
     <span>Model</span>
   </div>
+  <div id="vendor_id_title" class="minor-text">
+    <span>VendorID</span>
+  </div>
+  <div id="manufacturer_title" class="minor-text">
+    <span>Manufacturer</span>
+  </div>
+  <div id="W_H_title" class="minor-text">
+    <span>W, H</span>
+  </div>
+  
+  <div id="Aperture" class="minor-text">
+    <span>Aperture</span>
+  </div>
+  
   <div id="NIKON_D3100">
     <span>NIKON D3100</span>
   </div>
@@ -72,18 +145,9 @@
   <div id="ID1920_1080">
     <span>1920, 1080</span>
   </div>
-  <div id="Aperture_ba">
-    <span>Aperture</span>
-  </div>
-  <div id="Aperture_bb">
-    <span>Aperture</span>
-  </div>
-  <div id="Aperture_bc">
-    <span>Aperture</span>
-  </div>
   <div id="Group_2">
     <div class="Rectangle_5">
-      <img src="{{device.image_latest_path}}" alt="">
+      <img *ngIf="chosenDevice" src="{{chosenDevice.imageLatestPath}}" alt="">
     </div>
   </div>
   <div id="Group_3">
@@ -147,24 +211,24 @@
     <span>Last Image</span>
   </div>
   <div id="f-numbers">
-    <select id="f-number" (change)="setFNumber($event.target.value)">
-      <option *ngFor="let f_number of device.aperture_options" value="{{ f_number }}">f{{ f_number / 100 | number:'0.1' }}</option>
+    <select *ngIf="chosenDevice" id="f-number" [(ngModel)]="chosenDevice.fNumber" (change)="chosenDevice.setFNumber()">
+      <option *ngFor="let f_number of chosenDevice.fNumberOptions" value="{{f_number}}">f{{ f_number / 100 | number:'0.1' }}</option>
     </select>
   </div>
-  <div id="Shutter">
+  <div id="Shutter" class="minor-text">
     <span>Shutter (ms)</span>
   </div>
   <div id="exposures">
-    <select id="exposure" (change)="setShutter($event.target.value)">
-      <option *ngFor="let exposure_time of device.shutter_options" value="{{ exposure_time }}">{{ exposure_time / 10000 | number:'0.4' }}s</option>
+    <select *ngIf="chosenDevice" id="exposure" [(ngModel)]="chosenDevice.exposureTime" (change)="chosenDevice.setShutter()">
+      <option *ngFor="let exposureTime of chosenDevice.shutterOptions" value="{{exposureTime}}">{{ exposureTime / 10000 | number:'0.4' }}s</option>
     </select>
   </div>
   <div id="ISO">
     <span>ISO</span>
   </div>
   <div>
-    <select id="iso-number" (change)="setIsoNumber($event.target.value)">
-      <option *ngFor="let iso_number of device.iso_options" value="{{ iso_number }}">{{ iso_number }}</option>
+    <select *ngIf="chosenDevice" id="iso-number" [(ngModel)]="chosenDevice.iso" (change)="chosenDevice.setIsoNumber()">
+      <option *ngFor="let isoNumber of chosenDevice.isoOptions" value="{{isoNumber}}">{{ isoNumber }}</option>
     </select>
   </div>
   <svg class="Line_8" viewBox="0 0 359 1">
@@ -279,7 +343,7 @@
   </div>
   <div id="Group_16">
     <div class="Rectangle_5_cw">
-      <img src="{{device.image_latest_path}}" alt="">
+      <img *ngIf="chosenDevice" src="{{chosenDevice.imageLatestPath}}" alt="">
     </div>
   </div>
   <svg class="Line_9" viewBox="0 0 1082 1">
@@ -299,54 +363,5 @@
   </div>
   <div id="Delay">
     <span>Delay</span>
-  </div>
-  <div class="Rectangle_9">
-    <input id="Rectangle_9" [(ngModel)]="captureCount" (change)="checkCaptureCount($event.target.value)">
-  </div>
-  <svg class="Rectangle_10">
-    <rect id="Rectangle_10" rx="0" ry="0" x="0" y="0" width="77" height="31">
-    </rect>
-  </svg>
-  <div id="Stop_Time">
-    <span>Stop Time</span>
-  </div>
-  <div id="Something">
-    <span>Something…</span>
-  </div>
-  <svg class="Rectangle_11">
-    <rect id="Rectangle_11" rx="0" ry="0" x="0" y="0" width="77" height="31">
-    </rect>
-  </svg>
-  <svg class="Rectangle_12">
-    <rect id="Rectangle_12" rx="0" ry="0" x="0" y="0" width="77" height="31">
-    </rect>
-  </svg>
-  <svg class="Line_10" viewBox="0 0 251 1">
-    <path id="Line_10" d="M 0 0 L 251 0">
-    </path>
-  </svg>
-  <svg class="Line_11" viewBox="0 0 269 1">
-    <path id="Line_11" d="M 0 0 L 269 0">
-    </path>
-  </svg>
-  <div id="Group_20">
-    <svg class="Line_12" viewBox="0 0 11 14">
-      <path id="Line_12" d="M 0 0 L 11 14">
-      </path>
-    </svg>
-    <svg class="Line_13" viewBox="0 0 11 14">
-      <path id="Line_13" d="M 11 0 L 0 14">
-      </path>
-    </svg>
-  </div>
-  <div id="OpticNerve">
-    <span>OpticNerve</span>
-  </div>
-  <svg class="Polygon_2" viewBox="0 0 33 24">
-    <path id="Polygon_2" d="M 16.5 0 L 33 24 L 0 24 Z">
-    </path>
-  </svg>
-  <div *ngIf="action_pending" id="action_message_pending">
-    <span>{{action_pending_message}}</span>
   </div>
 </div>

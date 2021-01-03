@@ -1,94 +1,98 @@
 {
-			"name": "optic-nerve",
-			"version": "0.0.0",
-			"main": "main.js",
-			"scripts": {
-						"ng": "ng",
-						"start": "electron-forge start",
-						"build": "ng build",
-						"test": "ng test",
-						"lint": "ng lint",
-						"e2e": "ng e2e",
-						"electron": "electron .",
-						"electron-build": "ng build --prod && electron .",
-						"package": "electron-forge package",
-						"make": "electron-forge make"
-			},
-			"private": true,
-			"dependencies": {
-						"@angular-devkit/build-angular": "^0.1100.4",
-						"@angular/animations": "~11.0.3",
-						"@angular/common": "~11.0.3",
-						"@angular/compiler": "~11.0.3",
-						"@angular/core": "~11.0.3",
-						"@angular/forms": "~11.0.3",
-						"@angular/language-service": "^11.0.4",
-						"@angular/platform-browser": "~11.0.3",
-						"@angular/platform-browser-dynamic": "~11.0.3",
-						"@angular/router": "~11.0.3",
-						"electron-squirrel-startup": "^1.0.0",
-						"node-fetch": "^2.6.0",
-						"python-shell": "^2.0.1",
-						"rxjs": "~6.5.4",
-						"sleep": "~6.3.0",
-						"tslib": "^1.10.0",
-						"zone.js": "~0.10.2"
-			},
-			"devDependencies": {
-						"@angular/cli": "~11.0.3",
-						"@angular/compiler-cli": "~11.0.3",
-						"@electron-forge/cli": "^6.0.0-beta.54",
-						"@electron-forge/maker-deb": "^6.0.0-beta.54",
-						"@electron-forge/maker-rpm": "^6.0.0-beta.54",
-						"@electron-forge/maker-squirrel": "^6.0.0-beta.54",
-						"@electron-forge/maker-zip": "^6.0.0-beta.54",
-						"@types/jasmine": "~3.5.0",
-						"@types/jasminewd2": "~2.0.3",
-						"@types/node": "^12.11.1",
-						"codelyzer": "^5.1.2",
-						"electron": "^9.4.0",
-						"jasmine-core": "~3.5.0",
-						"jasmine-spec-reporter": "~4.2.1",
-						"karma": "~4.4.1",
-						"karma-chrome-launcher": "~3.1.0",
-						"karma-coverage-istanbul-reporter": "~2.1.0",
-						"karma-jasmine": "~3.0.1",
-						"karma-jasmine-html-reporter": "^1.4.2",
-						"protractor": "~5.4.3",
-						"ts-node": "~8.3.0",
-						"tslint": "~6.1.0",
-						"typescript": "~4.0.2"
-			},
-			"browser": {
-						"fs": false,
-						"path": false,
-						"os": false
-			},
-			"config": {
-						"forge": {
-									"packagerConfig": {},
-									"makers": [
-												{
-															"name": "@electron-forge/maker-squirrel",
-															"config": {
-																		"name": "optic_nerve"
-															}
-												},
-												{
-															"name": "@electron-forge/maker-zip",
-															"platforms": [
-																		"darwin"
-															]
-												},
-												{
-															"name": "@electron-forge/maker-deb",
-															"config": {}
-												},
-												{
-															"name": "@electron-forge/maker-rpm",
-															"config": {}
-												}
-									]
-						}
-			}
+  "name": "optic-nerve",
+  "version": "0.0.0",
+  "main": "main.js",
+  "scripts": {
+    "ng": "ng",
+    "start": "electron-forge start",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e",
+    "electron": "electron .",
+    "electron-build": "ng build --prod && electron .",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular-devkit/build-angular": "^0.1100.4",
+    "@angular/animations": "~11.0.3",
+    "@angular/cdk": "^11.0.3",
+    "@angular/common": "~11.0.3",
+    "@angular/compiler": "~11.0.3",
+    "@angular/core": "~11.0.3",
+    "@angular/forms": "~11.0.3",
+    "@angular/language-service": "^11.0.4",
+    "@angular/material": "^11.0.3",
+    "@angular/platform-browser": "~11.0.3",
+    "@angular/platform-browser-dynamic": "~11.0.3",
+    "@angular/router": "~11.0.3",
+    "electron-squirrel-startup": "^1.0.0",
+    "ngx-electron": "^2.2.0",
+    "ngx-spinner": "^10.0.1",
+    "node-fetch": "^2.6.0",
+    "python-shell": "^2.0.1",
+    "rxjs": "~6.5.4",
+    "sleep": "~6.3.0",
+    "tslib": "^1.10.0",
+    "zone.js": "~0.10.2"
+  },
+  "devDependencies": {
+    "@angular/cli": "~11.0.3",
+    "@angular/compiler-cli": "~11.0.3",
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "@types/jasmine": "~3.5.0",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^12.11.1",
+    "codelyzer": "^5.1.2",
+    "electron": "^9.4.0",
+    "jasmine-core": "~3.5.0",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~4.4.1",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage-istanbul-reporter": "~2.1.0",
+    "karma-jasmine": "~3.0.1",
+    "karma-jasmine-html-reporter": "^1.4.2",
+    "protractor": "~5.4.3",
+    "ts-node": "~8.3.0",
+    "tslint": "~6.1.0",
+    "typescript": "~4.0.2"
+  },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "os": false
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "optic_nerve"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  }
 }

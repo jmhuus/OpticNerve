@@ -8,8 +8,8 @@ var webContents;
 var child;
 
 // Init Python Flask server
-initPythonServer();
-sleep(1);
+// initPythonServer();
+// sleep(1);
 
 
 function createWindow () {
@@ -19,7 +19,8 @@ function createWindow () {
 	height: 1200,
 	webPreferences: {
 	    preload: path.join(__dirname, 'preload.js'),
-	    sandbox: false
+	    sandbox: false,
+	    nodeIntegration: true
 	}
     })
 
@@ -49,6 +50,14 @@ app.whenReady().then(() => {
 // Init Python Flask server to handle device nication
 function initPythonServer() {
     child = spawn(path.join(__dirname, "./backend/dist/server/server"));
+}
+
+
+async function getConnectedDevices_server() {
+    var response = await fetch("http://127.0.0.1:8080/get-ptp-device-ids", {
+	method: "get"
+    });
+    return response.json();
 }
 
 // Initiates the device to capture an image and return the result
@@ -187,6 +196,16 @@ async function setIso_server(iso_number, device_type) {
 ipcMain.on('main', (event, arg) => {
     // Issue the specified command
     switch(arg["command"]) {
+    case "getConnectedDevices_server":
+	getConnectedDevices_server()
+	    .then(response => {
+		response["command"] = arg["command"];
+		event.returnValue = response;
+	    })
+	    .catch(error => {
+		displayErrorMessage(error);
+	    });
+	break;
     case "captureImage_server":
 	captureImage_server(arg["capture-count"], arg["device-type"])
 	    .then(response => {
@@ -194,8 +213,6 @@ ipcMain.on('main', (event, arg) => {
 		event.reply("rendererListener", response);
 	    })
 	    .catch(error => {
-		response = {};
-		response["success"] = false;
 		displayErrorMessage(error);
 	    });
 	break;

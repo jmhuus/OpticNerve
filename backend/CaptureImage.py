@@ -14,6 +14,12 @@ from threading import Thread
 from model import Camera
 
 
+def get_usb_device_ids():
+    """Retrieves all USB devies with USB device class #6 (PTP deviecs)
+    """
+    return PtpUsbTransport.getDeviceIds(PtpUsbTransport.USB_CLASS_PTP)
+
+
 def get_device_details():
     """TODO(jordanhuus): add description
     """

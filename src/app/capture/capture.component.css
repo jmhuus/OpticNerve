@@ -1,3 +1,46 @@
+#devices_title {
+    top: 1000px;
+    left: 50px;
+    width: 40px;
+    height: 20px;
+    position: absolute;
+    color: rgb(255, 255,255);
+}
+#devices-list {
+    top: 1050px;
+    left: 50px;
+    width: 300px;
+    height: 80px;
+    position: absolute;
+}
+table{
+    /* margin-left: 1em; */
+    /* margin-right: 1em; */
+    border: 1px solid rgb(220, 220, 220);
+}
+tr:hover {
+  background-color: rgba(45, 45, 45, 1);
+}
+td {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+.major-text {
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(255,255,255,1);
+}
+.minor-text {
+    text-align: left;
+    font-family: Helvetica Neue;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgba(112,112,112,1);
+}
 .mediaViewInfo {
     --web-view-name: Custom Size – 1;
     --web-view-id: Custom_Size__1;
@@ -40,8 +83,8 @@
     cursor: pointer;
 }
 #capture-image-button:hover {
-  background-color: #555555;
-  color: white;
+    background-color: #555555;
+    color: white;
 }
 #Group_18 {
     position: absolute;
@@ -136,26 +179,14 @@
     overflow: visible;
     width: 78px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
-#Format {
+#format_title {
     left: 34px;
     top: 385px;
     position: absolute;
     overflow: visible;
     width: 65px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
 #JPEG {
     left: 182px;
@@ -164,138 +195,57 @@
     overflow: visible;
     width: 54px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 20px;
-    color: rgba(255,255,255,1);
 }
-#W_H {
+
+
+/* Titles */
+#W_H_title {
     left: 402px;
     top: 385px;
     position: absolute;
     overflow: visible;
     width: 44px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
-#VendorID {
+#vendor_id_title {
     left: 34px;
     top: 481px;
     position: absolute;
     overflow: visible;
     width: 83px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
-#Aperture_v {
-    left: 402px;
-    top: 481px;
-    position: absolute;
-    overflow: visible;
-    width: 78px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
-}
-#Lens {
+#lens_title {
     left: 34px;
     top: 417px;
     position: absolute;
     overflow: visible;
     width: 44px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
-#Aperture_x {
-    left: 182px;
-    top: 416px;
-    position: absolute;
-    overflow: visible;
-    width: 84px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 20px;
-    color: rgba(255,255,255,1);
-}
-#Aperture_y {
-    left: 402px;
-    top: 417px;
-    position: absolute;
-    overflow: visible;
-    width: 78px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
-}
-#Manufacturer {
+#manufacturer_title {
     left: 34px;
     top: 513px;
     position: absolute;
     overflow: visible;
     width: 120px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
-#Aperture_ {
-    left: 402px;
-    top: 513px;
-    position: absolute;
-    overflow: visible;
-    width: 78px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
-}
-#Model {
+#model_title {
     left: 34px;
     top: 449px;
     position: absolute;
     overflow: visible;
     width: 57px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
+}
+#device_lens {
+    left: 182px;
+    top: 416px;
+    position: absolute;
+    overflow: visible;
+    width: 84px;
+    white-space: nowrap;
 }
 #NIKON_D3100 {
     left: 183px;
@@ -352,48 +302,6 @@
     font-weight: bold;
     font-size: 20px;
     color: rgba(255,255,255,1);
-}
-#Aperture_ba {
-    left: 402px;
-    top: 449px;
-    position: absolute;
-    overflow: visible;
-    width: 78px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
-}
-#Aperture_bb {
-    left: 34px;
-    top: 545px;
-    position: absolute;
-    overflow: visible;
-    width: 78px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
-}
-#Aperture_bc {
-    left: 402px;
-    top: 545px;
-    position: absolute;
-    overflow: visible;
-    width: 78px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
 #Group_2 {
     position: absolute;
@@ -758,12 +666,6 @@
     overflow: visible;
     width: 66px;
     white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 20px;
-    color: rgba(112,112,112,1);
 }
 #exposures {
     left: 210px;
@@ -1585,8 +1487,8 @@
     position: absolute;
     width: 11.786px;
     height: 14.618px;
-    left: 0px;
-    top: 0px;
+    left: 313px;
+    top: 575px;
     transform: matrix(1,0,0,1,0,0);
 }
 #Line_13 {
@@ -1603,8 +1505,8 @@
     position: absolute;
     width: 11.786px;
     height: 14.618px;
-    left: 11px;
-    top: 0px;
+    left: 325px;
+    top: 575px;
     transform: matrix(1,0,0,1,0,0);
 }
 #OpticNerve {
@@ -1639,18 +1541,18 @@
     top: 23px;
     transform: matrix(1,0,0,1,0,0);
 }
-#action_message_pending {
-    left: 40px;
-    top: 620px;
-    height: 450px;
-    width: 570px;
-    position: absolute;
-    background-color: rgba(20, 20, 20, 0.85);
-    text-align: center;
-    padding-top: 225px;
-}
-#action_message_pending > span {
-	color: rgba(255,157,25,1);
-}
+/* #action_message_pending { */
+/*     left: 40px; */
+/*     top: 620px; */
+/*     height: 450px; */
+/*     width: 570px; */
+/*     position: absolute; */
+/*     background-color: rgba(20, 20, 20, 0.85); */
+/*     text-align: center; */
+/*     padding-top: 225px; */
+/* } */
+/* #action_message_pending > span { */
+    /* color: rgba(255,157,25,1); */
+/* } */
 
 

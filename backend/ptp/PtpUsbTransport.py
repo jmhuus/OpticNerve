@@ -187,6 +187,7 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
         for b in data:
             print(hex(ord(b)))
 
+            
     @classmethod
     def findptps(cls, device_class):
 
@@ -214,6 +215,23 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
             return device
         else:
             raise UsbException("USB camera not found.")
+
+        
+    @classmethod
+    def getDeviceIds(cls, device_class):
+        # find all usb devices
+        devices = usb.core.find(find_all=True)
+        devs = {}
+        for dev in devices:
+            for config in dev:
+                for intf in config:
+                    if intf.bInterfaceClass == device_class:
+                        devs[dev.product] = dev.serial_number
+                        break
+                    else:
+                        continue
+                    
+        return devs
 
 
     @classmethod
