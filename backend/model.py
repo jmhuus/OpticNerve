@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 
 
-database_path = "sqlite:////tmp/optic-nerve.db"
+database_path = "sqlite:///./backend/optic-nerve.db"
 db = SQLAlchemy()
 
 

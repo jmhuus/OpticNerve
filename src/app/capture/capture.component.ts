@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Device } from './device';
-import { interval } from 'rxjs';
 import { ElectronService } from 'ngx-electron';
 import { NgxSpinnerService } from "ngx-spinner";
 
@@ -19,44 +18,22 @@ export class CaptureComponent implements OnInit {
     actionPendingMessage: string;
     public electronService: ElectronService;
     deviceTableColumns: string[] = ["device", "serialNumber"];
+    public cdRef: ChangeDetectorRef;
 
     constructor(
-        private cdRef: ChangeDetectorRef,
-        private _electronService: ElectronService,
-        private spinner: NgxSpinnerService
+        private _cdRef: ChangeDetectorRef,
+        _electronService: ElectronService,
+        public spinner: NgxSpinnerService
     ) {
         this.actionPending = false;
         this.actionPendingMessage = "";
         this.electronService = _electronService;
+        this.cdRef = _cdRef;
     }
 
     ngOnInit(): void {
-        // Asynchronous response
-        this.electronService.ipcRenderer.on('rendererListener', (event, arg) => {
-            // Incoming error message?
-            if ("error" in arg) {
-                console.log("handling error");
-                console.log(arg);
-            } else {
-                // Handle normal request
-                switch (arg["command"]) {
-                    case "captureImage_server":
-                        if ("camera-session-id" in arg) {
-                            // Begin observing camera state for capture completion
-                            this.observeCameraStateUntilCompletion(arg["camera-session-id"]);
-                        } else {
-                            this.setActionPending(false, "");
-                            this.devices[0].imageLatestPath = arg["image-path"];
-                            this.cdRef.detectChanges();
-                        }
-                        break;
-                }
-            }
-        });
-
         // Init default values
-        this.devices = this.getConnectedDevices();
-        this.chosenDevice = this.devices[0];
+        this.getConnectedDevices();
     }
 
     // Set CSS class for the chosen device shooting mode (M, A, S, P)
@@ -72,77 +49,44 @@ export class CaptureComponent implements OnInit {
         }
     }
 
-    // Used when taking a timelapse to confirm when the device is comple, this.electronServicete
-    observeCameraStateUntilCompletion(cameraSessionId): boolean {
-        let subscription = interval(1000).subscribe(x => {
-            var response = this.electronService.ipcRenderer.sendSync("main", {
-                "command": "getCameraState_server",
-                "camera-session-id": cameraSessionId,
-                "device-type": this.devices[0].deviceType
-            });
-            if (response["camera-state"] == "complete") {
-                subscription.unsubscribe();
-                this.setActionPending(false, "");
-                this.devices[0].imageLatestPath = response["image-path"];
-                this.cdRef.detectChanges();
-            } else {
-                this.devices[0].imageLatestPath = response["image - path"];
-                this.cdRef.detectChanges();
-            }
-        });
-
-        return true;
-    }
-
     // Retrieve connected devices connected via USB
-    getConnectedDevices(): Array<Device> {
+    getConnectedDevices(): void {
         let devices: Array<Device> = [];
-        let response = this.electronService.ipcRenderer.sendSync("main", {
+        this.electronService.ipcRenderer.invoke("main", {
             "command": "getConnectedDevices_server"
-        });
-        if (response["success"]) {
-            for (const [key, value] of Object.entries(response["device-ids"])) {
-                devices.push(new Device(key, parseInt(String(value)), this.electronService, this));
-            }
-            console.log(devices.length);
-            console.log(devices[0]);
-            return devices;
-        } else {
-            console.log("There was an error calling getConnectedDevices()");
-            console.log(response["error"]);
-            return devices;
-        }
+        })
+            .then((response) => {
+                console.log(response);
+                for (const [key, value] of Object.entries(response["device-ids"])) {
+                    devices.push(new Device(key, parseInt(String(value)), this.electronService, this));
+                }
+                this.devices = devices;
+                this.chosenDevice = this.devices[0];
+            })
+            .catch(error => {
+                console.log("There was an error calling getConnectedDevices()");
+                console.log(error);
+            })
     }
+
 
     delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // Notify user that an action is pending
-    setActionPending(visible: boolean, message: string): void {
-        // setTimeout(() => {
-        //     /** spinner ends after 5 seconds */
-        //     this.spinner.hide();
-        // }, 5000);
-
-        // this.actionPending = visible;
-        // this.actionPendingMessage = message;
-    }
 
     // User connecting to a specific device
     chooseDevice(device: Device): void {
         this.chosenDevice = device;
         this.spinner.show();
-        setTimeout(() => {
-            this.chosenDevice.initConnectionDetails()
-                .then((value) => {
-                    this.setActionPending(false, "");
-                })
-                .catch((error) => {
-                    console.log("There was an error connecting to the device...");
-                })
-            this.spinner.hide();
-        }, 3000);
-
+        this.chosenDevice.initConnectionDetails()
+            .then((value) => {
+                console.log("initConnectionDetails complete");
+                this.spinner.hide();
+            })
+            .catch((error) => {
+                console.log("There was an error connecting to the device...");
+                console.log(error);
+            });
     }
 }

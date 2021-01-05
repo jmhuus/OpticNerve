@@ -193,90 +193,51 @@ async function setIso_server(iso_number, device_type) {
 }
 
 // Recieve asynchronous request from renderer
-ipcMain.on('main', (event, arg) => {
+ipcMain.handle('main', async (event, arg) => {
     // Issue the specified command
     switch(arg["command"]) {
     case "getConnectedDevices_server":
-	getConnectedDevices_server()
-	    .then(response => {
-		response["command"] = arg["command"];
-		event.returnValue = response;
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
-	break;
-    case "captureImage_server":
-	captureImage_server(arg["capture-count"], arg["device-type"])
-	    .then(response => {
-		response["command"] = arg["command"];
-		event.reply("rendererListener", response);
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
-	break;
-
-    case "setExposure_server":
-	setExposure_server(arg["exposure-time"], arg["device-type"])
-	    .then(response => {
-		event.returnValue = response;
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
+	var response = await getConnectedDevices_server()
+	response["command"] = arg["command"];
+	return response;
 	
-	break;
+    case "captureImage_server":
+	var response = await captureImage_server(arg["capture-count"], arg["device-type"])
+	response["command"] = arg["command"];
+	console.log("jfklsdajf2222");
+	console.log(response);
+	return response;
+	
+    // TODO(jordanhuus): change naming convention to shutter
+    case "setExposure_server":
+	var response = await setExposure_server(arg["exposure-time"], arg["device-type"])
+	response["command"] = arg["command"];
+	return response;
 
     case "getFNumberOptions_server":
-	getFNumberOptions_server(arg["device-type"])
-	    .then(response => {
-		event.returnValue = response;
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
-	break;
+	var response = await getFNumberOptions_server(arg["device-type"])
+	response["command"] = arg["command"];
+	return response;
 
     case "setFNumber_server":
-	setFNumber_server(arg["f-number"], arg["device-type"])
-	    .then(response => {
-		event.returnValue = response;
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
-	break;
+	var response = await setFNumber_server(arg["f-number"], arg["device-type"])
+	response["command"] = arg["command"];
+	return response;
 
     case "getCameraState_server":
-	getCameraState_server(arg["camera-session-id"], arg["device-type"])
-	    .then(response => {
-	    	event.returnValue = response;
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
-	break;
+	var response = await getCameraState_server(arg["camera-session-id"], arg["device-type"])
+	response["command"] = arg["command"];
+	return response;
 
     case "getIso_server":
-	getIso_server(arg["device-type"])
-	    .then(response => {
-	    	event.returnValue = response;
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
-	break;
+	var response = await getIso_server(arg["device-type"])
+	response["command"] = arg["command"];
+	return response;
 
     case "setIso_server":
-	setIso_server(arg["iso-number"], arg["device-type"])
-	    .then(response => {
-	    	event.returnValue = response;
-	    })
-	    .catch(error => {
-		displayErrorMessage(error);
-	    });
-	break;
+	var response = await setIso_server(arg["iso-number"], arg["device-type"])
+	response["command"] = arg["command"];
+	return response;
 
     case "shutdown_server":
 	shutdown_server();

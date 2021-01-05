@@ -1,5 +1,6 @@
 import { CaptureComponent } from './capture.component';
 import { ElectronService } from 'ngx-electron';
+import { interval } from 'rxjs';
 
 const DeviceType = {
     LOCAL: 'local',
@@ -55,15 +56,15 @@ export class Device {
     }
 
     public async initConnectionDetails(): Promise<boolean> {
-        console.log("calling public initConnectionDetails()");
         this.deviceType = DeviceType.LOCAL;
-        this.getFNumberOptions();
+        let response = await this.getFNumberOptions();
+        this.fNumberOptions = response["f-number-options"];
         this.fNumber = this.fNumberOptions[0];
-        this.setFNumber();
-        this.iso = this.isoOptions[0];
-        this.setIsoNumber();
+        await this.setFNumber();
+        await this.setIsoNumber();
+        await this.setShutter();
         this.exposureTime = this.shutterOptions[0];
-        this.setShutter();
+        this.iso = this.isoOptions[0];
 
         return true;
     }
@@ -81,102 +82,129 @@ export class Device {
     }
 
     // Capture a new image
-    captureImage(): void {
-        // this.setActionPending(true, "Camera Busy: capturing image...");
-
+    async captureImage(): Promise<any> {
         // TODO(jordanhuus): this will need to analyze 'this.captureCount'
         // Likely just provide this on each and every call???? Not sure
-        this.electronService.ipcRenderer.send("main", {
+        this.electronService.ipcRenderer.invoke("main", {
             "command": "captureImage_server",
             "capture-count": this.captureCount,
             "device-type": this.deviceType
+        })
+            .then(response => {
+                if ("camera-session-id" in response) {
+                    // Begin observing camera state for capture completion
+                    this.observeCameraStateUntilCompletion(response["camera-session-id"]);
+                } else {
+                    console.log("printing response from device.ts.captureImage()");
+                    console.log(response);
+                    this.imageLatestPath = response["image-path"];
+                }
+            })
+            .catch(error => {
+                console.log("There was an error calling device.captureImage(): " + error);
+            })
+    }
+
+    // Used when taking a timelapse to confirm when the device is comple, this.electronServicete
+    observeCameraStateUntilCompletion(cameraSessionId): void {
+        let subscription = interval(1000).subscribe(x => {
+            this.electronService.ipcRenderer.invoke("main", {
+                "command": "getCameraState_server",
+                "camera-session-id": cameraSessionId,
+                "device-type": this.deviceType
+            })
+                .then(response => {
+                    if (response["camera-state"] == "complete") {
+                        this.imageLatestPath = response["image-path"];
+                        subscription.unsubscribe();
+                    } else {
+                        this.imageLatestPath = response["image-path"];
+                    }
+                })
+                .catch(error => {
+                    console.log("There was an error calling device.observeCameraStateUntilCompletion(): " + error);
+                    subscription.unsubscribe();
+                })
+
         });
     }
 
     // Set the exposure time for
     // Only available for manual (M) and shutter priority (S) modes
-    setShutter(): void {
-        // this.setActionPending(true, "Camera Busy: setting shutter exposure setting...");
-        var response = this.electronService.ipcRenderer.sendSync("main", {
+    async setShutter(): Promise<void> {
+        this.captureComponent.spinner.show();
+        this.electronService.ipcRenderer.invoke("main", {
             "command": "setExposure_server",
             "exposure-time": this.exposureTime,
             "device-type": this.deviceType
-        });
-        if (response["success"]) {
-            this.shutter = response["exposure-time"];
-        } else {
-            console.log("There was an error calling setShutter: " + response["error"]);
-        }
-        // this.setActionPending(false, "");
+        })
+            .then(() => {
+                this.captureComponent.spinner.hide();
+            })
+            .catch(error => {
+                console.log("There was an error calling device.setShutter(): " + error);
+            })
     }
 
-    setFNumber(): void {
-        // this.setActionPending(true, "Camera Busy: setting f-stop setting...");
-        var response = this.electronService.ipcRenderer.sendSync("main", {
+    async setFNumber(): Promise<void> {
+        this.captureComponent.spinner.show();
+        this.electronService.ipcRenderer.invoke("main", {
             "command": "setFNumber_server",
             "f-number": this.fNumber,
             "device-type": this.deviceType
-        });
-        if (response["success"]) {
-
-        } else {
-            console.log("There was an error calling setFNumber: " + response["error"]);
-        }
-        // this.setActionPending(false, "");
+        })
+            .then(() => {
+                this.captureComponent.spinner.hide();
+            })
+            .catch(error => {
+                console.log("There was an error calling device.setFNumber(): " + error);
+            })
     }
 
     // Retrieve available f-stop numbers for the current camera lens
-    getFNumberOptions(): void {
-        // this.setActionPending(true, "Camera Busy: retrieving available f-stop values...");
-        var response = this.electronService.ipcRenderer.send("main", {
+    async getFNumberOptions(): Promise<any> {
+        this.captureComponent.spinner.show();
+        var response = await this.electronService.ipcRenderer.invoke("main", {
             "command": "getFNumberOptions_server",
             "device-type": this.deviceType
         });
-        if (response["success"]) {
-            this.fNumberOptions = response["f-number-options"];
-        } else {
-            console.log("There was an error calling getFNubmerOptions: " + response["error"]);
-        }
-        // this.setActionPending(false, "");
+        this.captureComponent.spinner.hide();
+        return response;
     }
 
     // Retrieve current device ISO number
-    getIsoNumber(): void {
-        // this.setActionPending(true, "Camera Busy: retrieving device ISO number...");
-        var response = this.electronService.ipcRenderer.sendSync("main", {
+    async getIsoNumber(): Promise<any> {
+        this.captureComponent.spinner.show();
+        let response = await this.electronService.ipcRenderer.invoke("main", {
             "command": "getIso_server",
             "device-type": this.deviceType
         });
-        if (response["success"]) {
-            this.iso = response["iso-number"];
-        } else {
-            console.log("There was an error calling getIsoNumber: " + response["error"]);
-        }
-        // this.setActionPending(false, "");
+        this.captureComponent.spinner.hide();
+        return response;
     }
 
     // Set device ISO number
-    setIsoNumber(): void {
-        // this.setActionPending(true, "Camera Busy: setting ISO number...");
-        var response = this.electronService.ipcRenderer.sendSync("main", {
+    async setIsoNumber(): Promise<void> {
+        this.captureComponent.spinner.show();
+        this.electronService.ipcRenderer.invoke("main", {
             "command": "setIso_server",
             "device-type": this.deviceType,
-            "iso-number": this.iso
-        });
-        if (response["success"]) {
-            this.iso = response["iso-number"];
-        } else {
-            console.log("There was an error calling setIsoNumber: " + response["error"]);
-        }
-        // this.setActionPending(false, "");
+            "iso-number": this.iso,
+        })
+            .then(response => {
+                this.iso = response["iso-number"];
+                this.captureComponent.spinner.hide();
+            })
+            .catch(error => {
+                console.log("There was an error calling device.setFNumber()");
+            });
     }
 
     // Ensure user-specified capture count is valid
     checkCaptureCount(): void {
-        console.log(this.captureCount);
-        // if (this.captureCount <= 0) {
-        //     // TODO(jordanhuus): notify user that the value was invalid
-        //     this.captureCount = 1;
-        // }
+        if (this.captureCount <= 0) {
+            // TODO(jordanhuus): notify user that the value was invalid
+            this.captureCount = 1;
+        }
     }
 }
