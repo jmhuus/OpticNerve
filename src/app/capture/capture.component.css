@@ -1542,6 +1542,13 @@ td {
     top: 23px;
     transform: matrix(1,0,0,1,0,0);
 }
+#refresh-icon {
+    left: 365px;
+    top: 1050px;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+}
 /* #action_message_pending { */
 /*     left: 40px; */
 /*     top: 620px; */

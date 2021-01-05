@@ -19,6 +19,7 @@ export class CaptureComponent implements OnInit {
     public electronService: ElectronService;
     deviceTableColumns: string[] = ["device", "serialNumber"];
     public cdRef: ChangeDetectorRef;
+    refreshIconPath: string = "assets/images/refresh_white_18dp.png";
 
     constructor(
         private _cdRef: ChangeDetectorRef,
