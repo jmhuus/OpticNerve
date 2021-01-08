@@ -18,6 +18,8 @@ export class Device {
     public fNumberOptions: number[];
     public shutterOptions: number[];
     public isoOptions: number[];
+    public imageFormat: string;
+    public lensName: string;
 
     // User-specified settings
     public shooting_mode: string;
@@ -56,15 +58,30 @@ export class Device {
     }
 
     public async initConnectionDetails(): Promise<boolean> {
+        var response: any;
         this.deviceType = DeviceType.LOCAL;
-        let response = await this.getFNumberOptions();
+        response = await this.getFNumberOptions();
         this.fNumberOptions = response["f-number-options"];
         this.fNumber = this.fNumberOptions[0];
         await this.setFNumber();
+        this.iso = this.isoOptions[0];
         await this.setIsoNumber();
         await this.setShutter();
         this.exposureTime = this.shutterOptions[0];
-        this.iso = this.isoOptions[0];
+        response = await this.getDeviceDetails();
+
+        this.imageFormat = response["device-details"]["CaptureFormats"];
+        this.model = response["device-details"]["Manufacturer"] + " " + response["device-details"]["Model"];
+
+        /*
+        CaptureFormats: "(14337, 12288)"
+        DeviceVersion: "V1.01"
+        Manufacturer: "Nikon Corporation"
+        Model: "D3100"
+        OperationsSupported: (19) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+        SerialNumber: "3378947"
+        VendorExtensionID: "6"
+        */
 
         return true;
     }
@@ -91,13 +108,13 @@ export class Device {
             "device-type": this.deviceType
         })
             .then(response => {
-                if ("camera-session-id" in response) {
-                    // Begin observing camera state for capture completion
-                    this.observeCameraStateUntilCompletion(response["camera-session-id"]);
-                } else {
-                    console.log("printing response from device.ts.captureImage()");
-                    console.log(response);
-                    this.imageLatestPath = response["image-path"];
+                if (response["success"]) {
+                    if ("camera-session-id" in response) {
+                        // Begin observing camera state for capture completion
+                        this.observeCameraStateUntilCompletion(response["camera-session-id"]);
+                    } else {
+                        this.imageLatestPath = response["image-path"];
+                    }
                 }
             })
             .catch(error => {
@@ -114,11 +131,15 @@ export class Device {
                 "device-type": this.deviceType
             })
                 .then(response => {
-                    if (response["camera-state"] == "complete") {
-                        this.imageLatestPath = response["image-path"];
-                        subscription.unsubscribe();
+                    if (response["success"]) {
+                        if (response["camera-state"] == "complete") {
+                            this.imageLatestPath = response["image-path"];
+                            subscription.unsubscribe();
+                        } else {
+                            this.imageLatestPath = response["image-path"];
+                        }
                     } else {
-                        this.imageLatestPath = response["image-path"];
+                        // TODO(jordanhuus): alert user that there was an error...
                     }
                 })
                 .catch(error => {
@@ -133,32 +154,32 @@ export class Device {
     // Only available for manual (M) and shutter priority (S) modes
     async setShutter(): Promise<void> {
         this.captureComponent.spinner.show();
-        this.electronService.ipcRenderer.invoke("main", {
+        var response = await this.electronService.ipcRenderer.invoke("main", {
             "command": "setExposure_server",
             "exposure-time": this.exposureTime,
             "device-type": this.deviceType
-        })
-            .then(() => {
-                this.captureComponent.spinner.hide();
-            })
-            .catch(error => {
-                console.log("There was an error calling device.setShutter(): " + error);
-            })
+        });
+        this.captureComponent.spinner.hide();
+        if (response["success"]) {
+            // TODO(jordanhuus): something here...
+        } else {
+            // TODO(jordanhuus): alert user that there was an error...
+        }
     }
 
     async setFNumber(): Promise<void> {
         this.captureComponent.spinner.show();
-        this.electronService.ipcRenderer.invoke("main", {
+        var response = await this.electronService.ipcRenderer.invoke("main", {
             "command": "setFNumber_server",
             "f-number": this.fNumber,
             "device-type": this.deviceType
-        })
-            .then(() => {
-                this.captureComponent.spinner.hide();
-            })
-            .catch(error => {
-                console.log("There was an error calling device.setFNumber(): " + error);
-            })
+        });
+        this.captureComponent.spinner.hide();
+        if (response["success"]) {
+            // TODO(jordanhuus): something here...
+        } else {
+            // TODO(jordanhuus): alert user that there was an error...
+        }
     }
 
     // Retrieve available f-stop numbers for the current camera lens
@@ -169,6 +190,11 @@ export class Device {
             "device-type": this.deviceType
         });
         this.captureComponent.spinner.hide();
+        if (response["success"]) {
+            // TODO(jordanhuus): something here...
+        } else {
+            // TODO(jordanhuus): alert user that there was an error...
+        }
         return response;
     }
 
@@ -180,24 +206,45 @@ export class Device {
             "device-type": this.deviceType
         });
         this.captureComponent.spinner.hide();
+        if (response["success"]) {
+            // TODO(jordanhuus): something here...
+        } else {
+            // TODO(jordanhuus): alert user that there was an error...
+        }
+
         return response;
     }
 
     // Set device ISO number
     async setIsoNumber(): Promise<void> {
         this.captureComponent.spinner.show();
-        this.electronService.ipcRenderer.invoke("main", {
+        var response = await this.electronService.ipcRenderer.invoke("main", {
             "command": "setIso_server",
             "device-type": this.deviceType,
             "iso-number": this.iso,
-        })
-            .then(response => {
-                this.iso = response["iso-number"];
-                this.captureComponent.spinner.hide();
-            })
-            .catch(error => {
-                console.log("There was an error calling device.setFNumber()");
-            });
+        });
+        this.captureComponent.spinner.hide();
+        if (response["success"]) {
+            // TODO(jordanhuus): something here...
+        } else {
+            // TODO(jordanhuus): alert user that there was an error...
+        }
+        this.iso = response["iso-number"];
+
+    }
+
+    // Get device details (camera model, etc.)
+    async getDeviceDetails(): Promise<void> {
+        this.captureComponent.spinner.show();
+        var response = await this.electronService.ipcRenderer.invoke("main", {
+            "command": "getDeviceDetails_server",
+            "device-type": this.deviceType
+        });
+        this.captureComponent.spinner.hide();
+        if (!response["success"]) {
+            // TODO(jordanhuus): something here...
+        }
+        return response;
     }
 
     // Ensure user-specified capture count is valid

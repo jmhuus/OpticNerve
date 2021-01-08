@@ -10,6 +10,7 @@ from minimodem import Minimodem
 import json
 import CaptureImage
 import action_request_pb2
+import time
 
 
 app = Flask(__name__)
@@ -700,8 +701,7 @@ def set_iso_number():
             "success": False,
             "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
         })
-    
-    
+
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:

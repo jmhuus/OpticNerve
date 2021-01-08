@@ -57,12 +57,10 @@ export class CaptureComponent implements OnInit {
             "command": "getConnectedDevices_server"
         })
             .then((response) => {
-                console.log(response);
                 for (const [key, value] of Object.entries(response["device-ids"])) {
                     devices.push(new Device(key, parseInt(String(value)), this.electronService, this));
                 }
                 this.devices = devices;
-                this.chosenDevice = this.devices[0];
             })
             .catch(error => {
                 console.log("There was an error calling getConnectedDevices()");
@@ -82,7 +80,6 @@ export class CaptureComponent implements OnInit {
         this.spinner.show();
         this.chosenDevice.initConnectionDetails()
             .then((value) => {
-                console.log("initConnectionDetails complete");
                 this.spinner.hide();
             })
             .catch((error) => {

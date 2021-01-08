@@ -189,7 +189,7 @@ td {
     width: 65px;
     white-space: nowrap;
 }
-#JPEG {
+#format_value {
     left: 182px;
     top: 384px;
     position: absolute;
@@ -208,36 +208,12 @@ td {
     width: 44px;
     white-space: nowrap;
 }
-#vendor_id_title {
-    left: 34px;
-    top: 481px;
-    position: absolute;
-    overflow: visible;
-    width: 83px;
-    white-space: nowrap;
-}
-#lens_title {
+#model_title {
     left: 34px;
     top: 417px;
     position: absolute;
     overflow: visible;
     width: 44px;
-    white-space: nowrap;
-}
-#manufacturer_title {
-    left: 34px;
-    top: 513px;
-    position: absolute;
-    overflow: visible;
-    width: 120px;
-    white-space: nowrap;
-}
-#model_title {
-    left: 34px;
-    top: 449px;
-    position: absolute;
-    overflow: visible;
-    width: 57px;
     white-space: nowrap;
 }
 #device_lens {
@@ -248,9 +224,9 @@ td {
     width: 84px;
     white-space: nowrap;
 }
-#NIKON_D3100 {
-    left: 183px;
-    top: 448px;
+#chosen_device {
+    left: 182px;
+    top: 417px;
     position: absolute;
     overflow: visible;
     width: 131px;
@@ -262,35 +238,7 @@ td {
     font-size: 20px;
     color: rgba(255,255,255,1);
 }
-#ID1234 {
-    left: 183px;
-    top: 480px;
-    position: absolute;
-    overflow: visible;
-    width: 45px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 20px;
-    color: rgba(255,255,255,1);
-}
-#NIKON_D3100_ {
-    left: 183px;
-    top: 514px;
-    position: absolute;
-    overflow: visible;
-    width: 131px;
-    white-space: nowrap;
-    text-align: left;
-    font-family: Helvetica Neue;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 20px;
-    color: rgba(255,255,255,1);
-}
-#ID1920_1080 {
+#image_format {
     left: 508px;
     top: 385px;
     position: absolute;

@@ -192,60 +192,80 @@ async function setIso_server(iso_number, device_type) {
     return response.json();
 }
 
+async function getDeviceDetails_server(device_type) {
+    var response = await fetch("http://127.0.0.1:8080/get-device-details", {
+    	method: "POST",
+    	headers: {
+    	    "Content-Type": "application/json"
+    	},
+    	body: JSON.stringify({
+	    "device-type": device_type
+    	})
+    });
+    return response.json();
+}
+
+// function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
 // Recieve asynchronous request from renderer
-ipcMain.handle('main', async (event, arg) => {
+ipcMain.handle('main', (event, arg) => {
     // Issue the specified command
     switch(arg["command"]) {
     case "getConnectedDevices_server":
-	var response = await getConnectedDevices_server()
+	var response = getConnectedDevices_server()
 	response["command"] = arg["command"];
 	return response;
 	
     case "captureImage_server":
-	var response = await captureImage_server(arg["capture-count"], arg["device-type"])
+	var response = captureImage_server(arg["capture-count"], arg["device-type"])
 	response["command"] = arg["command"];
-	console.log("jfklsdajf2222");
-	console.log(response);
 	return response;
 	
     // TODO(jordanhuus): change naming convention to shutter
     case "setExposure_server":
-	var response = await setExposure_server(arg["exposure-time"], arg["device-type"])
+	var response = setExposure_server(arg["exposure-time"], arg["device-type"])
 	response["command"] = arg["command"];
 	return response;
 
     case "getFNumberOptions_server":
-	var response = await getFNumberOptions_server(arg["device-type"])
-	response["command"] = arg["command"];
+	var response = getFNumberOptions_server(arg["device-type"])
+	response["command"] = arg["command"];	
 	return response;
 
     case "setFNumber_server":
-	var response = await setFNumber_server(arg["f-number"], arg["device-type"])
-	response["command"] = arg["command"];
+	var response = setFNumber_server(arg["f-number"], arg["device-type"])
+	response["command"] = arg["command"];	
 	return response;
 
     case "getCameraState_server":
-	var response = await getCameraState_server(arg["camera-session-id"], arg["device-type"])
-	response["command"] = arg["command"];
+	var response = getCameraState_server(arg["camera-session-id"], arg["device-type"])
+	response["command"] = arg["command"];	
 	return response;
 
     case "getIso_server":
-	var response = await getIso_server(arg["device-type"])
+	var response = getIso_server(arg["device-type"])
 	response["command"] = arg["command"];
 	return response;
 
     case "setIso_server":
-	var response = await setIso_server(arg["iso-number"], arg["device-type"])
+	var response = setIso_server(arg["iso-number"], arg["device-type"])
 	response["command"] = arg["command"];
 	return response;
 
+    case "getDeviceDetails_server":
+	var response = getDeviceDetails_server(arg["device-type"])
+	response["command"] = arg["command"];
+	return response;
+	
     case "shutdown_server":
 	shutdown_server();
 	break;
 	
     default:
-	console.log("command: "+command+" not found.");
-    }
+	console.log("command: "+command+" not found.");}
+    
 })
 
 function displayErrorMessage(error) {

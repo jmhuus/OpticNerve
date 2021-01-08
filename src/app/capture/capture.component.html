@@ -99,50 +99,26 @@
   <div id="Aperture" class="minor-text">
     <span>Aperture</span>
   </div>
-  <div id="JPEG" class="major-text">
-    <span>JPEG</span>
+  <div *ngIf="chosenDevice" id="format_value" class="major-text">
+    <span>{{ chosenDevice.imageFormat }}</span>
   </div>
-
-  <!-- Device Values -->
-  <div id="device_lens" class="major-text">
-    <span>awesome lens</span>
-  </div>
-  
-  <!-- Titles -->
   <div id="format_title" class="minor-text">
     <span>Format</span>
-  </div>
-  <div id="lens_title" class="minor-text">
-    <span>Lens</span>
   </div>
   <div id="model_title" class="minor-text">
     <span>Model</span>
   </div>
-  <div id="vendor_id_title" class="minor-text">
-    <span>VendorID</span>
-  </div>
-  <div id="manufacturer_title" class="minor-text">
-    <span>Manufacturer</span>
-  </div>
   <div id="W_H_title" class="minor-text">
     <span>W, H</span>
   </div>
-  
   <div id="Aperture" class="minor-text">
     <span>Aperture</span>
   </div>
-  
-  <div id="NIKON_D3100">
-    <span>NIKON D3100</span>
+  <div *ngIf="chosenDevice" id="chosen_device">
+    <span>{{ chosenDevice.model }}</span>
   </div>
-  <div id="ID1234">
-    <span>1234</span>
-  </div>
-  <div id="NIKON_D3100_">
-    <span>NIKON D3100</span>
-  </div>
-  <div id="ID1920_1080">
-    <span>1920, 1080</span>
+  <div *ngIf="chosenDevice" id="image_format">
+    <span>{{ chosenDevice.imageFormat }}</span>
   </div>
   <div id="Group_2">
     <div class="Rectangle_5">
