@@ -99,88 +99,25 @@
   <div id="Aperture" class="minor-text">
     <span>Aperture</span>
   </div>
-  <div *ngIf="chosenDevice" id="format_value" class="major-text">
-    <span>{{ chosenDevice.imageFormat }}</span>
-  </div>
-  <div id="format_title" class="minor-text">
-    <span>Format</span>
-  </div>
   <div id="model_title" class="minor-text">
     <span>Model</span>
   </div>
-  <div id="W_H_title" class="minor-text">
-    <span>W, H</span>
+  <div id="image_size_title" class="minor-text">
+    <span>Image Size</span>
   </div>
   <div id="Aperture" class="minor-text">
     <span>Aperture</span>
   </div>
-  <div *ngIf="chosenDevice" id="chosen_device">
+  <div *ngIf="chosenDevice" id="chosen_device_value">
     <span>{{ chosenDevice.model }}</span>
   </div>
-  <div *ngIf="chosenDevice" id="image_format">
+  <div *ngIf="chosenDevice" id="image_format_value">
     <span>{{ chosenDevice.imageFormat }}</span>
   </div>
   <div id="Group_2">
     <div class="Rectangle_5">
       <img *ngIf="chosenDevice" src="{{chosenDevice.imageLatestPath}}" alt="">
     </div>
-  </div>
-  <div id="Group_3">
-    <svg class="Rectangle_5_bf">
-      <rect id="Rectangle_5_bf" rx="0" ry="0" x="0" y="0" width="140" height="94">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_bg" viewBox="0 0 35 32">
-      <path id="Polygon_1_bg" d="M 17.5 0 L 35 32 L 0 32 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_bh">
-      <ellipse id="Ellipse_1_bh" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_bi">
-      <rect id="Rectangle_3_bi" rx="0" ry="0" x="0" y="0" width="37" height="37">
-      </rect>
-    </svg>
-  </div>
-  <div id="Group_4">
-    <svg class="Rectangle_5_bk">
-      <rect id="Rectangle_5_bk" rx="0" ry="0" x="0" y="0" width="140" height="94">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_bl" viewBox="0 0 35 31">
-      <path id="Polygon_1_bl" d="M 17.5 0 L 35 31 L 0 31 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_bm">
-      <ellipse id="Ellipse_1_bm" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_bn">
-      <rect id="Rectangle_3_bn" rx="0" ry="0" x="0" y="0" width="37" height="37">
-      </rect>
-    </svg>
-  </div>
-  <div id="Group_5">
-    <svg class="Rectangle_5_bp">
-      <rect id="Rectangle_5_bp" rx="0" ry="0" x="0" y="0" width="140" height="94">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_bq" viewBox="0 0 35 31">
-      <path id="Polygon_1_bq" d="M 17.5 0 L 35 31 L 0 31 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_br">
-      <ellipse id="Ellipse_1_br" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_bs">
-      <rect id="Rectangle_3_bs" rx="0" ry="0" x="0" y="0" width="37" height="37">
-      </rect>
-    </svg>
-  </div>
-  <div id="Live_View">
-    <span>Live View</span>
   </div>
   <div id="Last_Image">
     <span>Last Image</span>
@@ -222,115 +159,8 @@
   <div [ngClass]="getModeClass('P')" id="P">
     <span>P</span>
   </div>
-  <div id="Group_9">
-    <svg class="Rectangle_5_b">
-      <rect id="Rectangle_5_b" rx="0" ry="0" x="0" y="0" width="140" height="94">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_b" viewBox="0 0 35 32">
-      <path id="Polygon_1_b" d="M 17.5 0 L 35 32 L 0 32 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_b">
-      <ellipse id="Ellipse_1_b" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_b">
-      <rect id="Rectangle_3_b" rx="0" ry="0" x="0" y="0" width="37" height="37">
-      </rect>
-    </svg>
-  </div>
-  <div id="Group_7">
-    <svg class="Rectangle_5_cb">
-      <rect id="Rectangle_5_cb" rx="0" ry="0" x="0" y="0" width="140" height="95">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_cc" viewBox="0 0 35 31">
-      <path id="Polygon_1_cc" d="M 17.5 0 L 35 31 L 0 31 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_cd">
-      <ellipse id="Ellipse_1_cd" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_ce">
-      <rect id="Rectangle_3_ce" rx="0" ry="0" x="0" y="0" width="37" height="36">
-      </rect>
-    </svg>
-  </div>
-  <div id="Group_8">
-    <svg class="Rectangle_5_cg">
-      <rect id="Rectangle_5_cg" rx="0" ry="0" x="0" y="0" width="140" height="94">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_ch" viewBox="0 0 35 32">
-      <path id="Polygon_1_ch" d="M 17.5 0 L 35 32 L 0 32 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_ci">
-      <ellipse id="Ellipse_1_ci" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_cj">
-      <rect id="Rectangle_3_cj" rx="0" ry="0" x="0" y="0" width="37" height="37">
-      </rect>
-    </svg>
-  </div>
   <svg class="Rectangle_6">
     <rect id="Rectangle_6" rx="0" ry="0" x="0" y="0" width="167" height="112">
-    </rect>
-  </svg>
-  <div id="Group_15">
-    <svg class="Rectangle_5_cm">
-      <rect id="Rectangle_5_cm" rx="0" ry="0" x="0" y="0" width="140" height="94">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_cn" viewBox="0 0 35 32">
-      <path id="Polygon_1_cn" d="M 17.5 0 L 35 32 L 0 32 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_co">
-      <ellipse id="Ellipse_1_co" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_cp">
-      <rect id="Rectangle_3_cp" rx="0" ry="0" x="0" y="0" width="37" height="37">
-      </rect>
-    </svg>
-  </div>
-  <div id="Group_17">
-    <svg class="Rectangle_5_cr">
-      <rect id="Rectangle_5_cr" rx="0" ry="0" x="0" y="0" width="140" height="94">
-      </rect>
-    </svg>
-    <svg class="Polygon_1_cs" viewBox="0 0 35 32">
-      <path id="Polygon_1_cs" d="M 17.5 0 L 35 32 L 0 32 Z">
-      </path>
-    </svg>
-    <svg class="Ellipse_1_ct">
-      <ellipse id="Ellipse_1_ct" rx="12.5" ry="12.5" cx="12.5" cy="12.5">
-      </ellipse>
-    </svg>
-    <svg class="Rectangle_3_cu">
-      <rect id="Rectangle_3_cu" rx="0" ry="0" x="0" y="0" width="37" height="37">
-      </rect>
-    </svg>
-  </div>
-  <div id="Group_16">
-    <div class="Rectangle_5_cw">
-      <img *ngIf="chosenDevice" src="{{chosenDevice.imageLatestPath}}" alt="">
-    </div>
-  </div>
-  <svg class="Line_9" viewBox="0 0 1082 1">
-    <path id="Line_9" d="M 0 0 L 1082 0">
-    </path>
-  </svg>
-  <svg class="Rectangle_7">
-    <rect id="Rectangle_7" rx="3.5" ry="3.5" x="0" y="0" width="223" height="7">
-    </rect>
-  </svg>
-  <svg class="Rectangle_8">
-    <rect id="Rectangle_8" rx="0" ry="0" x="0" y="0" width="109" height="121">
     </rect>
   </svg>
   <div id="Count">

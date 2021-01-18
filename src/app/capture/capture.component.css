@@ -181,52 +181,37 @@ td {
     width: 78px;
     white-space: nowrap;
 }
-#format_title {
+
+/* Titles */
+#model_title {
     left: 34px;
-    top: 385px;
+    top: 133px;
     position: absolute;
     overflow: visible;
-    width: 65px;
+    width: 44px;
     white-space: nowrap;
 }
+#image_size_title {
+    left: 34px;
+    top: 166px;
+    position: absolute;
+    overflow: visible;
+    width: 44px;
+    white-space: nowrap;
+}
+
+/* Values */
 #format_value {
     left: 182px;
-    top: 384px;
+    top: 100px;
     position: absolute;
     overflow: visible;
     width: 54px;
     white-space: nowrap;
 }
-
-
-/* Titles */
-#W_H_title {
-    left: 402px;
-    top: 385px;
-    position: absolute;
-    overflow: visible;
-    width: 44px;
-    white-space: nowrap;
-}
-#model_title {
-    left: 34px;
-    top: 417px;
-    position: absolute;
-    overflow: visible;
-    width: 44px;
-    white-space: nowrap;
-}
-#device_lens {
+#chosen_device_value {
     left: 182px;
-    top: 416px;
-    position: absolute;
-    overflow: visible;
-    width: 84px;
-    white-space: nowrap;
-}
-#chosen_device {
-    left: 182px;
-    top: 417px;
+    top: 133px;
     position: absolute;
     overflow: visible;
     width: 131px;
@@ -238,9 +223,9 @@ td {
     font-size: 20px;
     color: rgba(255,255,255,1);
 }
-#image_format {
-    left: 508px;
-    top: 385px;
+#image_format_value {
+    left: 182px;
+    top: 166px;
     position: absolute;
     overflow: visible;
     width: 101px;
@@ -251,6 +236,15 @@ td {
     font-weight: bold;
     font-size: 20px;
     color: rgba(255,255,255,1);
+}
+
+#device_lens {
+    left: 182px;
+    top: 416px;
+    position: absolute;
+    overflow: visible;
+    width: 84px;
+    white-space: nowrap;
 }
 #Group_2 {
     position: absolute;
