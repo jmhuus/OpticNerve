@@ -8,8 +8,8 @@ var webContents;
 var child;
 
 // Init Python Flask server
-initPythonServer();
-sleep(1);
+// initPythonServer();
+// sleep(1);
 
 
 function createWindow () {
@@ -151,6 +151,13 @@ function shutdown_server(){
     fetch(`http://127.0.0.1:8080/shutdown-server`)
 }
 
+async function openImagesFileBrowser_server(){
+    const response = await fetch("http://127.0.0.1:8080/open-file-browser", {
+    	method: "GET",
+    });
+    return response.json();
+}
+
 async function getCameraState_server(cameraSessionId, device_type) {
     var response = await fetch("http://127.0.0.1:8080/get-camera-state", {
     	method: "POST",
@@ -214,18 +221,18 @@ ipcMain.handle('main', (event, arg) => {
     // Issue the specified command
     switch(arg["command"]) {
     case "getConnectedDevices_server":
-	var response = getConnectedDevices_server()
+	var response = getConnectedDevices_server();
 	response["command"] = arg["command"];
 	return response;
 	
     case "captureImage_server":
-	var response = captureImage_server(arg["capture-count"], arg["device-type"])
+	var response = captureImage_server(arg["capture-count"], arg["device-type"]);
 	response["command"] = arg["command"];
 	return response;
 	
     // TODO(jordanhuus): change naming convention to shutter
     case "setExposure_server":
-	var response = setExposure_server(arg["exposure-time"], arg["device-type"])
+	var response = setExposure_server(arg["exposure-time"], arg["device-type"]);
 	response["command"] = arg["command"];
 	return response;
 
@@ -235,7 +242,7 @@ ipcMain.handle('main', (event, arg) => {
 	return response;
 
     case "setFNumber_server":
-	var response = setFNumber_server(arg["f-number"], arg["device-type"])
+	var response = setFNumber_server(arg["f-number"], arg["device-type"]);
 	response["command"] = arg["command"];	
 	return response;
 
@@ -245,7 +252,7 @@ ipcMain.handle('main', (event, arg) => {
 	return response;
 
     case "getIso_server":
-	var response = getIso_server(arg["device-type"])
+	var response = getIso_server(arg["device-type"]);
 	response["command"] = arg["command"];
 	return response;
 
@@ -255,13 +262,18 @@ ipcMain.handle('main', (event, arg) => {
 	return response;
 
     case "getDeviceDetails_server":
-	var response = getDeviceDetails_server(arg["device-type"])
+	var response = getDeviceDetails_server(arg["device-type"]);
 	response["command"] = arg["command"];
 	return response;
 	
     case "shutdown_server":
 	shutdown_server();
 	break;
+
+    case "openImagesFileBrowser_server":
+	var response = openImagesFileBrowser_server();
+	response["command"] = arg["command"];
+	return response;
 	
     default:
 	console.log("command: "+command+" not found.");}

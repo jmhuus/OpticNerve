@@ -11,6 +11,8 @@ import json
 import CaptureImage
 import action_request_pb2
 import time
+import subprocess
+import platform
 
 
 app = Flask(__name__)
@@ -647,7 +649,7 @@ def get_iso_number():
             "success": False,
             "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
         })
-    
+
 
 @app.route("/set-iso-number", methods=["POST"])
 def set_iso_number():
@@ -701,6 +703,37 @@ def set_iso_number():
             "success": False,
             "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
         })
+
+
+@app.route("/open-file-browser")
+def open_file_browser():
+    """
+    JSON requirements:
+     - file path location
+    """
+
+    try:
+        base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-1])
+        file_path = f"{base_path}/OpticNerve/dist/OpticNerve/assets/images/"
+        
+        subprocess.call(
+            [
+                "{}/OpticNerve/backend/dist/server/open_file_explorer.sh".format(base_path),
+                platform.system(),
+                file_path
+            ]
+        )
+        return jsonify({
+            "success": True
+        })
+
+    except Exception as e:
+        print("problem opening file browser...: {}".format(e))
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
+
 
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')

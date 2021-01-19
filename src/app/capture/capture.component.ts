@@ -87,4 +87,17 @@ export class CaptureComponent implements OnInit {
                 console.log(error);
             });
     }
+
+    openImagesFileBrowser(): void {
+        this.electronService.ipcRenderer.invoke("main", {
+            "command": "openImagesFileBrowser_server"
+        })
+            .then(response => {
+                console.log("Done attempting to open file browser at location of captured images.");
+            })
+            .catch(error => {
+                console.log("There was an error connecting to the device...");
+                console.log(error);
+            });
+    }
 }
