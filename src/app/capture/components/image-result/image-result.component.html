@@ -1,0 +1,16 @@
+<div class="container" *ngIf="chosenDevice">
+  <img
+    src="http://localhost:8080/images/{{ chosenDevice.imageLatestName }}"
+    alt="Your most recent image.">
+  <ul class="images-list">
+    <li
+      class="image-item"
+      *ngFor="let image of chosenDevice.previousSevenImages.reverse()">
+      <img
+	src="http://localhost:8080/images/{{image}}"
+	alt="{{ image }}"
+	(click)="chooseImage(image)"
+	[ngStyle]="{'border': (image == chosenDevice.imageLatestName) ? '5px solid grey' : ''}">
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,34 @@
+/* CSS HEX */
+/*
+--pale-silver: #d7cdccff;
+--white: #ffffffff;
+--black-coral: #59656fff;
+--dark-purple: #28112bff;
+--raisin-black: #1d1e2cff;
+*/
+
+/* Global */
+.device {
+    height: 100vh;
+    background: #59656fff;
+}
+.field {
+    padding: 2em 3em;
+}
+
+/* Device Details */
+.device-details {
+    background: #222222;
+    color: #59656fff;
+}
+.device-detail span:last-of-type {
+    font-weight: bold;
+}
+.device-detail {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 10px;
+    font-size: 16px;
+    padding-bottom: 0.7em;
+}
+

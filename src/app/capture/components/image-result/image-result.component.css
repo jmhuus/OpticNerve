@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 50px;
+}
+.container > img {
+    width: 70%;
+}
+/* Images List */
+.images-list {
+    display: flex;
+    flex-flow: row wrap;
+    list-style: none;
+    justify-content: space-around;
+}
+.image-item {
+    flex: 0 1 120px;
+}
+.image-item img {
+    width: 100%;
+    height: auto;
+}

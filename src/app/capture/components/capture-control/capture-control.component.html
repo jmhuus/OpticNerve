@@ -1,0 +1,63 @@
+<form class="device" *ngIf="chosenDevice" [formGroup]="form" (ngSubmit)="captureImage(form.value)">
+  <!-- Device Details -->
+  <div class="field device-details">
+    <h3>Device Details</h3>
+    <div class="device-detail">
+      <span>Model</span><span>{{ chosenDevice.model }}</span>
+    </div>
+    <div class="device-detail">
+      <span>Serial Number</span><span>{{ chosenDevice.serialNumber }}</span>
+    </div>
+  </div>
+  
+  
+  <div class="field capture-controls">
+    <!-- Exposure -->  
+    <h4>Exposure Time</h4>
+    <mat-form-field appearance="fill">
+      <mat-label for="exposure">Exposure</mat-label>
+      <mat-select name="exposure" id="exposure" formControlName="exposure">
+	<mat-option *ngFor="let exposure of chosenDevice.exposureOptions" [value]="exposure">
+	  {{ exposure }}
+	</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- F Stop -->
+    <h4>F-Stop</h4>
+    <mat-form-field *ngIf="chosenDevice.fNumberOptions" appearance="fill">
+      <mat-label for="fNumber">f-number</mat-label>
+      <mat-select name="fNumber" id="fNumber" formControlName="fNumber">
+	<mat-option *ngFor="let fNumber of chosenDevice.fNumberOptions" [value]="fNumber">
+	  {{ fNumber }}
+	</mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+    <!-- ISO -->
+    <h4>Iso</h4>
+    <mat-form-field appearance="fill">
+      <mat-label for="iso">Iso</mat-label>
+      <mat-select name="iso" id="iso" formControlName="iso">
+	<mat-option *ngFor="let iso of chosenDevice.isoOptions" [value]="iso">
+	  {{ iso }}
+	</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Capture Count -->
+    <h4>Capture Count</h4>
+    <mat-form-field appearance="fill">
+      <mat-label for="capture-count">Capture Count</mat-label>
+      <input matInput type="number" id="capture-count" formControlName="captureCount">
+    </mat-form-field>
+  </div>
+
+  <mat-divider></mat-divider>
+  <br>
+  
+  <!-- Submit Button -->
+  <div class="field capture-image-button">
+    <button [disabled]="!form.valid" mat-raised-button type="submit">Capture Image</button>
+  </div>
+</form>

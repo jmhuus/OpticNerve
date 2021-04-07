@@ -1,0 +1,56 @@
+/* CSS HEX
+--pale-silver: #d7cdccff;
+--white: #ffffffff;
+--black-coral: #59656fff;
+--dark-purple: #28112bff;
+--raisin-black: #1d1e2cff;
+*/
+
+
+/* Sidenav */
+mat-sidenav h3 {
+    padding-top: 35px;
+    padding-left: 35px;
+    padding-bottom: 15px;
+    background: #59656fff;
+    color: #d7cdccff;
+    margin: 0;
+}
+mat-sidenav {
+    background: #d7cdccff ;
+}
+.sidenav {
+    max-width: 400px;
+    width: 40%;
+}
+mat-list-option {
+    margin-bottom: 10px;
+}
+.menu-button {
+    background: #1d1e2cff;
+    height: 100vh;
+    color: white;
+}
+::ng-deep .mat-tab-body .mat-tab-body-content .buttons-section {
+    display: flex;
+    justify-content: center;
+    padding: 1em;
+}
+::ng-deep .mat-tab-body .mat-tab-body-content .buttons-section button {
+    margin-right: 15%;
+}
+
+/* Main Content */
+.container {
+    background: #1d1e2cff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+.main-content-grid {
+    display: grid;
+    grid-template-columns: 50px 1fr 3fr;
+    grid-template-rows: 100px;
+}

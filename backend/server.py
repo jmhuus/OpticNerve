@@ -1,6 +1,7 @@
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_cors import CORS
 from datetime import datetime
 from model import setup_db
 import os
@@ -16,6 +17,7 @@ import platform
 
 
 app = Flask(__name__)
+CORS(app)
 
 
 # Set up database
@@ -40,8 +42,7 @@ def get_ptp_devices():
         return jsonify({
             "success": False,
             "error": str(e)
-        })
-    
+        })    
 
 
 @app.route("/get-device-details", methods=["POST"])
@@ -114,13 +115,10 @@ def capture_image():
     if data["device-type"] == "local":
         try:
             # Capture new image
-            base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/"))
-            image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-            output_path = f"{base_path}/dist/OpticNerve/assets/images/{image_file_name}"
-            CaptureImage.capture_new_image(save_path=output_path)
+            image_file_name = CaptureImage.capture_new_image()
             return jsonify({
                 "success": True,
-                "image-path": output_path
+                "image-name": image_file_name
             })
         except Exception as e:
             return jsonify({
@@ -243,10 +241,11 @@ def get_camera_state():
         try:
             # Check camera state
             camera = Camera.query.get(data["camera-session-id"])
+            print("image file name from Camera ORM object: ", camera.image_file_name)
             return jsonify({
                 "success": True,
                 "camera-state": "complete" if camera.camera_state==2 else "pending",
-                "image-path": camera.image_file_name
+                "image-name": camera.image_file_name
             })
         except Exception as e:
             return jsonify({
@@ -734,12 +733,40 @@ def open_file_browser():
             "error": str(e)
         })
 
+    
+@app.route("/images/<path:image_name>")
+def get_image(image_name):
+    try:
+        return send_from_directory(
+            get_current_directory_path()+"images/", image_name)
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
+
 
 def shutdown():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
+
+def get_current_directory_path():
+    """Return directory path based on  if the application is running
+       as a script or as a frozen exe.
+
+    Returns:
+        str: the string of current execution directory path.
+    """
+    if getattr(sys, 'frozen', False):
+        application_path = os.path.dirname(sys.executable)
+    elif __file__:
+        application_path = os.path.dirname(__file__)
+
+    return application_path + "/"
 
     
 @app.route("/shutdown-server")

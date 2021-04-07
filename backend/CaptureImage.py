@@ -23,9 +23,11 @@ def get_usb_device_ids():
 def get_device_details():
     """TODO(jordanhuus): add description
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
     device_info = None
@@ -36,7 +38,12 @@ def get_device_details():
         device_info = ptpSession.GetDeviceInfoDict()
         
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" %
+            PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession, ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -47,28 +54,31 @@ def get_device_details():
     return device_info
 
 
-def capture_new_image(save_path, delete_from_device=False):
-    """Simple function to initiate camera capture and store the result into
-    the provided file object.
+def capture_new_image(delete_from_device=False):
+    """Initiate camera capture and store the result.
     
     Note:
-        Callers should expect the image to have saved correctly if an exception was not
-        thrown.
+        Callers should expect the image to have saved 
+        correctly if an exception was not thrown.
 
     Args:
-        param1: file object opened using 'wb' to result in <class '_io.BufferedWriter'>.
+        param1: file object opened using 'wb' to result in 
+        <class '_io.BufferedWriter'>.
     """
     # PTP Protocol Prep
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
 
     try:
         # Open device session
         ptpSession.OpenSession()
-        ptpSession.InitiateCapture(objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
+        ptpSession.InitiateCapture(
+            objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
 
         # Check for new object added after capture
         objectid = None
@@ -81,13 +91,23 @@ def capture_new_image(save_path, delete_from_device=False):
                 break
 
         # Download newly added object
+        image_file_name = \
+            "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        save_path = os.path.dirname(os.path.realpath(__file__))+"/images/"+image_file_name
         if objectid is not None:
             with open(save_path, "wb") as file:
                 ptpSession.GetObject(objectid, file)
             ptpSession.DeleteObject(objectid)
+
+        return image_file_name
             
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -97,11 +117,12 @@ def capture_new_image(save_path, delete_from_device=False):
 
 
 def multiple_captures(capture_count, session_id, db):
-    """Initiates a series of captures based on the count and the current capture settings.
+    """Initiates a series of captures based on the count.
     
     Note:
-        Callers should observe begin polling the endpoing '/get-camera-state' in order to
-        determine when the device has completed it's series of capturing images.
+        Callers should observe begin polling the endpoint '/get-camera-state'
+        in order to determine when the device has completed it's series of 
+        capturing images.
 
     Args:
         param1: (integer) representing the number of images to be taken.
@@ -112,9 +133,11 @@ def multiple_captures(capture_count, session_id, db):
     #    - See .../computer_science/test_threading/main.py for examples
     def capture_thread(capture_count):
         # PTP Protocol Prep
-        ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        ptpTransport = PtpUsbTransport(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
         bulk_in, bulk_out, interrupt_in = \
-            PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+            PtpUsbTransport.retrieve_device_endpoints(
+                PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
         ptpSession = PtpSession(ptpTransport)
         vendorId = PtpValues.Vendors.STANDARD
         image_file_name = None
@@ -125,7 +148,8 @@ def multiple_captures(capture_count, session_id, db):
             ptpSession.OpenSession()
 
             for _ in range(capture_count):
-                ptpSession.InitiateCapture(objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
+                ptpSession.InitiateCapture(
+                    objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
     
                 # Check for new object added after capture
                 objectid = None
@@ -138,17 +162,23 @@ def multiple_captures(capture_count, session_id, db):
                         break
 
                 # Download newly added object
+                image_file_name = \
+                    "latest_%s.jpg" % datetime.now().strftime(
+                        "%Y_%m_%d_%H_%M_%S")
+                save_path = os.path.dirname(os.path.realpath(__file__))+"/images/"+image_file_name
                 if objectid is not None:
-                    base_path = "/".join(os.path.dirname(os.path.realpath(__file__)).rsplit("/")[:-3])
-                    image_file_name = "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-                    file_path = f"{base_path}/dist/OpticNerve/assets/images/{image_file_name}"
-                    with open(file_path, "wb") as file:
+                    with open(save_path, "wb") as file:
                         ptpSession.GetObject(objectid, file)
-                    camera.image_file_name = file_path
+                    camera.image_file_name = image_file_name
                     db.session.commit()
         
         except PtpException as e:
-            raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+            raise PtpException(
+                "PTP Exception: %s" % PtpValues.ResponseNameById(
+                    e.responsecode,
+                    vendorId),
+                ptpSession,
+                ptpTransport)
         except Exception as e:
             raise Exception(e)
 
@@ -161,7 +191,10 @@ def multiple_captures(capture_count, session_id, db):
         db.session.commit()
 
     # Start new thread to capture images
-    t1 = Thread(target=capture_thread, kwargs={"capture_count": capture_count}, daemon=True)
+    t1 = Thread(
+        target=capture_thread,
+        kwargs={"capture_count": capture_count},
+        daemon=True)
     t1.start()
 
 
@@ -177,9 +210,12 @@ def begin_timelapse(file, delay):
         param1: file object opened using 'wb' to result in <class '_io.BufferedWriter'>
         param2: delay between captures. In milliseconds.
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(
+            PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
 
@@ -190,7 +226,8 @@ def begin_timelapse(file, delay):
         # Initiate timelapse capture events
         id = 0
         while True:
-            ptpSession.InitiateCapture(objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
+            ptpSession.InitiateCapture(
+                objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
 
             # Check for new object added after capture
             objectid = None
@@ -214,7 +251,12 @@ def begin_timelapse(file, delay):
             # Delay between shots
             time.sleep(delay)
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -225,14 +267,17 @@ def begin_timelapse(file, delay):
 
 
 def set_exposure_time(exposure_time):
-    """Changes the current exposure time when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
+    """Changes the current exposure time when using manual mode. 
+       TODO(jordanhuus): confirm when this works and doesn't work.
 
     Args:
         param1: (int) in milliseconds on how long the exposure will be open.
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
 
@@ -242,7 +287,12 @@ def set_exposure_time(exposure_time):
         ptpSession.SetExposureTime(exposure_time)
 
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -255,9 +305,11 @@ def set_exposure_time(exposure_time):
 def get_exposure_time():
     """TODO(jordanhuus): set doc string.
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
     exposure_time = None
@@ -268,7 +320,12 @@ def get_exposure_time():
         exposure_time = ptpSession.GetExposureTime()
 
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -280,14 +337,18 @@ def get_exposure_time():
 
 
 def set_f_number(f_number):
-    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work.
+    """Changes the current aperture size when using manual mode.
+       TODO(jordanhuus): confirm when this works and doesn't work.
 
     Args:
         param1 (float): TODO(jordanhuus): determine unit of measurement
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(
+            PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
 
@@ -297,7 +358,12 @@ def set_f_number(f_number):
         ptpSession.SetFNumber(f_number)
 
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -307,14 +373,19 @@ def set_f_number(f_number):
 
 
 def get_f_number():
-    """Changes the current aperture size when using manual mode. TODO(jordanhuus): confirm when this works and doesn't work based on the current mode being used. Perhaps this app can override the shooting mode?
+    """Changes the current aperture size when using manual mode.
+       TODO(jordanhuus): confirm when this works and doesn't work
+       based on the current mode being used. Perhaps this app can
+       override the shooting mode?
 
     Args:
         param1 (float): TODO(jordanhuus): determine unit of measurement
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
     f_number = None
@@ -325,7 +396,12 @@ def get_f_number():
         f_number = ptpSession.GetFNumber()
         
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -341,9 +417,11 @@ def get_f_number():
 def get_f_number_options():
     """TODO(jordanhuus): add doc string
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
     minimum_f_stop = None
@@ -416,7 +494,12 @@ def get_f_number_options():
                         continue
 
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -425,8 +508,8 @@ def get_f_number_options():
     del ptpTransport
     
     return f_stops[f_stop_type_index][\
-                                      f_stops[f_stop_type_index].index(minimum_f_stop):\
-                                      f_stops[f_stop_type_index].index(maximum_f_stop)+1
+                    f_stops[f_stop_type_index].index(minimum_f_stop):\
+                    f_stops[f_stop_type_index].index(maximum_f_stop)+1
     ]
 
 
@@ -434,9 +517,11 @@ def get_f_number_options():
 def get_iso_number():
     """TODO(jordanhuus): add doc string
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
     iso_number = None
@@ -449,7 +534,12 @@ def get_iso_number():
 
         
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
@@ -463,9 +553,11 @@ def get_iso_number():
 def set_iso_number(iso_number):
     """TODO(jordanhuus): add doc string
     """
-    ptpTransport = PtpUsbTransport(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+    ptpTransport = PtpUsbTransport(
+        PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     bulk_in, bulk_out, interrupt_in = \
-        PtpUsbTransport.retrieve_device_endpoints(PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
+        PtpUsbTransport.retrieve_device_endpoints(
+            PtpUsbTransport.findptps(PtpUsbTransport.USB_CLASS_PTP))
     ptpSession = PtpSession(ptpTransport)
     vendorId = PtpValues.Vendors.STANDARD
 
@@ -475,7 +567,12 @@ def set_iso_number(iso_number):
         ptpSession.SetExposureIndex(iso_number)
         
     except PtpException as e:
-        raise PtpException("PTP Exception: %s" % PtpValues.ResponseNameById(e.responsecode, vendorId), ptpSession, ptpTransport)
+        raise PtpException(
+            "PTP Exception: %s" % PtpValues.ResponseNameById(
+                e.responsecode,
+                vendorId),
+            ptpSession,
+            ptpTransport)
     except Exception as e:
         raise Exception(e)
 
