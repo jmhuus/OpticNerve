@@ -11,6 +11,7 @@
 .device {
     height: 100vh;
     background: #59656fff;
+    position: relative;
 }
 .field {
     padding: 2em 3em;
@@ -32,3 +33,16 @@
     padding-bottom: 0.7em;
 }
 
+/* Spinner */
+mat-spinner {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+}
+.spinner-overlay {
+    position: absolute;
+    background: rgba(50, 50, 50, 0.5);
+    backdrop-filter: blur(6px);
+    height: 100%;
+    width: 100%;
+}

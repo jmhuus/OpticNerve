@@ -25,6 +25,7 @@ export class Device {
     public lensName: string;
     public previousSevenImages: string[];
     public manufacturer: string;
+    public deviceCommsPending: boolean;
 
     // User-specified settings
     public shooting_mode: string;
@@ -64,6 +65,7 @@ export class Device {
         this.captureCount = 1;
         this.iso = this.isoOptions[0];
         this.previousSevenImages = [];
+        this.deviceCommsPending = false;
     }
 
     public async initConnectionDetails(): Promise<boolean> {
@@ -192,6 +194,7 @@ export class Device {
     // Retrieves the device exposure time which sets the exposure time (milliseconds)
     // Only available for manual (M) and shutter priority (S) modes
     async setExposure(): Promise<any> {
+        this.deviceCommsPending = true;
         const body = {
             'device-type': this.deviceType,
             'exposure-time': this.exposureTime
@@ -206,12 +209,13 @@ export class Device {
         if (response['success']) {
             this.exposureTime = this.exposureOptions[0];
         } else {
-            console.log(response);
+            // TODO(jordanhuus): show snackbar when error occurs
         }
+        this.deviceCommsPending = false;
     }
 
     async setFNumber(): Promise<any> {
-        // TODO(jordanhuus): show spinner
+        this.deviceCommsPending = true;
         const body = {
             'device-type': this.deviceType,
             'f-number': this.fNumber
@@ -223,14 +227,15 @@ export class Device {
             'http://127.0.0.1:8080/set-aperture-f-stop',
             body,
             postOptions).toPromise();
-        if (response['success']) {
-            // TODO(jordanhuus): hide spinner
+        if (!response['success']) {
+            // TODO(jordanhuus): show snackbar when error occurs
         }
+        this.deviceCommsPending = false;
     }
 
     // Retrieve available f-stop numbers for the current camera lens
     async getFNumberOptions(): Promise<any> {
-        // TODO(jordanhuus): show spinner
+        this.deviceCommsPending = true;
         const body = { 'device-type': this.deviceType };
         const postOptions = {
             headers: { 'Content-Type': 'application/json' }
@@ -242,11 +247,15 @@ export class Device {
         if (response['success']) {
             this.fNumberOptions = response["f-number-options"];
             this.fNumber = this.fNumberOptions[0];
+        } else {
+            // TODO(jordanhuus): show snackbar when error occurs
         }
+        this.deviceCommsPending = false;
     }
 
     // Retrieve current device ISO number
     async getIsoNumber(): Promise<any> {
+        this.deviceCommsPending = true;
         const body = { 'device-type': 'local' };
         const postOptions = {
             headers: {
@@ -260,11 +269,15 @@ export class Device {
             postOptions).toPromise();
         if (response['success']) {
             this.iso = response['iso-number'];
+        } else {
+            // TODO(jordanhuus): show snackbar when error occurs
         }
+        this.deviceCommsPending = false;
     }
 
     // Set device ISO number
     async setIsoNumber(): Promise<any> {
+        this.deviceCommsPending = true;
         const body = {
             'device-type': 'local',
             'iso-number': this.iso
@@ -281,12 +294,15 @@ export class Device {
             postOptions).toPromise();
         if (response['success']) {
             this.iso = response['iso-number'];
+        } else {
+            // TODO(jordanhuus): show snackbar when error occurs
         }
+        this.deviceCommsPending = false;
     }
 
     // Get device details (camera model, etc.)
     async getDeviceDetails(): Promise<any> {
-        // TODO(jordanhuus): show spinner
+        this.deviceCommsPending = true;
         const body = { 'device-type': this.deviceType };
         const postOptions = {
             headers: { 'Content-Type': 'application/json' }
@@ -295,8 +311,13 @@ export class Device {
             "http://127.0.0.1:8080/get-device-details",
             body,
             postOptions).toPromise();
-        this.imageFormat = response["device-details"]["CaptureFormats"];
-        this.manufacturer = response["device-details"]["Manufacturer"];
+        if (!response["success"]) {
+            this.imageFormat = response["device-details"]["CaptureFormats"];
+            this.manufacturer = response["device-details"]["Manufacturer"];
+        } else {
+            // TODO(jordanhuus): show snackbar when error occurs
+        }
+        this.deviceCommsPending = false;
     }
 
     // Ensure user-specified capture count is valid

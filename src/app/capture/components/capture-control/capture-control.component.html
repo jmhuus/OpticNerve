@@ -1,4 +1,9 @@
 <form class="device" *ngIf="chosenDevice" [formGroup]="form" (ngSubmit)="captureImage(form.value)">
+  <!-- Spinner -->
+  <div *ngIf="chosenDevice.deviceCommsPending" class="spinner-overlay">
+  </div>
+  <mat-spinner *ngIf="chosenDevice.deviceCommsPending"></mat-spinner>
+  
   <!-- Device Details -->
   <div class="field device-details">
     <h3>Device Details</h3>
@@ -19,7 +24,11 @@
     <h4>Exposure Time</h4>
     <mat-form-field appearance="fill">
       <mat-label for="exposure">Exposure</mat-label>
-      <mat-select name="exposure" id="exposure" formControlName="exposure">
+      <mat-select
+	[disabled]="chosenDevice.deviceCommsPending"
+	name="exposure"
+	id="exposure"
+	formControlName="exposure">
 	<mat-option *ngFor="let exposure of chosenDevice.exposureOptions" [value]="exposure">
 	  {{ exposure }}
 	</mat-option>
@@ -30,7 +39,11 @@
     <h4>F-Stop</h4>
     <mat-form-field *ngIf="chosenDevice.fNumberOptions" appearance="fill">
       <mat-label for="fNumber">f-number</mat-label>
-      <mat-select name="fNumber" id="fNumber" formControlName="fNumber">
+      <mat-select
+	[disabled]="chosenDevice.deviceCommsPending"
+	name="fNumber"
+	id="fNumber"
+	formControlName="fNumber">
 	<mat-option *ngFor="let fNumber of chosenDevice.fNumberOptions" [value]="fNumber">
 	  {{ fNumber }}
 	</mat-option>
@@ -41,7 +54,11 @@
     <h4>Iso</h4>
     <mat-form-field appearance="fill">
       <mat-label for="iso">Iso</mat-label>
-      <mat-select name="iso" id="iso" formControlName="iso">
+      <mat-select
+	[disabled]="chosenDevice.deviceCommsPending"
+	name="iso"
+	id="iso"
+	formControlName="iso">
 	<mat-option *ngFor="let iso of chosenDevice.isoOptions" [value]="iso">
 	  {{ iso }}
 	</mat-option>
@@ -52,7 +69,12 @@
     <h4>Capture Count</h4>
     <mat-form-field appearance="fill">
       <mat-label for="capture-count">Capture Count</mat-label>
-      <input matInput type="number" id="capture-count" formControlName="captureCount">
+      <input
+	[disabled]="chosenDevice.deviceCommsPending"
+	matInput
+	type="number"
+	id="capture-count"
+	formControlName="captureCount">
     </mat-form-field>
   </div>
 
@@ -61,6 +83,6 @@
   
   <!-- Submit Button -->
   <div class="field capture-image-button">
-    <button [disabled]="!form.valid" mat-raised-button type="submit">Capture Image</button>
+    <button [disabled]="!form.valid || chosenDevice.deviceCommsPending" mat-raised-button type="submit">Capture Image</button>
   </div>
 </form>
