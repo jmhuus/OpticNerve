@@ -24,6 +24,7 @@ export class Device {
     public imageFormat: string;
     public lensName: string;
     public previousSevenImages: string[];
+    public manufacturer: string;
 
     // User-specified settings
     public shooting_mode: string;
@@ -295,9 +296,7 @@ export class Device {
             body,
             postOptions).toPromise();
         this.imageFormat = response["device-details"]["CaptureFormats"];
-        this.model =
-            response["device-details"]["Manufacturer"] +
-            " " + response["device-details"]["Model"];
+        this.manufacturer = response["device-details"]["Manufacturer"];
     }
 
     // Ensure user-specified capture count is valid
