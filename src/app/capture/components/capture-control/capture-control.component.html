@@ -30,7 +30,7 @@
 	id="exposure"
 	formControlName="exposure">
 	<mat-option *ngFor="let exposure of chosenDevice.exposureOptions" [value]="exposure">
-	  {{ exposure }}
+	  {{ exposure / 10000 | number:'0.4' }}s
 	</mat-option>
       </mat-select>
     </mat-form-field>
@@ -45,7 +45,7 @@
 	id="fNumber"
 	formControlName="fNumber">
 	<mat-option *ngFor="let fNumber of chosenDevice.fNumberOptions" [value]="fNumber">
-	  {{ fNumber }}
+	  f{{ fNumber / 100 | number:'0.1' }}
 	</mat-option>
       </mat-select>
     </mat-form-field>

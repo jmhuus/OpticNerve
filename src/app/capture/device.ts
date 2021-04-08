@@ -132,7 +132,6 @@ export class Device {
                 body,
                 postOptions).toPromise();
             if (response['success']) {
-                console.log("blah 9876: ", response);
                 if ("camera-session-id" in response) {
                     this.observeCameraStateUntilCompletion(
                         response["camera-session-id"]);
@@ -311,7 +310,7 @@ export class Device {
             "http://127.0.0.1:8080/get-device-details",
             body,
             postOptions).toPromise();
-        if (!response["success"]) {
+        if (response["success"]) {
             this.imageFormat = response["device-details"]["CaptureFormats"];
             this.manufacturer = response["device-details"]["Manufacturer"];
         } else {
