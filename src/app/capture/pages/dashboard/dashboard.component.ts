@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Device } from '../../device';
 import { ElectronService } from 'ngx-electron';
 import { HttpClient } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // TODO(jordanhuus): Consider removing eletronservice if not used after migrating
 // to HttCliennt.
@@ -29,6 +30,7 @@ export class DashboardComponent implements OnInit {
 
     constructor(
         _electronService: ElectronService,
+        private _snackBar: MatSnackBar,
         private http: HttpClient
     ) {
         this.actionPending = false;
@@ -103,5 +105,9 @@ export class DashboardComponent implements OnInit {
             .subscribe(() => {
                 console.log("Done attempting to open file browser at location of captured images.");
             });
+    }
+
+    showSnackBarMessage(message: string): void {
+        this._snackBar.open(message, "", { duration: 5000 });
     }
 }

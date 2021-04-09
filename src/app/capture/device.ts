@@ -126,7 +126,6 @@ export class Device {
                     'Content-Type': 'application/json'
                 }
             };
-            // TODO(jordanhuus): notify user of POST error response
             let response = await this.http.post(
                 "http://localhost:8080/multiple-captures-by-count",
                 body,
@@ -139,6 +138,8 @@ export class Device {
                     this.imageLatestName = response["image-name"];
                     this.addImageToHistory(response["image-name"]);
                 }
+            } else {
+                // TODO(jordanhuus): display toast if error occurs
             }
         } else {
             const body = {

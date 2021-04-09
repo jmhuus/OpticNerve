@@ -30,6 +30,7 @@ export class CaptureControlComponent implements OnInit {
     iso: FormControl;
 
     @Input('chosenDevice') public chosenDevice: Device;
+    @Output() showSnackBarEvent = new EventEmitter();
 
     constructor() { }
 
@@ -87,11 +88,14 @@ export class CaptureControlComponent implements OnInit {
             captureCount: this.captureCount,
             exposure: this.exposure,
             iso: this.iso
-            // fNumber: this.fNumber
         });
     }
 
     captureImage(formValue: any): void {
         this.chosenDevice.captureImage();
+    }
+
+    showSnackBarMessage(message: string): void {
+        this.showSnackBarEvent.emit(message);
     }
 }

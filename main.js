@@ -8,8 +8,8 @@ var webContents;
 var child;
 
 // Init Python Flask server
-// initPythonServer();
-// sleep(1);
+initPythonServer();
+sleep(1);
 
 
 function createWindow () {
