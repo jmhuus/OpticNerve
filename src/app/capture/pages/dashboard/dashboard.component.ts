@@ -30,8 +30,8 @@ export class DashboardComponent implements OnInit {
 
     constructor(
         _electronService: ElectronService,
-        private _snackBar: MatSnackBar,
-        private http: HttpClient
+        private http: HttpClient,
+        private _snackBar: MatSnackBar
     ) {
         this.actionPending = false;
         this.actionPendingMessage = "";
@@ -63,7 +63,7 @@ export class DashboardComponent implements OnInit {
             .subscribe(response => {
                 if (response["success"]) {
                     for (const [key, value] of Object.entries(response["device-ids"])) {
-                        devices.push(new Device(key, parseInt(String(value)), null, this, this.http));
+                        devices.push(new Device(key, parseInt(String(value)), this, this.http));
                     }
                     this.devices = devices;
                 }

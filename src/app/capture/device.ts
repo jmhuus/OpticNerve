@@ -1,9 +1,6 @@
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { ElectronService } from 'ngx-electron';
 import { interval } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
 
 const DeviceType = {
     LOCAL: 'local',
@@ -32,7 +29,6 @@ export class Device {
     public exposure: number;
     public iso: number;
     public deviceType: string;
-    private electronService: ElectronService;
     private dashboardComponent: DashboardComponent;
     public captureCount: number;
     public exposureTime: number
@@ -41,13 +37,11 @@ export class Device {
     public constructor(
         _model: string,
         _serialNumber: number,
-        private _electronService: ElectronService,
         private _dashboardComponent: DashboardComponent,
         private http: HttpClient
     ) {
         this.model = _model;
         this.serialNumber = _serialNumber;
-        this.electronService = _electronService;
         this.dashboardComponent = _dashboardComponent;
         this.captureCount = 1;
 
@@ -139,7 +133,8 @@ export class Device {
                     this.addImageToHistory(response["image-name"]);
                 }
             } else {
-                // TODO(jordanhuus): display toast if error occurs
+                this.dashboardComponent.showSnackBarMessage(
+                    "There was an error: " + response["error"]);
             }
         } else {
             const body = {
@@ -159,11 +154,14 @@ export class Device {
             if (response['success']) {
                 this.imageLatestName = response["image-name"];
                 this.addImageToHistory(response["image-name"]);
+            } else {
+                this.dashboardComponent.showSnackBarMessage(
+                    "There was an error: " + response["error"]);
             }
         }
     }
 
-    // Used when taking a timelapse to confirm when the device is comple, this.electronServicete
+    // Used when taking a timelapse to confirm when the device is complete
     observeCameraStateUntilCompletion(cameraSessionId): void {
         let subscription = interval(1000).subscribe(x => {
             const body = {
@@ -181,6 +179,9 @@ export class Device {
                     if (response["success"] && response["image-name"]) {
                         this.imageLatestName = response["image-name"];
                         this.addImageToHistory(response["image-name"]);
+                    } else {
+                        this.dashboardComponent.showSnackBarMessage(
+                            "There was an error: " + response["error"]);
                     }
 
                     // Time lapse completion
@@ -209,7 +210,8 @@ export class Device {
         if (response['success']) {
             this.exposureTime = this.exposureOptions[0];
         } else {
-            // TODO(jordanhuus): show snackbar when error occurs
+            this.dashboardComponent.showSnackBarMessage(
+                "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
     }
@@ -228,7 +230,8 @@ export class Device {
             body,
             postOptions).toPromise();
         if (!response['success']) {
-            // TODO(jordanhuus): show snackbar when error occurs
+            this.dashboardComponent.showSnackBarMessage(
+                "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
     }
@@ -248,7 +251,8 @@ export class Device {
             this.fNumberOptions = response["f-number-options"];
             this.fNumber = this.fNumberOptions[0];
         } else {
-            // TODO(jordanhuus): show snackbar when error occurs
+            this.dashboardComponent.showSnackBarMessage(
+                "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
     }
@@ -262,7 +266,6 @@ export class Device {
                 'Content-Type': 'application/json'
             }
         };
-        // TODO(jordanhuus): notify user of POST error response
         let response = await this.http.post(
             "http://localhost:8080/get-iso-number",
             body,
@@ -270,7 +273,8 @@ export class Device {
         if (response['success']) {
             this.iso = response['iso-number'];
         } else {
-            // TODO(jordanhuus): show snackbar when error occurs
+            this.dashboardComponent.showSnackBarMessage(
+                "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
     }
@@ -287,7 +291,6 @@ export class Device {
                 'Content-Type': 'application/json'
             }
         };
-        // TODO(jordanhuus): notify user of POST error response
         let response = await this.http.post(
             "http://localhost:8080/set-iso-number",
             body,
@@ -295,7 +298,8 @@ export class Device {
         if (response['success']) {
             this.iso = response['iso-number'];
         } else {
-            // TODO(jordanhuus): show snackbar when error occurs
+            this.dashboardComponent.showSnackBarMessage(
+                "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
     }
@@ -315,7 +319,8 @@ export class Device {
             this.imageFormat = response["device-details"]["CaptureFormats"];
             this.manufacturer = response["device-details"]["Manufacturer"];
         } else {
-            // TODO(jordanhuus): show snackbar when error occurs
+            this.dashboardComponent.showSnackBarMessage(
+                "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
     }

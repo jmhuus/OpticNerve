@@ -47,7 +47,7 @@
       </div>
 
       <!-- Camera Controls -->
-      <app-capture-control (showSnackBar)="showSnackBarMessage($event.value)" [chosenDevice]="chosenDevice"></app-capture-control>
+      <app-capture-control [chosenDevice]="chosenDevice"></app-capture-control>
       
       <!-- Image Result -->
       <app-image-result [chosenDevice]="chosenDevice"></app-image-result>
