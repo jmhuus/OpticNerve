@@ -72,21 +72,25 @@ export class DashboardComponent implements OnInit {
 
     // User connecting to a specific device
     chooseDevice(device: Device, selectedTabIndex: any): void {
+
         // USB
         if (selectedTabIndex == ConnectionTypeIndexes.USB) {
+            if (device == null) {
+                this.showSnackBarMessage("Please select a device to connect to.");
+                return;
+            }
+
             this.chosenDevice = device;
-            // TODO(jordanhuus): show spinner
             this.chosenDevice.initConnectionDetails()
                 .then(() => {
-                    // TODO(jordanhuus): hide spinner
                 })
                 .catch((error) => {
-                    console.log("There was an error connecting to the device...");
-                    console.log(error);
+                    this.showSnackBarMessage("There was an error: " + error);
                 });
 
             // Remote Packet Radio
         } else if (selectedTabIndex == ConnectionTypeIndexes.REMOTE_PACKET_RADIO) {
+            // TODO(jordanhuus): implement packet radio connection
             console.log("Packet radio selected");
         }
     }
