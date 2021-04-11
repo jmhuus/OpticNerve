@@ -5,6 +5,7 @@ backend/dist/
 backend/build/
 build/
 optic-nerve-linux-x64/
+package-lock.json
 
 # compiled output
 /dist

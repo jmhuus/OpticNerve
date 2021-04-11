@@ -92,5 +92,6 @@ export class CaptureControlComponent implements OnInit {
 
     captureImage(formValue: any): void {
         this.chosenDevice.captureImage();
+        console.log(this.chosenDevice);
     }
 }
