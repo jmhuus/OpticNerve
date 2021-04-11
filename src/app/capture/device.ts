@@ -2,11 +2,6 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { interval } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
-const DeviceType = {
-    LOCAL: 'local',
-    RADIO: 'radio'
-};
-
 export class Device {
     public id: number;
     public serialNumber: number;
@@ -29,21 +24,24 @@ export class Device {
     public exposure: number;
     public iso: number;
     public deviceType: string;
-    private dashboardComponent: DashboardComponent;
     public captureCount: number;
     public exposureTime: number
     public fNumber: number;
 
+    public static readonly LOCAL = "local";
+    public static readonly REMOTE = "remote";
+
     public constructor(
         _model: string,
         _serialNumber: number,
+        _deviceType: string,
         private _dashboardComponent: DashboardComponent,
         private http: HttpClient
     ) {
         this.model = _model;
         this.serialNumber = _serialNumber;
-        this.dashboardComponent = _dashboardComponent;
         this.captureCount = 1;
+        this.deviceType = _deviceType;
 
         // Temp hard-coded
         this.imageLatestName = "milky_way_image_pending.jpg";
@@ -63,7 +61,6 @@ export class Device {
     }
 
     public async initConnectionDetails(): Promise<boolean> {
-        this.deviceType = DeviceType.LOCAL;
         await this.getFNumberOptions();
         await this.setFNumber();
         await this.setIsoNumber();
@@ -112,7 +109,7 @@ export class Device {
     async captureImage(): Promise<any> {
         if (this.captureCount > 1) {
             const body = {
-                'device-type': 'local',
+                'device-type': this.deviceType,
                 'capture-count': this.captureCount
             };
             const postOptions = {
@@ -133,12 +130,12 @@ export class Device {
                     this.addImageToHistory(response["image-name"]);
                 }
             } else {
-                this.dashboardComponent.showSnackBarMessage(
+                this._dashboardComponent.showSnackBarMessage(
                     "There was an error: " + response["error"]);
             }
         } else {
             const body = {
-                'device-type': 'local',
+                'device-type': this.deviceType,
             };
             const postOptions = {
                 headers: {
@@ -155,7 +152,7 @@ export class Device {
                 this.imageLatestName = response["image-name"];
                 this.addImageToHistory(response["image-name"]);
             } else {
-                this.dashboardComponent.showSnackBarMessage(
+                this._dashboardComponent.showSnackBarMessage(
                     "There was an error: " + response["error"]);
             }
         }
@@ -165,7 +162,7 @@ export class Device {
     observeCameraStateUntilCompletion(cameraSessionId): void {
         let subscription = interval(1000).subscribe(x => {
             const body = {
-                'device-type': 'local',
+                'device-type': this.deviceType,
                 'camera-session-id': cameraSessionId
             };
             const postOptions = {
@@ -180,7 +177,7 @@ export class Device {
                         this.imageLatestName = response["image-name"];
                         this.addImageToHistory(response["image-name"]);
                     } else {
-                        this.dashboardComponent.showSnackBarMessage(
+                        this._dashboardComponent.showSnackBarMessage(
                             "There was an error: " + response["error"]);
                     }
 
@@ -210,7 +207,7 @@ export class Device {
         if (response['success']) {
             this.exposureTime = this.exposureOptions[0];
         } else {
-            this.dashboardComponent.showSnackBarMessage(
+            this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
@@ -230,7 +227,7 @@ export class Device {
             body,
             postOptions).toPromise();
         if (!response['success']) {
-            this.dashboardComponent.showSnackBarMessage(
+            this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
@@ -251,7 +248,7 @@ export class Device {
             this.fNumberOptions = response["f-number-options"];
             this.fNumber = this.fNumberOptions[0];
         } else {
-            this.dashboardComponent.showSnackBarMessage(
+            this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
@@ -260,7 +257,7 @@ export class Device {
     // Retrieve current device ISO number
     async getIsoNumber(): Promise<any> {
         this.deviceCommsPending = true;
-        const body = { 'device-type': 'local' };
+        const body = { 'device-type': this.deviceType };
         const postOptions = {
             headers: {
                 'Content-Type': 'application/json'
@@ -273,7 +270,7 @@ export class Device {
         if (response['success']) {
             this.iso = response['iso-number'];
         } else {
-            this.dashboardComponent.showSnackBarMessage(
+            this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
@@ -283,7 +280,7 @@ export class Device {
     async setIsoNumber(): Promise<any> {
         this.deviceCommsPending = true;
         const body = {
-            'device-type': 'local',
+            'device-type': this.deviceType,
             'iso-number': this.iso
         };
         const postOptions = {
@@ -298,7 +295,7 @@ export class Device {
         if (response['success']) {
             this.iso = response['iso-number'];
         } else {
-            this.dashboardComponent.showSnackBarMessage(
+            this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;
@@ -319,7 +316,7 @@ export class Device {
             this.imageFormat = response["device-details"]["CaptureFormats"];
             this.manufacturer = response["device-details"]["Manufacturer"];
         } else {
-            this.dashboardComponent.showSnackBarMessage(
+            this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
         }
         this.deviceCommsPending = false;

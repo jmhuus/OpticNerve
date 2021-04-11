@@ -69,7 +69,7 @@ def device_details():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Construct protobuf request
             action_request = action_request_pb2.ActionRequest()
@@ -98,7 +98,7 @@ def device_details():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
         
 
@@ -127,7 +127,7 @@ def capture_image():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -150,7 +150,7 @@ def capture_image():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
@@ -195,7 +195,7 @@ def capture_images_count():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -218,7 +218,7 @@ def capture_images_count():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(["device-type"])
         })
     
 
@@ -254,7 +254,7 @@ def get_camera_state():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -279,7 +279,7 @@ def get_camera_state():
     else:
         return jsonify({
                 "success": False,
-                "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+                "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
@@ -312,7 +312,7 @@ def set_exposure():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -336,7 +336,7 @@ def set_exposure():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
         
@@ -364,7 +364,7 @@ def gete_exposure():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -388,7 +388,7 @@ def gete_exposure():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
@@ -420,7 +420,7 @@ def set_aperture():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -444,7 +444,7 @@ def set_aperture():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
@@ -473,7 +473,7 @@ def set_aperture_f_stop():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -497,7 +497,7 @@ def set_aperture_f_stop():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
         
@@ -527,7 +527,7 @@ def get_aperture_options():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -551,7 +551,7 @@ def get_aperture_options():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
         
@@ -581,7 +581,7 @@ def get_id_lens():
                 "error": str(e)
             })
             
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         # Serialize data into protobuf
         action_request = action_request_pb2.ActionRequest()
         action_request.action = action_request_pb2.ActionRequest.ACTION_GET_LENS_ID
@@ -622,7 +622,7 @@ def get_iso_number():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -646,7 +646,7 @@ def get_iso_number():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
@@ -676,7 +676,7 @@ def set_iso_number():
             })
 
     # Remote communication via packet radio
-    elif data["device-type"] == "radio":
+    elif data["device-type"] == "remote":
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
@@ -700,7 +700,7 @@ def set_iso_number():
     else:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'radio' options allowed.".format(data["device-type"])
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
