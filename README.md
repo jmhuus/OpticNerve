@@ -1,4 +1,4 @@
-## Optic Nervep
+## Optic Nerve
 Optic Nerve is a desktop app that can control DSLR camera's via USB or packet radio to initiate new pictures, download images, and change various camera capture settings such as ISO, F-Stop, and Exposure (Shutter). 
 
 ### USB
