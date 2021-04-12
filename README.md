@@ -1,32 +1,34 @@
-### Optic Nerve
-This is a simple desktop GUI to control a tethered camera device. This application is great for star gazing in the comfort of your car, tent, or otherwise.
+## Optic Nerve
+Optic Nerve is a desktop app that can control DSLR camera's via USB or packet radio to initiate new pictures, download images, and change various camera capture settings such as ISO, F-Stop, and Epxosure (Shutter). 
 
-I decided to build this app even though there are some great existing applications (DarkTable, Capture One, Adobe Lightroom, etc) as a learning journey. Also, I'd like a more user-friendly UX to engage with when working at night - dark screen, preview of the last image taken, and easy to set capture settings.
+##### USB
+These commands are communicated directly to the DSLR via USB using the PTP protocol. Connecting a DSLR direclty to your MacOS or Linux machine allows you to issue these commands.
+
+##### Packet Radio (WIP)
+Optic Nerve can communicate with your DSLR wirelessly over packet radio. Packet radio is like dial-up over a ham radio, other wise known as a tranceiver or walkie talkie. With the help of two computers (recommended Raspberry Pi), Optic Nerve can serialize DSLR commands in the form of protocol buffers that are then transmitted over the air waves. A receiving radio running Optic Nerve will be listening for binary encoded data, issue the commands to the DSLR, and respond via packet radio to comfirm the request.
+
 
 ![Optic Nerve DSLR Tether](/example_screenshot.png)
 
-#### Tech Stack
+### Tech Stack
 * jmhuus/pyptp to support sending PTP commands to DSLR using Python 3
 * ElectronJS
 * Angular
 
-#### What is the status of this project?
-Last Update: 8/3/2020
-* InitiateCapture command is working
-* Retrieve and display image result working
-* Set shutter exposure time working
-* Set aperture f-stop 
 
-
-#### Where is this project going?
-* Full-featured camera tether control of DSLR using mobile or desktop UI
-* Pan/tilt
-    * This UI will ideally support pan/tilt functionality for the DSLR which will require a user to hook up an arduino or Raspberry Pi.
-
-
-### Setup Steps
+### Setup Steps (for development)
 * Set up virtualenv
-* Download dependencies using pip install -r requirements.txt
+    - `cd backend`
+    - `virtualenv -p python3 env_optic_nerve`
+* Download dependencies for virtual environment
+    - `pip install -r requirements.txt`
+* Run pyinstaller
+    - `pyinstaller server.py --paths=./env_optic_nerve/lib/python3.7/site-packages/ --add-data images/:images/`
+* Install node packages
+    - `cd ..`
+    - `npm install`
+* Build angular project
+    - `ng build`
 * (Optional) Using a Raspberry Pi to control DSLR wirelessly
     * Must allow non-root user to access the DSLR USB device with the following steps
     ```bash
