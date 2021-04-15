@@ -36,7 +36,7 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.capture_new_image({"name": "jordan"})  # TODO(jordanhuus): remove hardcoded placeholder data
+            CaptureImage.capture_new_image(download_image=False)  # TODO(jordanhuus): remove hardcoded placeholder data
             action_response.response_successful = True
         except Exception as e:
             action_response.response_successful = False

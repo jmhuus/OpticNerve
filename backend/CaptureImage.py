@@ -54,7 +54,7 @@ def get_device_details():
     return device_info
 
 
-def capture_new_image(delete_from_device=False):
+def capture_new_image(delete_from_device=False, download_image=True):
     """Initiate camera capture and store the result.
     
     Note:
@@ -92,12 +92,13 @@ def capture_new_image(delete_from_device=False):
 
         # Download newly added object
         image_file_name = \
-            "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        save_path = os.path.dirname(os.path.realpath(__file__))+"/images/"+image_file_name
-        if objectid is not None:
-            with open(save_path, "wb") as file:
-                ptpSession.GetObject(objectid, file)
-            ptpSession.DeleteObject(objectid)
+                "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        if download_image:
+            save_path = os.path.dirname(os.path.realpath(__file__))+"/images/"+image_file_name
+            if objectid is not None:
+                with open(save_path, "wb") as file:
+                    ptpSession.GetObject(objectid, file)
+                ptpSession.DeleteObject(objectid)
 
         return image_file_name
             
