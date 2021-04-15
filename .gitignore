@@ -1,5 +1,5 @@
 .DS_Store
-backend/env_backend
+backend/env_optic_nerve
 __pycache__
 backend/dist/
 backend/build/
