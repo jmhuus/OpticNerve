@@ -6,7 +6,7 @@ from hamming_code_ecc import \
     decode_hamming_code_binary_array_to_string
 import re
 import json
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 
 class Minimodem:
@@ -29,11 +29,10 @@ class Minimodem:
         self.tx_data = None
         self.rx_data = None
 
-        # # Set up GPIO pins
-        # GPIO.setwarnings(False)
-        # GPIO.setmode(GPIO.BOARD)
-        # GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
-
+        # Set up GPIO pins
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
         
     def transmit(self, data):
         self.tx_data = data
@@ -61,6 +60,7 @@ class Minimodem:
             )
             for stdout_line in iter(popen.stdout.readline, ""):
                 yield stdout_line
+                
             popen.stdout.close()
             return_code = popen.wait()
             if return_code:
@@ -103,10 +103,11 @@ class Minimodem:
             "cat tmp_data.txt|minimodem --tx 500 -f {}".format(tmp_sound_filename),
             shell=True
         )
-        # GPIO.output(3, GPIO.HIGH)
+        GPIO.output(3, GPIO.HIGH)
+        # 'afplay' for MacOS testing, 'aplay' for linux
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
-        # GPIO.output(3, GPIO.LOW)
- 
+        GPIO.output(3, GPIO.LOW)
+        
 
     def clean_data(self, data, terminate_statement):
         data = data.replace(".", "")

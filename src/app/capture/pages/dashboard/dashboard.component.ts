@@ -91,7 +91,9 @@ export class DashboardComponent implements OnInit {
     chooseRemoteDevice(): void {
         // TODO(jordanhuus): implement packet radio connection
         this.showSnackBarMessage("Connecting to packet radio device.");
-        this.chosenDevice = new Device("Remote Device", 1234, Device.REMOTE, this, this.http);
+        this.chosenDevice =
+            new Device("Remote Device", 1234, Device.REMOTE, this, this.http);
+        this.chosenDevice.fNumber = 280;
     }
 
     delay(ms: number) {

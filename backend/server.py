@@ -14,6 +14,7 @@ import action_request_pb2
 import time
 import subprocess
 import platform
+import RPi.GPIO as GPIO
 
 
 app = Flask(__name__)
@@ -23,6 +24,9 @@ CORS(app)
 # Set up database
 db = setup_db(app)
 migrate = Migrate(app, db)
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
 
 
 @app.route("/")
@@ -133,7 +137,9 @@ def capture_image():
             action_request = action_request_pb2.ActionRequest()
             action_request.action = action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE
             modem = Minimodem()
+            print("transmitting...")
             response = modem.transmit(action_request.SerializeToString().hex())
+            print("recieving...")
 
             # Desrialize data from protobuf
             action_response = action_request_pb2.ActionRequest()
