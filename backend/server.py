@@ -104,7 +104,7 @@ def device_details():
             "success": False,
             "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
-        
+    
 
 @app.route("/capture-image", methods=["POST"])
 def capture_image():
@@ -137,10 +137,8 @@ def capture_image():
             action_request = action_request_pb2.ActionRequest()
             action_request.action = action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE
             modem = Minimodem()
-            print("transmitting...")
             response = modem.transmit(action_request.SerializeToString().hex())
-            print("recieving...")
-
+            
             # Desrialize data from protobuf
             action_response = action_request_pb2.ActionRequest()
             action_response.ParseFromString(bytes.fromhex(response))
@@ -181,7 +179,7 @@ def capture_images_count():
             camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
             db.session.add(camera)
             db.session.commit()
-        
+            
             # Capture new image
             # TODO(jordanhuus): refactor to a simpler parameter set
             CaptureImage.multiple_captures(
@@ -284,8 +282,8 @@ def get_camera_state():
             })
     else:
         return jsonify({
-                "success": False,
-                "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
@@ -586,7 +584,7 @@ def get_id_lens():
                 "success": False,
                 "error": str(e)
             })
-            
+        
     elif data["device-type"] == "remote":
         # Serialize data into protobuf
         action_request = action_request_pb2.ActionRequest()

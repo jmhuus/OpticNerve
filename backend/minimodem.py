@@ -104,8 +104,10 @@ class Minimodem:
             shell=True
         )
         GPIO.output(3, GPIO.HIGH)
+        time.sleep(0.5)
         # 'afplay' for MacOS testing, 'aplay' for linux
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
+        time.sleep(0.5)
         GPIO.output(3, GPIO.LOW)
         
 
