@@ -197,6 +197,6 @@ def process_data(modem, data, terminate_statement):
 data = None
 modem = Minimodem()
 while True:
-    data = modem.recieve("~")
+    data = modem.receive("~")
     if data:
         process_data(modem, data, "~")
