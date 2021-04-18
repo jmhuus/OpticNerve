@@ -137,12 +137,13 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_APERTURE_OPTIONS:
         action_response = action_request_pb2.ActionRequest()
         try:
-            f_number_options = CaptureImage.get_f_number_options({"test": "TODO(jordanhuus): set context for GET requests"})
+            f_number_options = CaptureImage.get_f_number_options()
             action_response.response_successful = True
             for num in f_number_options:
                 num_to_set = action_response.aperture_options.append(num)
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_APERTURE_OPTIONS: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -163,11 +164,12 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_ISO_NUMBER:
         action_response = action_request_pb2.ActionRequest()
         try:
-            iso_number = CaptureImage.get_iso_number({"name": "jordan"})
+            iso_number = CaptureImage.get_iso_number()
             action_response.response_successful = True
             action_response.iso_number = iso_number
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_ISO_NUMBER: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -175,18 +177,14 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_ISO_NUMBER:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_iso_number({"name": "jordan"}, action_request.iso_number)
+            CaptureImage.set_iso_number(action_request.iso_number)
             action_response.response_successful = True
-            response = {
-                "success": True,
-                "iso-number": action_request.iso_number
-            }
+            
         except Exception as e:
+            print("there was an error calling ACTION_SET_ISO_NUMBER: ", str(e))
             action_response.response_successful = False
-            response = {
-                "success": False
-            }
-            modem.send(action_response.SerializeToString().hex())
+
+        modem.send(action_response.SerializeToString().hex())
             
     else:
         raise Exception(

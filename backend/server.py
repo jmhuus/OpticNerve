@@ -684,7 +684,7 @@ def set_iso_number():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_CAPTURE_IMAGE
+            action_request.action = action_request_pb2.ActionRequest.ACTION_SET_ISO_NUMBER
             action_request.iso_number = data["iso-number"]
             modem = Minimodem()
             response = modem.transmit(action_request.SerializeToString().hex())
