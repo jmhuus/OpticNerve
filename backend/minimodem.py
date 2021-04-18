@@ -42,7 +42,7 @@ class Minimodem:
             self.send(self.tx_data)
 
             # Recieve
-            self.rx_data = self.recieve("~")
+            self.rx_data = self.receive("~")
             
         finally:
             if self.rx_data:
@@ -51,7 +51,7 @@ class Minimodem:
                 return None
 
             
-    def recieve(self, terminate_statement=None):
+    def receive(self, terminate_statement=None):
         def execute(cmd):
             popen = subprocess.Popen(
                 cmd,

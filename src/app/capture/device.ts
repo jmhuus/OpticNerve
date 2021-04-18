@@ -125,7 +125,7 @@ export class Device {
                 if ("camera-session-id" in response) {
                     this.observeCameraStateUntilCompletion(
                         response["camera-session-id"]);
-                } else {
+                } else if ("image-name" in response) {
                     this.imageLatestName = response["image-name"];
                     this.addImageToHistory(response["image-name"]);
                 }

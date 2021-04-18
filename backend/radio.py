@@ -28,7 +28,7 @@ def process_data(modem, data, terminate_statement):
                 action_response.device_details.CopyFrom(device_details_proto)
                 
         except Exception as e:
-            print("ERROR: ", str(e))
+            print("there was an error calling ACTION_GET_DEVICE_DETAILS: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -39,6 +39,7 @@ def process_data(modem, data, terminate_statement):
             CaptureImage.capture_new_image(download_image=False)  # TODO(jordanhuus): remove hardcoded placeholder data
             action_response.response_successful = True
         except Exception as e:
+            print("there was an error calling ACTION_CAPTURE_IMAGE: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -57,6 +58,7 @@ def process_data(modem, data, terminate_statement):
             action_response.context.CopyFrom(context)
             
         except Exception as e:
+            print("there was an error calling ACTION_MULTIPLE_CAPTURES_BY_COUNT: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -76,6 +78,7 @@ def process_data(modem, data, terminate_statement):
                 action_response.context.CopyFrom(context)
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_CAMERA_STATE: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -83,11 +86,12 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_exposure_time(action_request.exposure_time, {"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            CaptureImage.set_exposure_time(action_request.exposure_time)  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
             action_response.camera_state = action_request_pb2.ActionRequest.COMPLETE
 
         except Exception as e:
+            print("there was an error calling ACTION_SET_EXPOSURE_TIME: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -95,11 +99,12 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            exposure_time = CaptureImage.get_exposure_time({"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            exposure_time = CaptureImage.get_exposure_time()  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
             action_response.exposure_time = exposure_time
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_EXPOSURE_TIME: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -107,22 +112,24 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_APERTURE_F_STOP:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_f_number(action_request.f_number, {"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            CaptureImage.set_f_number(action_request.f_number)  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
 
         except Exception as e:
+            print("there was an error calling ACTION_SET_APERTURE_F_STOP: ", str(e))
             action_response.response_successful = False
-            o
-            modem.send(action_response.SerializeToString().hex())
+
+        modem.send(action_response.SerializeToString().hex())
             
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_APERTURE_F_STOP:
         action_response = action_request_pb2.ActionRequest()
         try:
-            f_number = CaptureImage.get_f_number({"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            f_number = CaptureImage.get_f_number()  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
             action_response.f_number = f_number
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_APERTURE_F_STOP: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
