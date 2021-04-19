@@ -4,14 +4,10 @@ import { ElectronService } from 'ngx-electron';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-// TODO(jordanhuus): Consider removing eletronservice if not used after migrating
-// to HttCliennt.
-
 enum ConnectionTypeIndexes {
     USB = 0,
     REMOTE_PACKET_RADIO = 1
 }
-
 
 @Component({
     selector: 'app-dashboard',
@@ -56,14 +52,14 @@ export class DashboardComponent implements OnInit {
         }
     }
 
-    // Retrieve connected devices connected via USB
+    // USB Devices
     getConnectedDevices(): void {
         let devices: Array<Device> = [];
         this.http.get("http://localhost:8080/get-ptp-device-ids")
             .subscribe(response => {
                 if (response["success"]) {
                     for (const [key, value] of Object.entries(response["device-ids"])) {
-                        devices.push(new Device(key, parseInt(String(value)), this, this.http));
+                        devices.push(new Device(key, parseInt(String(value)), Device.LOCAL, this, this.http));
                     }
                     this.devices = devices;
                 }
@@ -89,15 +85,13 @@ export class DashboardComponent implements OnInit {
                 });
 
             // Remote Packet Radio
-        } else if (selectedTabIndex == ConnectionTypeIndexes.REMOTE_PACKET_RADIO) {
-            // TODO(jordanhuus): implement packet radio connection
-            console.log("Packet radio selected");
         }
     }
 
     chooseRemoteDevice(): void {
-        // TODO(jordanhuus): implement connection to remote packet radio device.
-        console.log("Choosing remote device...");
+        // TODO(jordanhuus): implement packet radio connection
+        this.showSnackBarMessage("Connecting to packet radio device.");
+        this.chosenDevice = new Device("Remote Device", 1234, Device.REMOTE, this, this.http);
     }
 
     delay(ms: number) {
