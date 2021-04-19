@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# The code contained in this directory, ptp, and it's contents was sourced from https://github.com/capaulson/pyptp.
 from .import PtpAbstractTransport
 import usb
 from usb.util import endpoint_type, endpoint_direction, ENDPOINT_TYPE_BULK, \
