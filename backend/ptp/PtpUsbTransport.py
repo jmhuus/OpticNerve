@@ -214,7 +214,7 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
 
         if device:
             device.reset()
-            time.sleep(2)
+            time.sleep(0.5)
             return device
         else:
             raise UsbException("USB camera not found.")

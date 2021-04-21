@@ -5,6 +5,7 @@ from flask_cors import CORS
 from datetime import datetime
 from model import setup_db
 import os
+import sys
 import time
 from model import Camera
 from minimodem import Minimodem
@@ -27,7 +28,10 @@ migrate = Migrate(app, db)
 
 @app.route("/")
 def home():
-    return "hello world"
+    path_to_check = get_current_directory_path()+"images/"
+    return "hello world <br>" + \
+        path_to_check + "<br>" + \
+        str(CaptureImage.get_directory_permissions(path_to_check))
 
 
 @app.route("/get-ptp-device-ids")
@@ -738,7 +742,10 @@ def open_file_browser():
 def get_image(image_name):
     try:
         return send_from_directory(
-            get_current_directory_path()+"images/", image_name)
+            ensure_path_available(
+                os.path.expanduser("~")+"/Documents/optic-nerve/images/"),
+            image_name
+        )
 
     except Exception as e:
         return jsonify({
@@ -767,6 +774,13 @@ def get_current_directory_path():
         application_path = os.path.dirname(__file__)
 
     return application_path + "/"
+
+
+def ensure_path_available(path):
+    if not os.path.isdir(path):
+        os.makedirs(path)
+        os.chmod(path, 0o777)
+    return path
 
     
 @app.route("/shutdown-server")

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import os
+import os, stat
 import traceback
 from ptp.PtpUsbTransport import PtpUsbTransport
 from ptp.PtpSession import PtpSession, PtpException
@@ -12,6 +12,7 @@ import time
 from datetime import datetime
 from threading import Thread
 from model import Camera
+from server import get_current_directory_path, ensure_path_available
 
 
 def get_usb_device_ids():
@@ -93,14 +94,16 @@ def capture_new_image(delete_from_device=False):
         # Download newly added object
         image_file_name = \
             "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        save_path = os.path.dirname(os.path.realpath(__file__))+"/images/"+image_file_name
+        save_path = ensure_path_available(
+            os.path.expanduser("~")+"/Documents/optic-nerve/images/"
+        )+image_file_name
         if objectid is not None:
             with open(save_path, "wb") as file:
                 ptpSession.GetObject(objectid, file)
-            ptpSession.DeleteObject(objectid)
+                ptpSession.DeleteObject(objectid)
 
         return image_file_name
-            
+    
     except PtpException as e:
         raise PtpException(
             "PTP Exception: %s" % PtpValues.ResponseNameById(
@@ -150,7 +153,7 @@ def multiple_captures(capture_count, session_id, db):
             for _ in range(capture_count):
                 ptpSession.InitiateCapture(
                     objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
-    
+                
                 # Check for new object added after capture
                 objectid = None
                 while True:
@@ -165,13 +168,15 @@ def multiple_captures(capture_count, session_id, db):
                 image_file_name = \
                     "latest_%s.jpg" % datetime.now().strftime(
                         "%Y_%m_%d_%H_%M_%S")
-                save_path = os.path.dirname(os.path.realpath(__file__))+"/images/"+image_file_name
+                save_path = ensure_path_available(
+                    os.path.expanduser("~")+"/Documents/optic-nerve/images/"
+                )+image_file_name
                 if objectid is not None:
                     with open(save_path, "wb") as file:
                         ptpSession.GetObject(objectid, file)
-                    camera.image_file_name = image_file_name
-                    db.session.commit()
-        
+                        camera.image_file_name = image_file_name
+                        db.session.commit()
+                        
         except PtpException as e:
             raise PtpException(
                 "PTP Exception: %s" % PtpValues.ResponseNameById(
@@ -243,10 +248,10 @@ def begin_timelapse(file, delay):
             if objectid != None:
                 if file is None:
                     file = open("capture_%i.jpg" % id, "wb")
-                ptpSession.GetObject(objectid, file)
-                file.close()
-                id+=1
-                ptpSession.DeleteObject(objectid)
+                    ptpSession.GetObject(objectid, file)
+                    file.close()
+                    id+=1
+                    ptpSession.DeleteObject(objectid)
 
             # Delay between shots
             time.sleep(delay)
@@ -474,7 +479,7 @@ def get_f_number_options():
                         minimum_f_stop = f_number
                         f_stop_type_index = i
                         break
-                        
+                    
                 except PtpException as ptpe:
                     if ptpe.args[0] == 8220:
                         continue
@@ -508,8 +513,8 @@ def get_f_number_options():
     del ptpTransport
     
     return f_stops[f_stop_type_index][\
-                    f_stops[f_stop_type_index].index(minimum_f_stop):\
-                    f_stops[f_stop_type_index].index(maximum_f_stop)+1
+                                      f_stops[f_stop_type_index].index(minimum_f_stop):\
+                                      f_stops[f_stop_type_index].index(maximum_f_stop)+1
     ]
 
 
@@ -581,3 +586,21 @@ def set_iso_number(iso_number):
     del ptpTransport
     
     return iso_number
+
+
+def get_directory_permissions(directory_path):
+    platform = sys.platform
+    if platform == "linux":
+        return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
+    elif platform == "macos":
+        # TODO(jordanhuus): need to test/implement from windows machine
+        # return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
+        print("blah....")
+    elif platform == "win":
+        # TODO(jordanhuus): need to test/implement from windows machine
+        # return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
+        print("blah....")
+
+    print("WARNING: Couldn't identify the OS platform, attempting to fetch " \
+          "directory permissions generically which may be incorrect.")
+    return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
