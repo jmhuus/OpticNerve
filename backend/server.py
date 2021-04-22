@@ -1,3 +1,4 @@
+
 from flask import Flask, request, abort, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -15,6 +16,7 @@ import action_request_pb2
 import time
 import subprocess
 import platform
+import utils
 
 
 app = Flask(__name__)
@@ -28,10 +30,9 @@ migrate = Migrate(app, db)
 
 @app.route("/")
 def home():
-    path_to_check = get_current_directory_path()+"images/"
+    path_to_check = utils.get_base_application_path()
     return "hello world <br>" + \
-        path_to_check + "<br>" + \
-        str(CaptureImage.get_directory_permissions(path_to_check))
+        path_to_check + "<br>\n"
 
 
 @app.route("/get-ptp-device-ids")
@@ -742,7 +743,7 @@ def open_file_browser():
 def get_image(image_name):
     try:
         return send_from_directory(
-            ensure_path_available(
+            utils.ensure_path_available(
                 os.path.expanduser("~")+"/Documents/optic-nerve/images/"),
             image_name
         )
@@ -759,28 +760,6 @@ def shutdown():
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
-
-
-def get_current_directory_path():
-    """Return directory path based on  if the application is running
-       as a script or as a frozen exe.
-
-    Returns:
-        str: the string of current execution directory path.
-    """
-    if getattr(sys, 'frozen', False):
-        application_path = os.path.dirname(sys.executable)
-    elif __file__:
-        application_path = os.path.dirname(__file__)
-
-    return application_path + "/"
-
-
-def ensure_path_available(path):
-    if not os.path.isdir(path):
-        os.makedirs(path)
-        os.chmod(path, 0o777)
-    return path
 
     
 @app.route("/shutdown-server")

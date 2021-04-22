@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 from threading import Thread
 from model import Camera
-from server import get_current_directory_path, ensure_path_available
+from utils import get_base_application_path, ensure_path_available
 
 
 def get_usb_device_ids():
@@ -586,21 +586,3 @@ def set_iso_number(iso_number):
     del ptpTransport
     
     return iso_number
-
-
-def get_directory_permissions(directory_path):
-    platform = sys.platform
-    if platform == "linux":
-        return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
-    elif platform == "macos":
-        # TODO(jordanhuus): need to test/implement from windows machine
-        # return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
-        print("blah....")
-    elif platform == "win":
-        # TODO(jordanhuus): need to test/implement from windows machine
-        # return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
-        print("blah....")
-
-    print("WARNING: Couldn't identify the OS platform, attempting to fetch " \
-          "directory permissions generically which may be incorrect.")
-    return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]

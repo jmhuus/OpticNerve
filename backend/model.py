@@ -1,10 +1,14 @@
 import os
+import sys
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
+import utils
 
-
-database_path = "sqlite:///./backend/optic-nerve.db"
+application_path = utils.get_base_application_path()
+utils.ensure_path_available(application_path+"backend/")
+# os.chmod(application_path+"backend/optic-nerve.db", 0o777)
+database_path = f"sqlite:///{application_path}backend/optic-nerve.db"
 db = SQLAlchemy()
 
 
@@ -25,3 +29,4 @@ class Camera(db.Model):
 
     def __repr__(self):
         return f"<Camera {self.id} {self.camera_state}>"
+

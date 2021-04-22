@@ -1,6 +1,6 @@
 {
     "name": "optic-nerve",
-    "description": "Simple GUI to control DSLR cameras using Python as the transportation layer and Electron frontend.",
+    "description": "DSLR tether controller desktop app. Controll your DSLR from your computer via USB or wirelessly over long distances with packet radio.",
     "version": "0.0.0",
     "main": "main.js",
     "license": "MIT",
@@ -73,6 +73,9 @@
     "config": {
 	"forge": {
 	    "packagerConfig": {
+		"icon": "optic_nerve_icon.icns"
+	    },
+	    "electronPackagerConfig": {
 		"icon": "optic_nerve_icon.icns"
 	    },
 	    "makers": [
