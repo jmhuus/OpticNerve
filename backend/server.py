@@ -105,7 +105,7 @@ def device_details():
             "success": False,
             "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
-        
+    
 
 @app.route("/capture-image", methods=["POST"])
 def capture_image():
@@ -180,7 +180,7 @@ def capture_images_count():
             camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
             db.session.add(camera)
             db.session.commit()
-        
+            
             # Capture new image
             # TODO(jordanhuus): refactor to a simpler parameter set
             CaptureImage.multiple_captures(
@@ -283,8 +283,8 @@ def get_camera_state():
             })
     else:
         return jsonify({
-                "success": False,
-                "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "success": False,
+            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
         })
 
 
@@ -585,7 +585,7 @@ def get_id_lens():
                 "success": False,
                 "error": str(e)
             })
-            
+        
     elif data["device-type"] == "remote":
         # Serialize data into protobuf
         action_request = action_request_pb2.ActionRequest()
@@ -742,6 +742,13 @@ def open_file_browser():
 @app.route("/images/<path:image_name>")
 def get_image(image_name):
     try:
+        STOCK_IMAGE_NAME = "milky_way_image_pending.jpg"
+        if image_name == STOCK_IMAGE_NAME:
+            return send_from_directory(
+                utils.get_base_application_path() + "backend/images/",
+                STOCK_IMAGE_NAME
+            )
+        
         return send_from_directory(
             utils.ensure_path_available(
                 os.path.expanduser("~")+"/Documents/optic-nerve/images/"),

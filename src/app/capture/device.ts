@@ -176,7 +176,7 @@ export class Device {
                     if (response["success"] && response["image-name"]) {
                         this.imageLatestName = response["image-name"];
                         this.addImageToHistory(response["image-name"]);
-                    } else {
+                    } else if (!response["success"]) {
                         this._dashboardComponent.showSnackBarMessage(
                             "There was an error: " + response["error"]);
                     }
