@@ -11,9 +11,11 @@ Optic Nerve can communicate with your DSLR wirelessly over packet radio. Packet 
 ![Optic Nerve DSLR Tether](/example_screenshot.png)
 
 ## Tech Stack
-* jmhuus/pyptp to support sending PTP commands to DSLR using Python 3
 * ElectronJS
 * Angular
+* SQLite
+* Node
+* Flask
 
 
 ## Setup Steps (for development)
