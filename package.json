@@ -1,7 +1,7 @@
 {
     "name": "optic-nerve",
     "description": "DSLR tether controller desktop app. Controll your DSLR from your computer via USB or wirelessly over long distances with packet radio.",
-    "version": "0.0.0",
+    "version": "2021.04.01",
     "main": "main.js",
     "license": "MIT",
     "scripts": {
