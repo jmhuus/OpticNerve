@@ -83,8 +83,6 @@ export class DashboardComponent implements OnInit {
                 .catch((error) => {
                     this.showSnackBarMessage("There was an error: " + error);
                 });
-
-            // Remote Packet Radio
         }
     }
 
@@ -93,7 +91,12 @@ export class DashboardComponent implements OnInit {
         this.showSnackBarMessage("Connecting to packet radio device.");
         this.chosenDevice =
             new Device("Remote Device", 1234, Device.REMOTE, this, this.http);
-        this.chosenDevice.fNumber = 280;
+	this.chosenDevice.initConnectionDetails()
+	    .then(() => {
+            })
+            .catch((error) => {
+                this.showSnackBarMessage("There was an error: " + error);
+            });
     }
 
     delay(ms: number) {

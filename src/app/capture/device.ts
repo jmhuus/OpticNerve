@@ -56,16 +56,28 @@ export class Device {
         this.isoOptions = [100, 200, 400, 800, 1600, 3200];
         this.captureCount = 1;
         this.iso = this.isoOptions[0];
-        this.previousSevenImages = [];
+        this.previousSevenImages = [];  
         this.deviceCommsPending = false;
     }
 
     public async initConnectionDetails(): Promise<boolean> {
-        await this.getFNumberOptions();
-        await this.setFNumber();
-        await this.setIsoNumber();
-        await this.setExposure();
-        await this.getDeviceDetails()
+	if (this.deviceType == Device.LOCAL) {
+            await this.getFNumberOptions();
+            await this.setFNumber();
+            await this.setIsoNumber();
+            await this.setExposure();
+            await this.getDeviceDetails();
+	} else {
+	    await this.getFNumberOptions();
+	    await this.delay(500);
+            await this.setFNumber();
+	    await this.delay(500);
+            await this.setIsoNumber();
+	    await this.delay(500);
+            await this.setExposure();
+	    await this.delay(500);
+            await this.getDeviceDetails();
+	}
 
         /*
           CaptureFormats: "(14337, 12288)"
@@ -313,8 +325,8 @@ export class Device {
             body,
             postOptions).toPromise();
         if (response["success"]) {
-            this.imageFormat = response["device-details"]["CaptureFormats"];
             this.manufacturer = response["device-details"]["Manufacturer"];
+            this.model = response["device-details"]["Model"];
         } else {
             this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
@@ -328,5 +340,9 @@ export class Device {
             // TODO(jordanhuus): notify user that the value was invalid
             this.captureCount = 1;
         }
+    }
+
+    delay(ms: number) {
+	return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

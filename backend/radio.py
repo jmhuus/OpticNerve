@@ -14,18 +14,12 @@ def process_data(modem, data, terminate_statement):
         action_response = action_request_pb2.ActionRequest()
         try:
             device_details = CaptureImage.get_device_details()
-
-            # Go through each device detail and add to protobuf
             device_details_proto = action_request_pb2.DeviceDetails()
-
-            # Clean up and add the capture formats; originally a string representing a tuple
-            capture_formats = re.sub('[^0-9,]', '', device_details["CaptureFormats"]).split(",")
-            for format in capture_formats:
-                format_to_set = device_details_proto.capture_formats.append(int(format))
-                device_details_proto.device_version = device_details["DeviceVersion"]
-                device_details_proto.model = device_details["Model"]
-                action_response.response_successful = True
-                action_response.device_details.CopyFrom(device_details_proto)
+            device_details_proto.device_version = device_details["DeviceVersion"]
+            device_details_proto.model = device_details["Model"]
+            device_details_proto.manufacturer = device_details["Manufacturer"]
+            action_response.response_successful = True
+            action_response.device_details.CopyFrom(device_details_proto)
                 
         except Exception as e:
             print("there was an error calling ACTION_GET_DEVICE_DETAILS: ", str(e))

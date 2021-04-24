@@ -87,10 +87,9 @@ def device_details():
             return jsonify({
                 "success": action_response.response_successful,
                 "device-details": {
-                    "capture_formats": [i for i in action_response.device_details.capture_formats],
-                    "device_version": action_response.device_details.device_version,
-                    "manufacturer": action_response.device_details.manufacturer,
-                    "model": action_response.device_details.model
+                    "Manufacturer": action_response.device_details.manufacturer,
+                    "Model": action_response.device_details.model
+                    # TODO(jordanhuus): add serial number to protocol buffer
                 }
             })
 
@@ -544,7 +543,7 @@ def get_aperture_options():
             action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
                 "success": action_response.response_successful,
-                "aperture-options": [i for i in action_response.aperture_options]
+                "f-number-options": [i for i in action_response.aperture_options]
             })
         
         except Exception as e:
