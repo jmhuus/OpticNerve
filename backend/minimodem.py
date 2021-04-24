@@ -1,10 +1,7 @@
 import subprocess
 import os
 import time
-# from hamming_code_ecc import \
-#     encode_data_to_hamming_binary_array, \
-#     decode_hamming_code_binary_array_to_string
-import hamming_code_ecc_jordan  # TODO(jordanhuus): remove name from source file
+import hamming_code_ecc
 import re
 import json
 import RPi.GPIO as GPIO
@@ -77,8 +74,7 @@ class Minimodem:
                     request = request.split("--")
                     request = [i.replace(" ", "0") for i in request]
                     request = [re.sub('[^0-1]', '', i) for i in request]
-                    request = hamming_code_ecc_jordan\
-                        .decode_hamming_binary(request)
+                    request = hamming_code_ecc.decode_hamming_binary(request)
                     request = self.clean_data(request, terminate_statement)
                     time.sleep(1)
                     return request
@@ -88,9 +84,7 @@ class Minimodem:
 
     def send(self, data):
         # Convert data to hamming code binary
-        data = hamming_code_ecc_jordan \
-            .encode_data_to_hamming_binary_array(data)
-        import pdb; pdb.set_trace()
+        data = hamming_code_ecc.encode_data_to_hamming_binary_array(data)
         data = "--".join(i for i in data) + "~~~~\n\n\n"
         
         # Write data to tmp_data.txt
