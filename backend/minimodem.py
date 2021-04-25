@@ -4,7 +4,10 @@ import time
 import hamming_code_ecc
 import re
 import json
-import RPi.GPIO as GPIO
+try:
+    import RPi.GPIO as GPIO
+except:
+    pass
 
 
 class Minimodem:
@@ -28,9 +31,12 @@ class Minimodem:
         self.rx_data = None
 
         # Set up GPIO pins
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+        try:
+            GPIO.setwarnings(False)
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+        except:
+            pass
         
     def transmit(self, data):
         self.tx_data = data
@@ -98,12 +104,18 @@ class Minimodem:
             "cat tmp_data.txt|minimodem --tx 500 -f {}".format(tmp_sound_filename),
             shell=True
         )
-        GPIO.output(3, GPIO.HIGH)
+        try:
+            GPIO.output(3, GPIO.HIGH)
+        except:
+            pass
         time.sleep(0.5)
         # 'afplay' for MacOS testing, 'aplay' for linux
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
         time.sleep(0.5)
-        GPIO.output(3, GPIO.LOW)
+        try:
+            GPIO.output(3, GPIO.LOW)
+        except:
+            pass
         
 
     def clean_data(self, data, terminate_statement):
