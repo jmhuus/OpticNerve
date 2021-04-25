@@ -41,8 +41,8 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
 
         # Open the USB device
         claim_interface(self.__device, self.__usb_interface)
-        device_name = PtpUsbTransport.retrieve_device_name(self.__device)
-        print(f"Connected to {device_name}.")
+        self.device_name = PtpUsbTransport.retrieve_device_name(self.__device)
+        print(f"Connected to {self.device_name}.")
         self.usb_read_timeout = 5000
         self.usb_write_timeout = 5000
 

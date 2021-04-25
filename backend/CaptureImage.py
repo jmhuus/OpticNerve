@@ -36,6 +36,7 @@ def get_device_details():
         # Open device session
         ptpSession.OpenSession()
         device_info = ptpSession.GetDeviceInfoDict()
+        device_info["Model"] = ptpTransport.device_name
         
     except PtpException as e:
         raise PtpException(
