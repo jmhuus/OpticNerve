@@ -20,7 +20,7 @@ mat-sidenav {
     background: #d7cdccff ;
 }
 .sidenav {
-    max-width: 400px;
+    max-width: 480px;
     width: 40%;
 }
 mat-list-option {
@@ -38,6 +38,9 @@ mat-list-option {
 }
 ::ng-deep .mat-tab-body .mat-tab-body-content .buttons-section button {
     margin-right: 15%;
+}
+ul {
+    list-style: none;
 }
 
 /* Main Content */

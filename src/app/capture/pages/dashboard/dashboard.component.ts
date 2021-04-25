@@ -3,10 +3,17 @@ import { Device } from '../../device';
 import { ElectronService } from 'ngx-electron';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ThemePalette } from '@angular/material/core';
 
 enum ConnectionTypeIndexes {
     USB = 0,
     REMOTE_PACKET_RADIO = 1
+}
+
+export interface DeviceTypeRequirements {
+    text: string;
+    completed: boolean;
+    color: ThemePalette;
 }
 
 @Component({
@@ -23,6 +30,59 @@ export class DashboardComponent implements OnInit {
     public electronService: ElectronService;
     deviceTableColumns: string[] = ["device", "serialNumber"];
     refreshIconPath: string = "assets/images/refresh_white_18dp.png";
+    allComplete_usb: boolean = false;
+    allComplete_packetRadio: boolean = false;
+
+    packetRadioRequirements: Array<DeviceTypeRequirements> = [
+        {
+            text: 'This device is a Raspberry Pi.',
+            completed: false,
+            color: 'primary'
+        },
+        {
+            text: 'This device is connected to a radio transceiver.',
+            completed: false,
+            color: 'primary'
+        },
+        {
+            text: 'A second Raspberry Pi is running Optic Nerve Telemetry Software.',
+            completed: false,
+            color: 'primary'
+        },
+        {
+            text: 'The second Pi is connected to a radio transceiver.',
+            completed: false,
+            color: 'primary'
+        },
+        {
+            text: 'The second Raspberry Pi is connected to a DSLR.',
+            completed: false,
+            color: 'primary'
+        },
+        {
+            text: 'The DSLR is set to Manual Mode.',
+            completed: false,
+            color: 'primary'
+        },
+        {
+            text: 'Both radios are set to the same frequency.',
+            completed: false,
+            color: 'primary'
+        }
+    ];
+
+    usbRequirements: Array<DeviceTypeRequirements> = [
+        {
+            text: 'This device is connected to a DSLR via USB.',
+            completed: false,
+            color: 'primary'
+        },
+        {
+            text: 'The DSLR is set to Manual Mode.',
+            completed: false,
+            color: 'primary'
+        },
+    ];
 
     constructor(
         _electronService: ElectronService,
@@ -91,8 +151,8 @@ export class DashboardComponent implements OnInit {
         this.showSnackBarMessage("Connecting to packet radio device.");
         this.chosenDevice =
             new Device("Remote Device", 1234, Device.REMOTE, this, this.http);
-	this.chosenDevice.initConnectionDetails()
-	    .then(() => {
+        this.chosenDevice.initConnectionDetails()
+            .then(() => {
             })
             .catch((error) => {
                 this.showSnackBarMessage("There was an error: " + error);
@@ -112,5 +172,15 @@ export class DashboardComponent implements OnInit {
 
     showSnackBarMessage(message: string): void {
         this._snackBar.open(message, "", { duration: 5000 });
+    }
+
+    updateAllComplete(deviceType: string) {
+        if (deviceType == 'usb') {
+            this.allComplete_usb =
+                this.usbRequirements.every(t => t.completed);
+        } else if (deviceType == 'packet_radio') {
+            this.allComplete_packetRadio =
+                this.packetRadioRequirements.every(t => t.completed);
+        }
     }
 }

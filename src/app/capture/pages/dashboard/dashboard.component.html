@@ -17,10 +17,21 @@
 	    {{ device.model }}
 	  </mat-list-option>
 	</mat-selection-list>
+	<ul>
+	  <li *ngFor="let requirement of usbRequirements">
+	    <mat-checkbox
+	      [color]="requirement.color"
+	      [(ngModel)]="requirement.completed"
+	      (ngModelChange)="updateAllComplete('usb')">
+	      {{ requirement.text }}
+	    </mat-checkbox>
+	  </li>
+	</ul>
 	<div class="buttons-section">
 	  <button
 	    mat-raised-button
 	    color="primary"
+	    [disabled]="!allComplete_usb"
 	    (click)="chooseDevice(device.selectedOptions.selected[0]?.value, connection_type_tabs.selectedIndex); sidenav.close()">Connect</button>
 	  <button
 	    mat-raised-button
@@ -29,10 +40,23 @@
 	</div>
       </mat-tab>
       <mat-tab label="Remote Packet Radio">
-	<button
-	  mat-raised-button
-	  color="primary"
-	  (click)="chooseRemoteDevice(); sidenav.close()">Connect</button>
+	<ul>
+	  <li *ngFor="let requirement of packetRadioRequirements">
+	    <mat-checkbox
+	      [color]="requirement.color"
+	      [(ngModel)]="requirement.completed"
+	      (ngModelChange)="updateAllComplete('packet_radio')">
+	      {{ requirement.text }}
+	    </mat-checkbox>
+	  </li>
+	</ul>
+	<div class="buttons-section">
+	  <button
+	    mat-raised-button
+	    color="primary"
+	    [disabled]="!allComplete_packetRadio"
+	    (click)="chooseRemoteDevice(); sidenav.close()">Connect</button>
+	</div>
       </mat-tab>
     </mat-tab-group>
   </mat-sidenav>
