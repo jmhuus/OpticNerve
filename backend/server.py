@@ -555,7 +555,11 @@ def get_aperture_options():
             action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
                 "success": action_response.response_successful,
-                "f-number-options": [i for i in action_response.aperture_options]
+                "f-number-options": {
+                    "f-stop-type": action_response.f_stop_type,
+                    "minimum-f-stop": action_response.minimum_f_stop_index,
+                    "maximum-f-stop": action_response.maximum_f_stop_index            
+                }
             })
         
         except Exception as e:

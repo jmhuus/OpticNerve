@@ -77,9 +77,10 @@ def decode_hamming_binary(data):
                 invalid_bit_positions[0].intersection(*invalid_bit_positions)
 
             # Fix packet data
-            bit_position_to_correct = bit_correction_set.pop()
-            print(f"Bit error found and corrected at position {bit_position_to_correct}, packet {p}. Fixed.")
-            packet[bit_position_to_correct-1] = 1 if packet[bit_position_to_correct-1] == 0 else 0
+            if bit_correction_set:
+                bit_position_to_correct = bit_correction_set.pop()
+                print(f"Bit error found and corrected at position {bit_position_to_correct}, packet {p}. Fixed.")
+                packet[bit_position_to_correct-1] = 1 if packet[bit_position_to_correct-1] == 0 else 0
 
         # Exctract data bits; forget parity bits
         power_of_two_exp = 0

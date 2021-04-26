@@ -80,9 +80,8 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_exposure_time(action_request.exposure_time)  # TODO(jordanhuus): remove hard code
+            CaptureImage.set_exposure_time(action_request.exposure_time)
             action_response.response_successful = True
-            action_response.camera_state = action_request_pb2.ActionRequest.COMPLETE
 
         except Exception as e:
             print("there was an error calling ACTION_SET_EXPOSURE_TIME: ", str(e))
@@ -93,7 +92,7 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            exposure_time = CaptureImage.get_exposure_time()  # TODO(jordanhuus): remove hard code
+            exposure_time = CaptureImage.get_exposure_time()
             action_response.response_successful = True
             action_response.exposure_time = exposure_time
 
