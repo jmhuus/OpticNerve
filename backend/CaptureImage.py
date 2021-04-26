@@ -516,7 +516,10 @@ def get_f_number_options():
         f_stop_type = "half_stops"
     elif f_stop_type_index == 2:
         f_stop_type = "full_stops"
-    return f_stop_type, minimum_f_stop, maximum_f_stop
+    return (f_stop_type,
+            f_stops[f_stop_type_index].index(minimum_f_stop),
+            f_stops[f_stop_type_index].index(maximum_f_stop)
+    )
 
 
 def get_iso_number():

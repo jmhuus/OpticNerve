@@ -56,28 +56,28 @@ export class Device {
         this.isoOptions = [100, 200, 400, 800, 1600, 3200];
         this.captureCount = 1;
         this.iso = this.isoOptions[0];
-        this.previousSevenImages = [];  
+        this.previousSevenImages = [];
         this.deviceCommsPending = false;
     }
 
     public async initConnectionDetails(): Promise<boolean> {
-	if (this.deviceType == Device.LOCAL) {
+        if (this.deviceType == Device.LOCAL) {
             await this.getFNumberOptions();
             await this.setFNumber();
             await this.setIsoNumber();
             await this.setExposure();
             await this.getDeviceDetails();
-	} else {
-	    await this.getFNumberOptions();
-	    await this.delay(500);
+        } else {
+            await this.getFNumberOptions();
+            await this.delay(500);
             await this.setFNumber();
-	    await this.delay(500);
+            await this.delay(500);
             await this.setIsoNumber();
-	    await this.delay(500);
+            await this.delay(500);
             await this.setExposure();
-	    await this.delay(500);
+            await this.delay(500);
             await this.getDeviceDetails();
-	}
+        }
 
         /*
           CaptureFormats: "(14337, 12288)"
@@ -252,45 +252,43 @@ export class Device {
         const postOptions = {
             headers: { 'Content-Type': 'application/json' }
         };
-	let f_number_options: Array<number>;
+        let f_number_options: Array<number>;
         let response = await this.http.post(
             'http://127.0.0.1:8080/get-aperture-options',
             body,
             postOptions).toPromise();
-	console.log(response);
         if (response['success']) {
-	    if (response["f-number-options"]["f-stop-type"] == "third_stops") {
-		f_number_options = [
-		    100,110,120,140,160,
-		    180,200,220,250,280,
-		    320,350,400,450,500,
-		    560,630,710,800,900,
-		    1000,1100,1300,1400,
-		    1600,1800,2000,2200,
-		    2500,2900,3200,3600
-		];
-	    } else if (response["f-number-options"]["f-stop-type"] == "half_stops") {
-		f_number_options = [
-		    100, 120, 140, 170,
-		    200, 240, 280, 330,
-		    400, 480, 560, 670,
-		    800, 950, 1100, 1300,
-		    1600, 1900, 2200, 2700,
-		    3200
-		];
-	    } else if (response["f-number-options"]["f-stop-type"] == "full_stops") {
-		f_number_options = [
-		    100, 140, 200, 280,
-		    400, 560, 800, 1100,
-		    1600, 2200, 3200
-		];
-	    }
-	    
+            if (response["f-number-options"]["f-stop-type"] == "third_stops") {
+                f_number_options = [
+                    100, 110, 120, 140, 160,
+                    180, 200, 220, 250, 280,
+                    320, 350, 400, 450, 500,
+                    560, 630, 710, 800, 900,
+                    1000, 1100, 1300, 1400,
+                    1600, 1800, 2000, 2200,
+                    2500, 2900, 3200, 3600
+                ];
+            } else if (response["f-number-options"]["f-stop-type"] == "half_stops") {
+                f_number_options = [
+                    100, 120, 140, 170,
+                    200, 240, 280, 330,
+                    400, 480, 560, 670,
+                    800, 950, 1100, 1300,
+                    1600, 1900, 2200, 2700,
+                    3200
+                ];
+            } else if (response["f-number-options"]["f-stop-type"] == "full_stops") {
+                f_number_options = [
+                    100, 140, 200, 280,
+                    400, 560, 800, 1100,
+                    1600, 2200, 3200
+                ];
+            }
+
             this.fNumberOptions = f_number_options.slice(
-		response["f-number-options"]["minimum-f-stop"],
-		response["f-number-options"]["maximum-f-stop"]+1
-	    );
-	    console.log(this.fNumberOptions);
+                response["f-number-options"]["minimum-f-stop"],
+                response["f-number-options"]["maximum-f-stop"] + 1
+            );
             this.fNumber = this.fNumberOptions[0];
         } else {
             this._dashboardComponent.showSnackBarMessage(
@@ -376,6 +374,6 @@ export class Device {
     }
 
     delay(ms: number) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

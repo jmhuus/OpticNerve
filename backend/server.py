@@ -525,14 +525,14 @@ def get_aperture_options():
     if data["device-type"] == "local":
         try:
             # Get exposure options
-            f_stop_type, minimum_f_stop, minimum_f_stop = \
+            f_stop_type, minimum_f_stop_index, maximum_f_stop_index = \
                 CaptureImage.get_f_number_options()
             return jsonify({
                 "success": True,
                 "f-number-options": {
                     "f-stop-type": f_stop_type,
-                    "minimum-f-stop": minimmum_f_stop,
-                    "maximum-f-stop": maximum_f_stop
+                    "minimum-f-stop": minimum_f_stop_index,
+                    "maximum-f-stop": maximum_f_stop_index
                 }
             })
         except Exception as e:
