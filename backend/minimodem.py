@@ -4,6 +4,7 @@ import time
 import hamming_code_ecc
 import re
 import json
+import action_request_pb2
 try:
     import RPi.GPIO as GPIO
 except:
@@ -49,6 +50,11 @@ class Minimodem:
             self.rx_data = self.receive("~")
             
         finally:
+            # Resend request
+            if not action_request.response_successfull and \
+               action_request_pb2.ActionRequest.ACTION_ERROR_RESEND_ACTION:
+                self.send(self.tx_data)
+
             if self.rx_data:
                 return self.rx_data
             else:
