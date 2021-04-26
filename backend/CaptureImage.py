@@ -93,16 +93,16 @@ def capture_new_image(delete_from_device=False, download_image=True):
 
         # Download newly added object
         image_file_name = \
-                "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+            "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         if download_image:
             save_path = os.path.dirname(os.path.realpath(__file__))+"/images/"+image_file_name
             if objectid is not None:
                 with open(save_path, "wb") as file:
                     ptpSession.GetObject(objectid, file)
                 ptpSession.DeleteObject(objectid)
-
+                    
         return image_file_name
-            
+    
     except PtpException as e:
         raise PtpException(
             "PTP Exception: %s" % PtpValues.ResponseNameById(
@@ -152,7 +152,7 @@ def multiple_captures(capture_count, session_id, db):
             for _ in range(capture_count):
                 ptpSession.InitiateCapture(
                     objectFormatId=PtpValues.StandardObjectFormats.EXIF_JPEG)
-    
+                
                 # Check for new object added after capture
                 objectid = None
                 while True:
@@ -171,9 +171,10 @@ def multiple_captures(capture_count, session_id, db):
                 if objectid is not None:
                     with open(save_path, "wb") as file:
                         ptpSession.GetObject(objectid, file)
+                        
                     camera.image_file_name = image_file_name
                     db.session.commit()
-        
+                        
         except PtpException as e:
             raise PtpException(
                 "PTP Exception: %s" % PtpValues.ResponseNameById(
@@ -245,6 +246,7 @@ def begin_timelapse(file, delay):
             if objectid != None:
                 if file is None:
                     file = open("capture_%i.jpg" % id, "wb")
+                    
                 ptpSession.GetObject(objectid, file)
                 file.close()
                 id+=1
@@ -476,7 +478,7 @@ def get_f_number_options():
                         minimum_f_stop = f_number
                         f_stop_type_index = i
                         break
-                        
+                    
                 except PtpException as ptpe:
                     if ptpe.args[0] == 8220:
                         continue
@@ -508,12 +510,13 @@ def get_f_number_options():
     # Close the session
     del ptpSession
     del ptpTransport
-    
-    return f_stops[f_stop_type_index][\
-                    f_stops[f_stop_type_index].index(minimum_f_stop):\
-                    f_stops[f_stop_type_index].index(maximum_f_stop)+1
-    ]
-
+    if f_stop_type_index == 0:
+        f_stop_type = "third_stops"
+    elif f_stop_type_index == 1:
+        f_stop_type = "half_stops"
+    elif f_stop_type_index == 2:
+        f_stop_type = "full_stops"
+    return f_stop_type, minimum_f_stop, maximum_f_stop
 
 
 def get_iso_number():

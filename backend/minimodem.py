@@ -51,7 +51,10 @@ class Minimodem:
             
         finally:
             # Resend request
-            if not action_request.response_successfull and \
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(self.rx_data))
+            
+            if not action_response.response_successful and \
                action_request_pb2.ActionRequest.ACTION_ERROR_RESEND_ACTION:
                 self.send(self.tx_data)
 
@@ -59,7 +62,7 @@ class Minimodem:
                 return self.rx_data
             else:
                 return None
-
+ 
             
     def receive(self, terminate_statement=None):
         def execute(cmd):

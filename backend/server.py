@@ -90,7 +90,7 @@ def device_details():
 
             # Deconstruct protobuf response
             action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
+            action_response.ParseFromString(bytes.fromhex(response))  # Check that response is not empty
             return jsonify({
                 "success": action_response.response_successful,
                 "device-details": {
@@ -471,7 +471,7 @@ def set_aperture_f_stop():
     if data["device-type"] == "local":
         try:
             # Set exposure time
-            f_number = CaptureImage.get_f_number(    )
+            f_number = CaptureImage.get_f_number()
             return jsonify({
                 "success": True,
                 "f-number": f_number
@@ -525,10 +525,15 @@ def get_aperture_options():
     if data["device-type"] == "local":
         try:
             # Get exposure options
-            f_number_options = CaptureImage.get_f_number_options()
+            f_stop_type, minimum_f_stop, minimum_f_stop = \
+                CaptureImage.get_f_number_options()
             return jsonify({
                 "success": True,
-                "f-number-options": f_number_options
+                "f-number-options": {
+                    "f-stop-type": f_stop_type,
+                    "minimum-f-stop": minimmum_f_stop,
+                    "maximum-f-stop": maximum_f_stop
+                }
             })
         except Exception as e:
             return jsonify({
