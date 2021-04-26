@@ -131,10 +131,12 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_APERTURE_OPTIONS:
         action_response = action_request_pb2.ActionRequest()
         try:
-            f_number_options = CaptureImage.get_f_number_options()
+            f_stop_type, minimum_f_stop_index, maximum_f_stop_index = \
+                CaptureImage.get_f_number_options()
+            action_response.f_stop_type = f_stop_type
+            action_response.minimum_f_stop_index = minimum_f_stop_index
+            action_response.maximum_f_stop_index = maximum_f_stop_index
             action_response.response_successful = True
-            for num in f_number_options:
-                num_to_set = action_response.aperture_options.append(num)
 
         except Exception as e:
             print("there was an error calling ACTION_GET_APERTURE_OPTIONS: ", str(e))
