@@ -29,6 +29,7 @@ message ActionRequest {
     ACTION_GET_LENS_ID = 10;
     ACTION_GET_ISO_NUMBER = 11;
     ACTION_SET_ISO_NUMBER = 12;
+    ACTION_ERROR_RESEND_ACTION = 13;
   }
 
   enum CameraState {

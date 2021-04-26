@@ -179,16 +179,29 @@ def process_data(modem, data, terminate_statement):
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
-            
+
     else:
         raise Exception(
             "ERROR: Action with index of {} does not exist or there is a problem locating it".format(action_request.action)
         )
+
+def process_error(modem, data, terminate_statement):
+    import time; time.sleep(20)
+    data = Minimodem.clean_data(Minimodem, data, terminate_statement)
+    action_response = action_request_pb2.ActionRequest()
+    action_response.response_successful = False
+    action_response.action = action_request_pb2.ActionRequest.ACTION_ERROR_RESEND_ACTION
+    modem.send(action_response.SerializeToString().hex())
     
 
 data = None
 modem = Minimodem()
 while True:
-    data = modem.receive("~")
-    if data:
-        process_data(modem, data, "~")
+    try:
+        data = modem.receive("~")
+        if data:
+            process_data(modem, data, "~")
+    except Exception as e:
+        print("There was an error in radio.py: ", str(e))
+        process_error(modem, None, "~")
+        pass
