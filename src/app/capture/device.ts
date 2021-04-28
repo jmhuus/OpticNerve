@@ -75,8 +75,9 @@ export class Device {
             await this.setIsoNumber();
             await this.delay(500);
             await this.setExposure();
-            await this.delay(500);
-            await this.getDeviceDetails();
+	    // TODO(jordanhuus): tune minimodem to a higher bitrate and re-enable this
+            // await this.delay(500);
+            // await this.getDeviceDetails();
         }
 
         /*

@@ -80,7 +80,7 @@ class Minimodem:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
         request = ""
-        for path in execute(["minimodem", "--rx", "500", "-q", "--print-filter"]):
+        for path in execute(["minimodem", "--rx", "500", "--startbits", "5", "-q", "--print-filter"]):
             # Filter out incoming noise; proper data should be strictly binary
             if "0" in path or "1" in path:
                 request += path
@@ -100,7 +100,7 @@ class Minimodem:
     def send(self, data):
         # Convert data to hamming code binary
         data = hamming_code_ecc.encode_data_to_hamming_binary_array(data)
-        data = "--".join(i for i in data) + "~~~~\n\n\n"
+        data = "\n\n\n" + "--".join(i for i in data) + "~~~~\n\n\n"
         
         # Write data to tmp_data.txt
         with open("tmp_data.txt", "w") as f:
@@ -110,7 +110,7 @@ class Minimodem:
         path = os.path.dirname(os.path.realpath(__file__))
         tmp_sound_filename = path+"/tmp_send_audio_file.wav"
         subprocess.run(
-            "cat tmp_data.txt|minimodem --tx 500 -f {}".format(tmp_sound_filename),
+            "cat tmp_data.txt|minimodem --tx 500 --startbits 5 -f {}".format(tmp_sound_filename),
             shell=True
         )
         try:
