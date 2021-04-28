@@ -37,6 +37,7 @@ def get_device_details():
         # Open device session
         ptpSession.OpenSession()
         device_info = ptpSession.GetDeviceInfoDict()
+        device_info["Model"] = ptpTransport.device_name
         
     except PtpException as e:
         raise PtpException(
@@ -55,7 +56,7 @@ def get_device_details():
     return device_info
 
 
-def capture_new_image(delete_from_device=False):
+def capture_new_image(delete_from_device=False, download_image=True):
     """Initiate camera capture and store the result.
     
     Note:
@@ -94,13 +95,14 @@ def capture_new_image(delete_from_device=False):
         # Download newly added object
         image_file_name = \
             "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        save_path = ensure_path_available(
-            os.path.expanduser("~")+"/Documents/optic-nerve/images/"
-        )+image_file_name
-        if objectid is not None:
-            with open(save_path, "wb") as file:
-                ptpSession.GetObject(objectid, file)
-                ptpSession.DeleteObject(objectid)
+        if download_image:
+            save_path = ensure_path_available(
+                os.path.expanduser("~")+"/Documents/optic-nerve/images/"
+            )+image_file_name
+            if objectid is not None:
+                with open(save_path, "wb") as file:
+                    ptpSession.GetObject(objectid, file)
+                    ptpSession.DeleteObject(objectid)
 
         return image_file_name
     
@@ -174,8 +176,9 @@ def multiple_captures(capture_count, session_id, db):
                 if objectid is not None:
                     with open(save_path, "wb") as file:
                         ptpSession.GetObject(objectid, file)
-                        camera.image_file_name = image_file_name
-                        db.session.commit()
+                        
+                    camera.image_file_name = image_file_name
+                    db.session.commit()
                         
         except PtpException as e:
             raise PtpException(
@@ -246,12 +249,11 @@ def begin_timelapse(file, delay):
 
             # Download newly added object
             if objectid != None:
-                if file is None:
-                    file = open("capture_%i.jpg" % id, "wb")
-                    ptpSession.GetObject(objectid, file)
-                    file.close()
-                    id+=1
-                    ptpSession.DeleteObject(objectid)
+                file = open("capture_%i.jpg" % id, "wb")
+                ptpSession.GetObject(objectid, file)
+                file.close()
+                id+=1
+                ptpSession.DeleteObject(objectid)
 
             # Delay between shots
             time.sleep(delay)
@@ -511,12 +513,17 @@ def get_f_number_options():
     # Close the session
     del ptpSession
     del ptpTransport
-    
-    return f_stops[f_stop_type_index][\
-                                      f_stops[f_stop_type_index].index(minimum_f_stop):\
-                                      f_stops[f_stop_type_index].index(maximum_f_stop)+1
-    ]
 
+    if f_stop_type_index == 0:
+        f_stop_type = "third_stops"
+    elif f_stop_type_index == 1:
+        f_stop_type = "half_stops"
+    elif f_stop_type_index == 2:
+        f_stop_type = "full_stops"
+    return (f_stop_type,
+            f_stops[f_stop_type_index].index(minimum_f_stop),
+            f_stops[f_stop_type_index].index(maximum_f_stop)
+    )
 
 
 def get_iso_number():

@@ -61,11 +61,24 @@ export class Device {
     }
 
     public async initConnectionDetails(): Promise<boolean> {
-        await this.getFNumberOptions();
-        await this.setFNumber();
-        await this.setIsoNumber();
-        await this.setExposure();
-        await this.getDeviceDetails()
+        if (this.deviceType == Device.LOCAL) {
+            await this.getFNumberOptions();
+            await this.setFNumber();
+            await this.setIsoNumber();
+            await this.setExposure();
+            await this.getDeviceDetails();
+        } else {
+            await this.getFNumberOptions();
+            await this.delay(500);
+            await this.setFNumber();
+            await this.delay(500);
+            await this.setIsoNumber();
+            await this.delay(500);
+            await this.setExposure();
+	    // TODO(jordanhuus): tune minimodem to a higher bitrate and re-enable this
+            // await this.delay(500);
+            // await this.getDeviceDetails();
+        }
 
         /*
           CaptureFormats: "(14337, 12288)"
@@ -125,7 +138,7 @@ export class Device {
                 if ("camera-session-id" in response) {
                     this.observeCameraStateUntilCompletion(
                         response["camera-session-id"]);
-                } else {
+                } else if ("image-name" in response) {
                     this.imageLatestName = response["image-name"];
                     this.addImageToHistory(response["image-name"]);
                 }
@@ -240,12 +253,43 @@ export class Device {
         const postOptions = {
             headers: { 'Content-Type': 'application/json' }
         };
+        let f_number_options: Array<number>;
         let response = await this.http.post(
             'http://127.0.0.1:8080/get-aperture-options',
             body,
             postOptions).toPromise();
         if (response['success']) {
-            this.fNumberOptions = response["f-number-options"];
+            if (response["f-number-options"]["f-stop-type"] == "third_stops") {
+                f_number_options = [
+                    100, 110, 120, 140, 160,
+                    180, 200, 220, 250, 280,
+                    320, 350, 400, 450, 500,
+                    560, 630, 710, 800, 900,
+                    1000, 1100, 1300, 1400,
+                    1600, 1800, 2000, 2200,
+                    2500, 2900, 3200, 3600
+                ];
+            } else if (response["f-number-options"]["f-stop-type"] == "half_stops") {
+                f_number_options = [
+                    100, 120, 140, 170,
+                    200, 240, 280, 330,
+                    400, 480, 560, 670,
+                    800, 950, 1100, 1300,
+                    1600, 1900, 2200, 2700,
+                    3200
+                ];
+            } else if (response["f-number-options"]["f-stop-type"] == "full_stops") {
+                f_number_options = [
+                    100, 140, 200, 280,
+                    400, 560, 800, 1100,
+                    1600, 2200, 3200
+                ];
+            }
+
+            this.fNumberOptions = f_number_options.slice(
+                response["f-number-options"]["minimum-f-stop"],
+                response["f-number-options"]["maximum-f-stop"] + 1
+            );
             this.fNumber = this.fNumberOptions[0];
         } else {
             this._dashboardComponent.showSnackBarMessage(
@@ -313,8 +357,8 @@ export class Device {
             body,
             postOptions).toPromise();
         if (response["success"]) {
-            this.imageFormat = response["device-details"]["CaptureFormats"];
             this.manufacturer = response["device-details"]["Manufacturer"];
+            this.model = response["device-details"]["Model"];
         } else {
             this._dashboardComponent.showSnackBarMessage(
                 "There was an error: " + response["error"]);
@@ -328,5 +372,9 @@ export class Device {
             // TODO(jordanhuus): notify user that the value was invalid
             this.captureCount = 1;
         }
+    }
+
+    delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 }

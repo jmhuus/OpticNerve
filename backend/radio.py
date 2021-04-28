@@ -14,21 +14,15 @@ def process_data(modem, data, terminate_statement):
         action_response = action_request_pb2.ActionRequest()
         try:
             device_details = CaptureImage.get_device_details()
-
-            # Go through each device detail and add to protobuf
             device_details_proto = action_request_pb2.DeviceDetails()
-
-            # Clean up and add the capture formats; originally a string representing a tuple
-            capture_formats = re.sub('[^0-9,]', '', device_details["CaptureFormats"]).split(",")
-            for format in capture_formats:
-                format_to_set = device_details_proto.capture_formats.append(int(format))
-                device_details_proto.device_version = device_details["DeviceVersion"]
-                device_details_proto.model = device_details["Model"]
-                action_response.response_successful = True
-                action_response.device_details.CopyFrom(device_details_proto)
+            device_details_proto.device_version = device_details["DeviceVersion"]
+            device_details_proto.model = device_details["Model"]
+            device_details_proto.manufacturer = device_details["Manufacturer"]
+            action_response.response_successful = True
+            action_response.device_details.CopyFrom(device_details_proto)
                 
         except Exception as e:
-            print("ERROR: ", str(e))
+            print("there was an error calling ACTION_GET_DEVICE_DETAILS: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -36,9 +30,10 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.capture_new_image({"name": "jordan"})  # TODO(jordanhuus): remove hardcoded placeholder data
+            CaptureImage.capture_new_image(download_image=False)  # TODO(jordanhuus): remove hardcoded placeholder data
             action_response.response_successful = True
         except Exception as e:
+            print("there was an error calling ACTION_CAPTURE_IMAGE: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -57,6 +52,7 @@ def process_data(modem, data, terminate_statement):
             action_response.context.CopyFrom(context)
             
         except Exception as e:
+            print("there was an error calling ACTION_MULTIPLE_CAPTURES_BY_COUNT: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -76,6 +72,7 @@ def process_data(modem, data, terminate_statement):
                 action_response.context.CopyFrom(context)
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_CAMERA_STATE: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -83,11 +80,11 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_exposure_time(action_request.exposure_time, {"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            CaptureImage.set_exposure_time(action_request.exposure_time)
             action_response.response_successful = True
-            action_response.camera_state = action_request_pb2.ActionRequest.COMPLETE
 
         except Exception as e:
+            print("there was an error calling ACTION_SET_EXPOSURE_TIME: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -95,11 +92,12 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_EXPOSURE_TIME:
         action_response = action_request_pb2.ActionRequest()
         try:
-            exposure_time = CaptureImage.get_exposure_time({"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            exposure_time = CaptureImage.get_exposure_time()
             action_response.response_successful = True
             action_response.exposure_time = exposure_time
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_EXPOSURE_TIME: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -107,22 +105,24 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_APERTURE_F_STOP:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_f_number(action_request.f_number, {"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            CaptureImage.set_f_number(action_request.f_number)  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
 
         except Exception as e:
+            print("there was an error calling ACTION_SET_APERTURE_F_STOP: ", str(e))
             action_response.response_successful = False
-            o
-            modem.send(action_response.SerializeToString().hex())
+
+        modem.send(action_response.SerializeToString().hex())
             
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_APERTURE_F_STOP:
         action_response = action_request_pb2.ActionRequest()
         try:
-            f_number = CaptureImage.get_f_number({"name": "jordan"})  # TODO(jordanhuus): remove hard code
+            f_number = CaptureImage.get_f_number()  # TODO(jordanhuus): remove hard code
             action_response.response_successful = True
             action_response.f_number = f_number
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_APERTURE_F_STOP: ", str(e))
             action_response.response_successful = False
             
         modem.send(action_response.SerializeToString().hex())
@@ -130,12 +130,15 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_APERTURE_OPTIONS:
         action_response = action_request_pb2.ActionRequest()
         try:
-            f_number_options = CaptureImage.get_f_number_options({"test": "TODO(jordanhuus): set context for GET requests"})
+            f_stop_type, minimum_f_stop_index, maximum_f_stop_index = \
+                CaptureImage.get_f_number_options()
+            action_response.f_stop_type = f_stop_type
+            action_response.minimum_f_stop_index = minimum_f_stop_index
+            action_response.maximum_f_stop_index = maximum_f_stop_index
             action_response.response_successful = True
-            for num in f_number_options:
-                num_to_set = action_response.aperture_options.append(num)
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_APERTURE_OPTIONS: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -156,11 +159,12 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_GET_ISO_NUMBER:
         action_response = action_request_pb2.ActionRequest()
         try:
-            iso_number = CaptureImage.get_iso_number({"name": "jordan"})
+            iso_number = CaptureImage.get_iso_number()
             action_response.response_successful = True
             action_response.iso_number = iso_number
 
         except Exception as e:
+            print("there was an error calling ACTION_GET_ISO_NUMBER: ", str(e))
             action_response.response_successful = False
 
         modem.send(action_response.SerializeToString().hex())
@@ -168,28 +172,37 @@ def process_data(modem, data, terminate_statement):
     elif action_request.action == action_request_pb2.ActionRequest.ACTION_SET_ISO_NUMBER:
         action_response = action_request_pb2.ActionRequest()
         try:
-            CaptureImage.set_iso_number({"name": "jordan"}, action_request.iso_number)
+            CaptureImage.set_iso_number(action_request.iso_number)
             action_response.response_successful = True
-            response = {
-                "success": True,
-                "iso-number": action_request.iso_number
-            }
-        except Exception as e:
-            action_response.response_successful = False
-            response = {
-                "success": False
-            }
-            modem.send(action_response.SerializeToString().hex())
             
+        except Exception as e:
+            print("there was an error calling ACTION_SET_ISO_NUMBER: ", str(e))
+            action_response.response_successful = False
+
+        modem.send(action_response.SerializeToString().hex())
+
     else:
         raise Exception(
             "ERROR: Action with index of {} does not exist or there is a problem locating it".format(action_request.action)
         )
+
+def process_error(modem, data, terminate_statement):
+    import time; time.sleep(20)
+    data = Minimodem.clean_data(Minimodem, data, terminate_statement)
+    action_response = action_request_pb2.ActionRequest()
+    action_response.response_successful = False
+    action_response.action = action_request_pb2.ActionRequest.ACTION_ERROR_RESEND_ACTION
+    modem.send(action_response.SerializeToString().hex())
     
 
 data = None
 modem = Minimodem()
 while True:
-    data = modem.recieve("~")
-    if data:
-        process_data(modem, data, "~")
+    try:
+        data = modem.receive("~")
+        if data:
+            process_data(modem, data, "~")
+    except Exception as e:
+        print("There was an error in radio.py: ", str(e))
+        process_error(modem, None, "~")
+        pass

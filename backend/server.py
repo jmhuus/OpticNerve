@@ -18,6 +18,11 @@ import subprocess
 import platform
 import utils
 
+try:
+    import RPi.GPIO as GPIO
+except:
+    pass
+
 
 app = Flask(__name__)
 CORS(app)
@@ -26,6 +31,12 @@ CORS(app)
 # Set up database
 db = setup_db(app)
 migrate = Migrate(app, db)
+try:
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+except:
+    pass
 
 
 @app.route("/")
@@ -84,14 +95,13 @@ def device_details():
 
             # Deconstruct protobuf response
             action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
+            action_response.ParseFromString(bytes.fromhex(response))  # Check that response is not empty
             return jsonify({
                 "success": action_response.response_successful,
                 "device-details": {
-                    "capture_formats": [i for i in action_response.device_details.capture_formats],
-                    "device_version": action_response.device_details.device_version,
-                    "manufacturer": action_response.device_details.manufacturer,
-                    "model": action_response.device_details.model
+                    "Manufacturer": action_response.device_details.manufacturer,
+                    "Model": action_response.device_details.model
+                    # TODO(jordanhuus): add serial number to protocol buffer
                 }
             })
 
@@ -139,7 +149,7 @@ def capture_image():
             action_request.action = action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE
             modem = Minimodem()
             response = modem.transmit(action_request.SerializeToString().hex())
-
+            
             # Desrialize data from protobuf
             action_response = action_request_pb2.ActionRequest()
             action_response.ParseFromString(bytes.fromhex(response))
@@ -466,7 +476,7 @@ def set_aperture_f_stop():
     if data["device-type"] == "local":
         try:
             # Set exposure time
-            f_number = CaptureImage.get_f_number(    )
+            f_number = CaptureImage.get_f_number()
             return jsonify({
                 "success": True,
                 "f-number": f_number
@@ -520,10 +530,15 @@ def get_aperture_options():
     if data["device-type"] == "local":
         try:
             # Get exposure options
-            f_number_options = CaptureImage.get_f_number_options()
+            f_stop_type, minimum_f_stop_index, maximum_f_stop_index = \
+                CaptureImage.get_f_number_options()
             return jsonify({
                 "success": True,
-                "f-number-options": f_number_options
+                "f-number-options": {
+                    "f-stop-type": f_stop_type,
+                    "minimum-f-stop": minimum_f_stop_index,
+                    "maximum-f-stop": maximum_f_stop_index
+                }
             })
         except Exception as e:
             return jsonify({
@@ -545,7 +560,11 @@ def get_aperture_options():
             action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
                 "success": action_response.response_successful,
-                "aperture-options": [i for i in action_response.aperture_options]
+                "f-number-options": {
+                    "f-stop-type": action_response.f_stop_type,
+                    "minimum-f-stop": action_response.minimum_f_stop_index,
+                    "maximum-f-stop": action_response.maximum_f_stop_index            
+                }
             })
         
         except Exception as e:
@@ -685,7 +704,7 @@ def set_iso_number():
         try:
             # Serialize data into protobuf
             action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_CAPTURE_IMAGE
+            action_request.action = action_request_pb2.ActionRequest.ACTION_SET_ISO_NUMBER
             action_request.iso_number = data["iso-number"]
             modem = Minimodem()
             response = modem.transmit(action_request.SerializeToString().hex())

@@ -1,12 +1,14 @@
 import subprocess
 import os
 import time
-from hamming_code_ecc import \
-    encode_data_to_hamming_binary_array, \
-    decode_hamming_code_binary_array_to_string
+import hamming_code_ecc
 import re
 import json
-# import RPi.GPIO as GPIO
+import action_request_pb2
+try:
+    import RPi.GPIO as GPIO
+except:
+    pass
 
 
 class Minimodem:
@@ -29,11 +31,13 @@ class Minimodem:
         self.tx_data = None
         self.rx_data = None
 
-        # # Set up GPIO pins
-        # GPIO.setwarnings(False)
-        # GPIO.setmode(GPIO.BOARD)
-        # GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
-
+        # Set up GPIO pins
+        try:
+            GPIO.setwarnings(False)
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+        except:
+            pass
         
     def transmit(self, data):
         self.tx_data = data
@@ -43,16 +47,24 @@ class Minimodem:
             self.send(self.tx_data)
 
             # Recieve
-            self.rx_data = self.recieve("~")
+            self.rx_data = self.receive("~")
             
         finally:
+            # Resend request
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(self.rx_data))
+            
+            if not action_response.response_successful and \
+               action_request_pb2.ActionRequest.ACTION_ERROR_RESEND_ACTION:
+                self.send(self.tx_data)
+
             if self.rx_data:
                 return self.rx_data
             else:
                 return None
-
+ 
             
-    def recieve(self, terminate_statement=None):
+    def receive(self, terminate_statement=None):
         def execute(cmd):
             popen = subprocess.Popen(
                 cmd,
@@ -61,13 +73,14 @@ class Minimodem:
             )
             for stdout_line in iter(popen.stdout.readline, ""):
                 yield stdout_line
+                
             popen.stdout.close()
             return_code = popen.wait()
             if return_code:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
         request = ""
-        for path in execute(["minimodem", "--rx", "500", "-q", "--print-filter"]):
+        for path in execute(["minimodem", "--rx", "500", "--startbits", "5", "-q", "--print-filter"]):
             # Filter out incoming noise; proper data should be strictly binary
             if "0" in path or "1" in path:
                 request += path
@@ -76,10 +89,7 @@ class Minimodem:
                     request = request.split("--")
                     request = [i.replace(" ", "0") for i in request]
                     request = [re.sub('[^0-1]', '', i) for i in request]
-                    request = decode_hamming_code_binary_array_to_string(
-                        request,
-                        4
-                    )
+                    request = hamming_code_ecc.decode_hamming_binary(request)
                     request = self.clean_data(request, terminate_statement)
                     time.sleep(1)
                     return request
@@ -89,8 +99,8 @@ class Minimodem:
 
     def send(self, data):
         # Convert data to hamming code binary
-        data = encode_data_to_hamming_binary_array(data)
-        data = "--".join(i for i in data) + "~~~~\n\n\n"
+        data = hamming_code_ecc.encode_data_to_hamming_binary_array(data)
+        data = "\n\n\n" + "--".join(i for i in data) + "~~~~\n\n\n"
         
         # Write data to tmp_data.txt
         with open("tmp_data.txt", "w") as f:
@@ -100,13 +110,22 @@ class Minimodem:
         path = os.path.dirname(os.path.realpath(__file__))
         tmp_sound_filename = path+"/tmp_send_audio_file.wav"
         subprocess.run(
-            "cat tmp_data.txt|minimodem --tx 500 -f {}".format(tmp_sound_filename),
+            "cat tmp_data.txt|minimodem --tx 500 --startbits 5 -f {}".format(tmp_sound_filename),
             shell=True
         )
-        # GPIO.output(3, GPIO.HIGH)
+        try:
+            GPIO.output(3, GPIO.HIGH)
+        except:
+            pass
+        time.sleep(0.5)
+        # 'afplay' for MacOS testing, 'aplay' for linux
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
-        # GPIO.output(3, GPIO.LOW)
- 
+        time.sleep(0.5)
+        try:
+            GPIO.output(3, GPIO.LOW)
+        except:
+            pass
+        
 
     def clean_data(self, data, terminate_statement):
         data = data.replace(".", "")

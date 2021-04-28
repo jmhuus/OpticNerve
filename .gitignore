@@ -1,10 +1,11 @@
 .DS_Store
-backend/env_backend
+backend/env_optic_nerve
 __pycache__
 backend/dist/
 backend/build/
 build/
 optic-nerve-linux-x64/
+package-lock.json
 
 # compiled output
 /dist

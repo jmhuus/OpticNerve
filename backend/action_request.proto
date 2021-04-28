@@ -29,6 +29,7 @@ message ActionRequest {
     ACTION_GET_LENS_ID = 10;
     ACTION_GET_ISO_NUMBER = 11;
     ACTION_SET_ISO_NUMBER = 12;
+    ACTION_ERROR_RESEND_ACTION = 13;
   }
 
   enum CameraState {
@@ -43,8 +44,11 @@ message ActionRequest {
   optional CameraState camera_state = 5;
   optional int32 exposure_time = 6;
   optional int32 f_number = 7;
-  repeated int32 aperture_options = 8;
+  repeated int32 aperture_options = 8 [deprecated = true];
   optional int32 lens_id = 9;
   optional int32 iso_number = 10;
   optional DeviceDetails device_details = 12;
+  optional string f_stop_type = 13;
+  optional int32 minimum_f_stop_index = 14;
+  optional int32 maximum_f_stop_index = 15;
 }
