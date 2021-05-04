@@ -1,11 +1,8 @@
 ## Optic Nerve
-Optic Nerve is a desktop app that can control DSLR cameras via USB or packet radio to initiate new pictures, download images, and change various camera capture settings such as ISO, F-Stop, and Exposure (Shutter). 
+Optic Nerve is a desktop app that can control DSLR cameras via USB to initiate new pictures, download images, and change various camera capture settings such as ISO, F-Stop, and Exposure (Shutter). 
 
 ### USB
 These commands are communicated directly to the DSLR via USB using the PTP protocol. Connecting a DSLR direclty to your MacOS or Linux machine allows you to issue these commands.
-
-### Packet Radio (WIP)
-Optic Nerve can communicate with your DSLR wirelessly over packet radio. Packet radio is like dial-up over a ham radio, otherwise known as a tranceiver or walkie talkie. With the help of two computers (recommended Raspberry Pi), Optic Nerve can serialize DSLR commands in the form of protocol buffers that are then transmitted over the air waves. A receiving radio running Optic Nerve will be listening for binary encoded data, issue the commands to the DSLR, and respond via packet radio to comfirm the request.
 
 
 ![Optic Nerve DSLR Tether](/example_screenshot.png)
