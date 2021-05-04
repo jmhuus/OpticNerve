@@ -7,7 +7,6 @@ import { ThemePalette } from '@angular/material/core';
 
 enum ConnectionTypeIndexes {
     USB = 0,
-    REMOTE_PACKET_RADIO = 1
 }
 
 export interface DeviceTypeRequirements {
@@ -144,19 +143,6 @@ export class DashboardComponent implements OnInit {
                     this.showSnackBarMessage("There was an error: " + error);
                 });
         }
-    }
-
-    chooseRemoteDevice(): void {
-        // TODO(jordanhuus): implement packet radio connection
-        this.showSnackBarMessage("Connecting to packet radio device.");
-        this.chosenDevice =
-            new Device("Remote Device", 1234, Device.REMOTE, this, this.http);
-        this.chosenDevice.initConnectionDetails()
-            .then(() => {
-            })
-            .catch((error) => {
-                this.showSnackBarMessage("There was an error: " + error);
-            });
     }
 
     delay(ms: number) {

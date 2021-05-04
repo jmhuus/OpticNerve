@@ -1,6 +1,0 @@
-Identified Problems:
-* USB DSLR devices plugged in are mounted as memory volume and need to be unmounted before they can be used by python.
-    * In order to unmount, the only way I currently know (still searchinng) is to run the following commands.
-    * sudo chmod 666 /sys/bus/usb/drivers/usbfs/unbind
-    * echo -n 1-1:1.0 > /sys/bus/usb/drivers/usbfs/unbind (but the 1-1:1.0 is the device ID and needs to be found prior.
-    * sudo chmod 400 /sys/bus/usb/drivers/usbfs/unbind

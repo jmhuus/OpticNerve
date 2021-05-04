@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['server.py'],
-             pathex=['./env_optic_nerve/lib/python3.7/site-packages/', '/home/pi/Documents/OpticNerve/backend'],
+             pathex=['./env_optic_nerve/lib/python3.8/site-packages/', '/home/jordan/Documents/computer_science/OpticNerve/backend'],
              binaries=[],
              datas=[('images/', 'images/')],
              hiddenimports=[],

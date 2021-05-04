@@ -29,7 +29,6 @@ export class Device {
     public fNumber: number;
 
     public static readonly LOCAL = "local";
-    public static readonly REMOTE = "remote";
 
     public constructor(
         _model: string,
@@ -75,7 +74,7 @@ export class Device {
             await this.setIsoNumber();
             await this.delay(500);
             await this.setExposure();
-	    // TODO(jordanhuus): tune minimodem to a higher bitrate and re-enable this
+            // TODO(jordanhuus): tune minimodem to a higher bitrate and re-enable this
             // await this.delay(500);
             // await this.getDeviceDetails();
         }

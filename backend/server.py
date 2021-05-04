@@ -1,4 +1,3 @@
-
 from flask import Flask, request, abort, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -9,19 +8,12 @@ import os
 import sys
 import time
 from model import Camera
-from minimodem import Minimodem
 import json
 import CaptureImage
-import action_request_pb2
 import time
 import subprocess
 import platform
 import utils
-
-try:
-    import RPi.GPIO as GPIO
-except:
-    pass
 
 
 app = Flask(__name__)
@@ -31,12 +23,6 @@ CORS(app)
 # Set up database
 db = setup_db(app)
 migrate = Migrate(app, db)
-try:
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
-except:
-    pass
 
 
 @app.route("/")
@@ -70,52 +56,19 @@ def device_details():
     
     data = request.get_json()
 
-    if data["device-type"] == "local":
-        try:
-            # Get device details
-            device_details = CaptureImage.get_device_details()
-            return jsonify({
-                "success": True,
-                "device-details": device_details
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Construct protobuf request
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_DEVICE_DETAILS
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Deconstruct protobuf response
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))  # Check that response is not empty
-            return jsonify({
-                "success": action_response.response_successful,
-                "device-details": {
-                    "Manufacturer": action_response.device_details.manufacturer,
-                    "Model": action_response.device_details.model
-                    # TODO(jordanhuus): add serial number to protocol buffer
-                }
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Get device details
+        device_details = CaptureImage.get_device_details()
+        return jsonify({
+            "success": True,
+            "device-details": device_details
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
-    
+        
 
 @app.route("/capture-image", methods=["POST"])
 def capture_image():
@@ -126,46 +79,17 @@ def capture_image():
 
     data = request.get_json()
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            # Capture new image
-            image_file_name = CaptureImage.capture_new_image()
-            return jsonify({
-                "success": True,
-                "image-name": image_file_name
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_CAPTURE_IMAGE
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-            
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Capture new image
+        image_file_name = CaptureImage.capture_new_image()
+        return jsonify({
+            "success": True,
+            "image-name": image_file_name
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
 
@@ -184,56 +108,27 @@ def capture_images_count():
     if "capture-count" not in data.keys():
         abort(400, "Missing 'capture-count' data.")
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
-            db.session.add(camera)
-            db.session.commit()
-            
-            # Capture new image
-            # TODO(jordanhuus): refactor to a simpler parameter set
-            CaptureImage.multiple_captures(
-                data["capture-count"],
-                camera.id,
-                db
-            )
-
-            return jsonify({
-                "success": True,
-                "camera-session-id": camera.id
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_MULTIPLE_CAPTURES_BY_COUNT
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful
-            })
+    try:
+        camera = Camera(camera_state=Camera.STATE_PENDING_CAPTURE)
+        db.session.add(camera)
+        db.session.commit()
         
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+        # Capture new image
+        # TODO(jordanhuus): refactor to a simpler parameter set
+        CaptureImage.multiple_captures(
+            data["capture-count"],
+            camera.id,
+            db
+        )
+
+        return jsonify({
+            "success": True,
+            "camera-session-id": camera.id
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(["device-type"])
+            "error": str(e)
         })
     
 
@@ -251,50 +146,19 @@ def get_camera_state():
     if "camera-session-id" not in data.keys():
         abort(400, "Missing 'camera-session-id' data.")
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            # Check camera state
-            camera = Camera.query.get(data["camera-session-id"])
-            print("image file name from Camera ORM object: ", camera.image_file_name)
-            return jsonify({
-                "success": True,
-                "camera-state": "complete" if camera.camera_state==2 else "pending",
-                "image-name": camera.image_file_name
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ActionRequest.ACTION_GET_CAMERA_STATE
-
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful,
-                "camera-state": action_response.camera_state
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Check camera state
+        camera = Camera.query.get(data["camera-session-id"])
+        print("image file name from Camera ORM object: ", camera.image_file_name)
+        return jsonify({
+            "success": True,
+            "camera-state": "complete" if camera.camera_state==2 else "pending",
+            "image-name": camera.image_file_name
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
 
@@ -312,46 +176,16 @@ def set_exposure():
     if "exposure-time" not in data.keys():
         abort(400, "Missing 'exposure-time' object.")
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            # Set exposure time
-            CaptureImage.set_exposure_time(data["exposure-time"])
-            return jsonify({
-                "success": True
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_SET_EXPOSURE_TIME
-            action_request.exposure_time = data["exposure-time"]
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Set exposure time
+        CaptureImage.set_exposure_time(data["exposure-time"])
+        return jsonify({
+            "success": True
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
         
@@ -364,46 +198,16 @@ def gete_exposure():
     
     data = request.get_json()
     
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            exposure_time = CaptureImage.get_exposure_time()
-            return jsonify({
-                "success": True,
-                "exposure-time": exposure_time
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_EXPOSURE_TIME
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful,
-                "expsure-time": action_response.exposure_time
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        exposure_time = CaptureImage.get_exposure_time()
+        return jsonify({
+            "success": True,
+            "exposure-time": exposure_time
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
 
@@ -421,45 +225,15 @@ def set_aperture():
     if "f-number" not in data.keys():
         abort(400, "Missing 'exposure-time' object.")
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            CaptureImage.set_f_number(data["f-number"])
-            return jsonify({
-                "success": True
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_SET_APERTURE_F_STOP
-            action_request.f_number = data["f-number"]
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        CaptureImage.set_f_number(data["f-number"])
+        return jsonify({
+            "success": True
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
 
@@ -472,47 +246,17 @@ def set_aperture_f_stop():
     
     data = request.get_json()
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            # Set exposure time
-            f_number = CaptureImage.get_f_number()
-            return jsonify({
-                "success": True,
-                "f-number": f_number
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_APERTURE_F_STOP
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful,
-                "f-number": action_response.f_number
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Set exposure time
+        f_number = CaptureImage.get_f_number()
+        return jsonify({
+            "success": True,
+            "f-number": f_number
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
         
@@ -526,59 +270,25 @@ def get_aperture_options():
     
     data = request.get_json()
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            # Get exposure options
-            f_stop_type, minimum_f_stop_index, maximum_f_stop_index = \
-                CaptureImage.get_f_number_options()
-            return jsonify({
-                "success": True,
-                "f-number-options": {
-                    "f-stop-type": f_stop_type,
-                    "minimum-f-stop": minimum_f_stop_index,
-                    "maximum-f-stop": maximum_f_stop_index
-                }
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_APERTURE_OPTIONS
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful,
-                "f-number-options": {
-                    "f-stop-type": action_response.f_stop_type,
-                    "minimum-f-stop": action_response.minimum_f_stop_index,
-                    "maximum-f-stop": action_response.maximum_f_stop_index            
-                }
-            })
-        
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Get exposure options
+        f_stop_type, minimum_f_stop_index, maximum_f_stop_index = \
+            CaptureImage.get_f_number_options()
+        return jsonify({
+            "success": True,
+            "f-number-options": {
+                "f-stop-type": f_stop_type,
+                "minimum-f-stop": minimum_f_stop_index,
+                "maximum-f-stop": maximum_f_stop_index
+            }
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
-        
+    
 # TODO(jordanhuus): untested and unimplemented
 @app.route("/get-lens-id", methods=["POST"])
 def get_id_lens():
@@ -589,38 +299,22 @@ def get_id_lens():
     
     data = request.get_json()
 
-    if data["device-type"] == "local":
-        try:
-            tx_data = {
-                "action": Minimodem.ACTION_GET_LENS_ID,
-                "data": None
-            }
-            modem = Minimodem()
-            modem.transmit(json.dumps(tx_data))
-            
-        # TODO(jordanhuus): exception handling should be more specific
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-        
-    elif data["device-type"] == "remote":
-        # Serialize data into protobuf
-        action_request = action_request_pb2.ActionRequest()
-        action_request.action = action_request_pb2.ActionRequest.ACTION_GET_LENS_ID
+    try:
+        tx_data = {
+            "action": Minimodem.ACTION_GET_LENS_ID,
+            "data": None
+        }
         modem = Minimodem()
-        response = modem.transmit(action_request.SerializeToString().hex())
-        
-        # Desrialize data from protobuf
-        action_response = action_request_pb2.ActionRequest()
-        action_response.ParseFromString(bytes.fromhex(response))
+        modem.transmit(json.dumps(tx_data))
+            
+    # TODO(jordanhuus): exception handling should be more specific
+    except Exception as e:
         return jsonify({
-            "success": action_response.response_successful,
-            "lens-id": action_response.lens_id
+            "success": False,
+            "error": str(e)
         })
 
-
+    
 @app.route("/get-iso-number", methods=["POST"])
 def get_iso_number():
     """
@@ -630,47 +324,17 @@ def get_iso_number():
 
     data = request.get_json()
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            # Get exposure time
-            iso_number = CaptureImage.get_iso_number()
-            return jsonify({
-                "success": True,
-                "iso-number": iso_number
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_GET_ISO_NUMBER
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-            
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful,
-                "iso-number": action_response.iso_number
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Get exposure time
+        iso_number = CaptureImage.get_iso_number()
+        return jsonify({
+            "success": True,
+            "iso-number": iso_number
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
 
@@ -684,47 +348,17 @@ def set_iso_number():
     
     data = request.get_json()
 
-    # Connected via USB
-    if data["device-type"] == "local":
-        try:
-            # Set exposure time
-            CaptureImage.set_iso_number(data["iso-number"])
-            return jsonify({
-                "success": True,
-                "iso-number": data["iso-number"]
-            })
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-
-    # Remote communication via packet radio
-    elif data["device-type"] == "remote":
-        try:
-            # Serialize data into protobuf
-            action_request = action_request_pb2.ActionRequest()
-            action_request.action = action_request_pb2.ActionRequest.ACTION_SET_ISO_NUMBER
-            action_request.iso_number = data["iso-number"]
-            modem = Minimodem()
-            response = modem.transmit(action_request.SerializeToString().hex())
-            
-            # Desrialize data from protobuf
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(response))
-            return jsonify({
-                "success": action_response.response_successful
-            })
-
-        except Exception as e:
-            return jsonify({
-                "success": False,
-                "error": str(e)
-            })
-    else:
+    try:
+        # Set exposure time
+        CaptureImage.set_iso_number(data["iso-number"])
+        return jsonify({
+            "success": True,
+            "iso-number": data["iso-number"]
+        })
+    except Exception as e:
         return jsonify({
             "success": False,
-            "error": "Device {} not allowed. Only 'local' and 'remote' options allowed.".format(data["device-type"])
+            "error": str(e)
         })
 
 
