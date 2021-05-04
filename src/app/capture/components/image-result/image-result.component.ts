@@ -17,4 +17,14 @@ export class ImageResultComponent implements OnInit {
     chooseImage(image: string): void {
         this.chosenDevice.imageLatestName = image;
     }
+
+    getImagePath(): string {
+        var basePath = "http://localhost:8080/images/" + this.chosenDevice.imageLatestName;
+        if (this.chosenDevice.deviceType == Device.REMOTE) {
+            basePath += "?device-type=" + Device.REMOTE;
+        }
+
+        console.log("returning image base path", basePath);
+        return basePath;
+    }
 }

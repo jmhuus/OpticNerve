@@ -14,6 +14,13 @@ message DeviceDetails {
   optional string model = 4;
 }
 
+message Image {
+  optional string name = 1;
+  optional int32 height = 2;
+  optional int32 width = 3;
+  optional bytes data = 4;
+}
+
 message ActionRequest {
 
   enum Action {
@@ -28,6 +35,7 @@ message ActionRequest {
     ACTION_GET_APERTURE_OPTIONS = 9;
     ACTION_GET_LENS_ID = 10;
     ACTION_GET_ISO_NUMBER = 11;
+    ACTION_GET_IMAGE = 14;
     ACTION_SET_ISO_NUMBER = 12;
     ACTION_ERROR_RESEND_ACTION = 13;
   }
@@ -51,4 +59,5 @@ message ActionRequest {
   optional string f_stop_type = 13;
   optional int32 minimum_f_stop_index = 14;
   optional int32 maximum_f_stop_index = 15;
+  optional Image image = 16;
 }

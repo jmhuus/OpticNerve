@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x14\x61\x63tion_request.proto\x12\x07\x62\x61\x63kend\"0\n\x07\x43ontext\x12\x11\n\tdevice_id\x18\x01 \x01(\x05\x12\x12\n\nsession_id\x18\x02 \x01(\x05\"e\n\rDeviceDetails\x12\x17\n\x0f\x63\x61pture_formats\x18\x01 \x03(\x05\x12\x16\n\x0e\x64\x65vice_version\x18\x02 \x01(\t\x12\x14\n\x0cmanufacturer\x18\x03 \x01(\t\x12\r\n\x05model\x18\x04 \x01(\t\"\x88\x07\n\rActionRequest\x12-\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1d.backend.ActionRequest.Action\x12!\n\x07\x63ontext\x18\x02 \x01(\x0b\x32\x10.backend.Context\x12\"\n\x13response_successful\x18\x03 \x01(\x08:\x05\x66\x61lse\x12\x15\n\rcapture_count\x18\x04 \x01(\x05\x12\x38\n\x0c\x63\x61mera_state\x18\x05 \x01(\x0e\x32\".backend.ActionRequest.CameraState\x12\x15\n\rexposure_time\x18\x06 \x01(\x05\x12\x10\n\x08\x66_number\x18\x07 \x01(\x05\x12\x1c\n\x10\x61perture_options\x18\x08 \x03(\x05\x42\x02\x18\x01\x12\x0f\n\x07lens_id\x18\t \x01(\x05\x12\x12\n\niso_number\x18\n \x01(\x05\x12.\n\x0e\x64\x65vice_details\x18\x0c \x01(\x0b\x32\x16.backend.DeviceDetails\x12\x13\n\x0b\x66_stop_type\x18\r \x01(\t\x12\x1c\n\x14minimum_f_stop_index\x18\x0e \x01(\x05\x12\x1c\n\x14maximum_f_stop_index\x18\x0f \x01(\x05\"\x90\x03\n\x06\x41\x63tion\x12\x1d\n\x19\x41\x43TION_GET_DEVICE_DETAILS\x10\x01\x12\x18\n\x14\x41\x43TION_CAPTURE_IMAGE\x10\x02\x12%\n!ACTION_MULTIPLE_CAPTURES_BY_COUNT\x10\x03\x12\x1b\n\x17\x41\x43TION_GET_CAMERA_STATE\x10\x04\x12\x1c\n\x18\x41\x43TION_GET_EXPOSURE_TIME\x10\x05\x12\x1c\n\x18\x41\x43TION_SET_EXPOSURE_TIME\x10\x06\x12\x1e\n\x1a\x41\x43TION_SET_APERTURE_F_STOP\x10\x07\x12\x1e\n\x1a\x41\x43TION_GET_APERTURE_F_STOP\x10\x08\x12\x1f\n\x1b\x41\x43TION_GET_APERTURE_OPTIONS\x10\t\x12\x16\n\x12\x41\x43TION_GET_LENS_ID\x10\n\x12\x19\n\x15\x41\x43TION_GET_ISO_NUMBER\x10\x0b\x12\x19\n\x15\x41\x43TION_SET_ISO_NUMBER\x10\x0c\x12\x1e\n\x1a\x41\x43TION_ERROR_RESEND_ACTION\x10\r\"0\n\x0b\x43\x61meraState\x12\x0c\n\x08\x43OMPLETE\x10\x01\x12\x13\n\x0fPENDING_CAPTURE\x10\x02'
+  serialized_pb=b'\n\x14\x61\x63tion_request.proto\x12\x07\x62\x61\x63kend\"0\n\x07\x43ontext\x12\x11\n\tdevice_id\x18\x01 \x01(\x05\x12\x12\n\nsession_id\x18\x02 \x01(\x05\"e\n\rDeviceDetails\x12\x17\n\x0f\x63\x61pture_formats\x18\x01 \x03(\x05\x12\x16\n\x0e\x64\x65vice_version\x18\x02 \x01(\t\x12\x14\n\x0cmanufacturer\x18\x03 \x01(\t\x12\r\n\x05model\x18\x04 \x01(\t\"B\n\x05Image\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0e\n\x06height\x18\x02 \x01(\x05\x12\r\n\x05width\x18\x03 \x01(\x05\x12\x0c\n\x04\x64\x61ta\x18\x04 \x01(\x0c\"\xbd\x07\n\rActionRequest\x12-\n\x06\x61\x63tion\x18\x01 \x01(\x0e\x32\x1d.backend.ActionRequest.Action\x12!\n\x07\x63ontext\x18\x02 \x01(\x0b\x32\x10.backend.Context\x12\"\n\x13response_successful\x18\x03 \x01(\x08:\x05\x66\x61lse\x12\x15\n\rcapture_count\x18\x04 \x01(\x05\x12\x38\n\x0c\x63\x61mera_state\x18\x05 \x01(\x0e\x32\".backend.ActionRequest.CameraState\x12\x15\n\rexposure_time\x18\x06 \x01(\x05\x12\x10\n\x08\x66_number\x18\x07 \x01(\x05\x12\x1c\n\x10\x61perture_options\x18\x08 \x03(\x05\x42\x02\x18\x01\x12\x0f\n\x07lens_id\x18\t \x01(\x05\x12\x12\n\niso_number\x18\n \x01(\x05\x12.\n\x0e\x64\x65vice_details\x18\x0c \x01(\x0b\x32\x16.backend.DeviceDetails\x12\x13\n\x0b\x66_stop_type\x18\r \x01(\t\x12\x1c\n\x14minimum_f_stop_index\x18\x0e \x01(\x05\x12\x1c\n\x14maximum_f_stop_index\x18\x0f \x01(\x05\x12\x1d\n\x05image\x18\x10 \x01(\x0b\x32\x0e.backend.Image\"\xa6\x03\n\x06\x41\x63tion\x12\x1d\n\x19\x41\x43TION_GET_DEVICE_DETAILS\x10\x01\x12\x18\n\x14\x41\x43TION_CAPTURE_IMAGE\x10\x02\x12%\n!ACTION_MULTIPLE_CAPTURES_BY_COUNT\x10\x03\x12\x1b\n\x17\x41\x43TION_GET_CAMERA_STATE\x10\x04\x12\x1c\n\x18\x41\x43TION_GET_EXPOSURE_TIME\x10\x05\x12\x1c\n\x18\x41\x43TION_SET_EXPOSURE_TIME\x10\x06\x12\x1e\n\x1a\x41\x43TION_SET_APERTURE_F_STOP\x10\x07\x12\x1e\n\x1a\x41\x43TION_GET_APERTURE_F_STOP\x10\x08\x12\x1f\n\x1b\x41\x43TION_GET_APERTURE_OPTIONS\x10\t\x12\x16\n\x12\x41\x43TION_GET_LENS_ID\x10\n\x12\x19\n\x15\x41\x43TION_GET_ISO_NUMBER\x10\x0b\x12\x14\n\x10\x41\x43TION_GET_IMAGE\x10\x0e\x12\x19\n\x15\x41\x43TION_SET_ISO_NUMBER\x10\x0c\x12\x1e\n\x1a\x41\x43TION_ERROR_RESEND_ACTION\x10\r\"0\n\x0b\x43\x61meraState\x12\x0c\n\x08\x43OMPLETE\x10\x01\x12\x13\n\x0fPENDING_CAPTURE\x10\x02'
 )
 
 
@@ -87,20 +87,25 @@ _ACTIONREQUEST_ACTION = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='ACTION_SET_ISO_NUMBER', index=11, number=12,
+      name='ACTION_GET_IMAGE', index=11, number=14,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='ACTION_ERROR_RESEND_ACTION', index=12, number=13,
+      name='ACTION_SET_ISO_NUMBER', index=12, number=12,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='ACTION_ERROR_RESEND_ACTION', index=13, number=13,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=641,
-  serialized_end=1041,
+  serialized_start=740,
+  serialized_end=1162,
 )
 _sym_db.RegisterEnumDescriptor(_ACTIONREQUEST_ACTION)
 
@@ -124,8 +129,8 @@ _ACTIONREQUEST_CAMERASTATE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1043,
-  serialized_end=1091,
+  serialized_start=1164,
+  serialized_end=1212,
 )
 _sym_db.RegisterEnumDescriptor(_ACTIONREQUEST_CAMERASTATE)
 
@@ -219,6 +224,59 @@ _DEVICEDETAILS = _descriptor.Descriptor(
   ],
   serialized_start=83,
   serialized_end=184,
+)
+
+
+_IMAGE = _descriptor.Descriptor(
+  name='Image',
+  full_name='backend.Image',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='backend.Image.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='height', full_name='backend.Image.height', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='width', full_name='backend.Image.width', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='data', full_name='backend.Image.data', index=3,
+      number=4, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=186,
+  serialized_end=252,
 )
 
 
@@ -328,6 +386,13 @@ _ACTIONREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='image', full_name='backend.ActionRequest.image', index=14,
+      number=16, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -342,18 +407,20 @@ _ACTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=187,
-  serialized_end=1091,
+  serialized_start=255,
+  serialized_end=1212,
 )
 
 _ACTIONREQUEST.fields_by_name['action'].enum_type = _ACTIONREQUEST_ACTION
 _ACTIONREQUEST.fields_by_name['context'].message_type = _CONTEXT
 _ACTIONREQUEST.fields_by_name['camera_state'].enum_type = _ACTIONREQUEST_CAMERASTATE
 _ACTIONREQUEST.fields_by_name['device_details'].message_type = _DEVICEDETAILS
+_ACTIONREQUEST.fields_by_name['image'].message_type = _IMAGE
 _ACTIONREQUEST_ACTION.containing_type = _ACTIONREQUEST
 _ACTIONREQUEST_CAMERASTATE.containing_type = _ACTIONREQUEST
 DESCRIPTOR.message_types_by_name['Context'] = _CONTEXT
 DESCRIPTOR.message_types_by_name['DeviceDetails'] = _DEVICEDETAILS
+DESCRIPTOR.message_types_by_name['Image'] = _IMAGE
 DESCRIPTOR.message_types_by_name['ActionRequest'] = _ACTIONREQUEST
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -370,6 +437,13 @@ DeviceDetails = _reflection.GeneratedProtocolMessageType('DeviceDetails', (_mess
   # @@protoc_insertion_point(class_scope:backend.DeviceDetails)
   })
 _sym_db.RegisterMessage(DeviceDetails)
+
+Image = _reflection.GeneratedProtocolMessageType('Image', (_message.Message,), {
+  'DESCRIPTOR' : _IMAGE,
+  '__module__' : 'action_request_pb2'
+  # @@protoc_insertion_point(class_scope:backend.Image)
+  })
+_sym_db.RegisterMessage(Image)
 
 ActionRequest = _reflection.GeneratedProtocolMessageType('ActionRequest', (_message.Message,), {
   'DESCRIPTOR' : _ACTIONREQUEST,

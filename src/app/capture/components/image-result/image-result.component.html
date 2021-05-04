@@ -1,6 +1,6 @@
 <div class="container" *ngIf="chosenDevice">
   <img
-    src="http://localhost:8080/images/{{ chosenDevice.imageLatestName }}"
+    src="getImagePath()"
     alt="Your most recent image.">
   <ul class="images-list">
     <li

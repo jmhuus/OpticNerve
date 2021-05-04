@@ -10,6 +10,8 @@ try:
 except:
     pass
 
+PTT_PIN = 11
+
 
 class Minimodem:
 
@@ -34,34 +36,35 @@ class Minimodem:
         # Set up GPIO pins
         try:
             GPIO.setwarnings(False)
-            GPIO.setmode(GPIO.BOARD)
-            GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(PTT_PIN, GPIO.OUT, initial=GPIO.LOW)
         except:
             pass
         
     def transmit(self, data):
         self.tx_data = data
-        
-        try:
-            # Send
-            self.send(self.tx_data)
 
-            # Recieve
-            self.rx_data = self.receive("~")
-            
-        finally:
-            # Resend request
-            action_response = action_request_pb2.ActionRequest()
-            action_response.ParseFromString(bytes.fromhex(self.rx_data))
-            
-            if not action_response.response_successful and \
-               action_request_pb2.ActionRequest.ACTION_ERROR_RESEND_ACTION:
+        while not self.rx_data:
+            try:
+                # Send
                 self.send(self.tx_data)
 
-            if self.rx_data:
-                return self.rx_data
-            else:
-                return None
+                # Recieve
+                self.rx_data = self.receive("~")
+            
+            finally:
+                # Resend request
+                action_response = action_request_pb2.ActionRequest()
+                action_response.ParseFromString(bytes.fromhex(self.rx_data))
+
+                if not action_response.response_successful and \
+                   action_request_pb2.ActionRequest.ACTION_ERROR_RESEND_ACTION:
+                    print("request to resend command")
+                    self.rx_data = None
+                    pass
+
+                if self.rx_data:
+                    return self.rx_data
  
             
     def receive(self, terminate_statement=None):
@@ -80,7 +83,7 @@ class Minimodem:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
         request = ""
-        for path in execute(["minimodem", "--rx", "500", "--startbits", "5", "-q", "--print-filter"]):
+        for path in execute(["minimodem", "--rx", "1200", "--startbits", "5", "-q", "--print-filter"]):
             # Filter out incoming noise; proper data should be strictly binary
             if "0" in path or "1" in path:
                 request += path
@@ -100,7 +103,7 @@ class Minimodem:
     def send(self, data):
         # Convert data to hamming code binary
         data = hamming_code_ecc.encode_data_to_hamming_binary_array(data)
-        data = "\n\n\n" + "--".join(i for i in data) + "~~~~\n\n\n"
+        data = "--".join(i for i in data) + "~~~~\n\n\n"
         
         # Write data to tmp_data.txt
         with open("tmp_data.txt", "w") as f:
@@ -110,11 +113,11 @@ class Minimodem:
         path = os.path.dirname(os.path.realpath(__file__))
         tmp_sound_filename = path+"/tmp_send_audio_file.wav"
         subprocess.run(
-            "cat tmp_data.txt|minimodem --tx 500 --startbits 5 -f {}".format(tmp_sound_filename),
+            "cat tmp_data.txt|minimodem --tx 1200 --startbits 5 -f {}".format(tmp_sound_filename),
             shell=True
         )
         try:
-            GPIO.output(3, GPIO.HIGH)
+            GPIO.output(PTT_PIN, GPIO.HIGH)
         except:
             pass
         time.sleep(0.5)
@@ -122,7 +125,7 @@ class Minimodem:
         subprocess.run("aplay {}".format(tmp_sound_filename), shell=True)
         time.sleep(0.5)
         try:
-            GPIO.output(3, GPIO.LOW)
+            GPIO.output(PTT_PIN, GPIO.LOW)
         except:
             pass
         

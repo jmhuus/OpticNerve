@@ -1,4 +1,3 @@
-
 from flask import Flask, request, abort, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -9,7 +8,7 @@ import os
 import sys
 import time
 from model import Camera
-from minimodem import Minimodem
+from minimodem import Minimodem, PTT_PIN
 import json
 import CaptureImage
 import action_request_pb2
@@ -17,6 +16,7 @@ import time
 import subprocess
 import platform
 import utils
+from PIL import Image
 
 try:
     import RPi.GPIO as GPIO
@@ -33,8 +33,8 @@ db = setup_db(app)
 migrate = Migrate(app, db)
 try:
     GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(3, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(PTT_PIN, GPIO.OUT, initial=GPIO.LOW)
 except:
     pass
 
@@ -154,7 +154,8 @@ def capture_image():
             action_response = action_request_pb2.ActionRequest()
             action_response.ParseFromString(bytes.fromhex(response))
             return jsonify({
-                "success": action_response.response_successful
+                "success": action_response.response_successful,
+                "image-name": action_response.image.name
             })
 
         except Exception as e:
@@ -760,7 +761,27 @@ def open_file_browser():
     
 @app.route("/images/<path:image_name>")
 def get_image(image_name):
+    device_type = request.args.get("device-type")
     try:
+        # Fetch image bytes via packet radio
+        if device_type == "remote":
+            action_request = action_request_pb2.ActionRequest()
+            action_request.action = \
+                action_request_pb2.ActionRequest.ACTION_GET_IMAGE
+            modem = Minimodem()
+            response = modem.transmit(action_request.SerializeToString().hex())
+            action_response = action_request_pb2.ActionRequest()
+            action_response.ParseFromString(bytes.fromhex(response))  # Check that response is not empty
+            image_proto = action_response.image
+            image = Image.frombytes(
+                "RGBA",
+                (image_proto.width, image_proto.height),
+                image_proto.data)
+            save_path = utils.ensure_path_available(
+                os.path.expanduser("~")+"/Documents/optic-nerve/images/") + \
+                image_proto.name
+            image.save(save_path, format="JPEG")
+        
         STOCK_IMAGE_NAME = "milky_way_image_pending.jpg"
         if image_name == STOCK_IMAGE_NAME:
             return send_from_directory(

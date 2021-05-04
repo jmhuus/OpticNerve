@@ -94,7 +94,7 @@ def capture_new_image(delete_from_device=False, download_image=True):
 
         # Download newly added object
         image_file_name = \
-            "latest_%s.jpg" % datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+            "on_%s.jpg" % datetime.now().strftime("%m_%M_%S")
         if download_image:
             save_path = ensure_path_available(
                 os.path.expanduser("~")+"/Documents/optic-nerve/images/"
@@ -168,8 +168,7 @@ def multiple_captures(capture_count, session_id, db):
 
                 # Download newly added object
                 image_file_name = \
-                    "latest_%s.jpg" % datetime.now().strftime(
-                        "%Y_%m_%d_%H_%M_%S")
+                    "on_%s.jpg" % datetime.now().strftime("%m_%M_%S")
                 save_path = ensure_path_available(
                     os.path.expanduser("~")+"/Documents/optic-nerve/images/"
                 )+image_file_name
