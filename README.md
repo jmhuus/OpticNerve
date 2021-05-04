@@ -6,10 +6,10 @@ These commands are communicated directly to the DSLR via USB using the PTP proto
 
 ### Available Operating Systems
 * Linux
-* Debian DPKG (x86_64)
-* Red Hat RPM (x86_64)
-* Debian DPKG (ARM) for Raspberry Pi
-* Debian RPM (ARM) for Raspberry Pi
+  * Debian DPKG (x86_64)
+  * Red Hat RPM (x86_64)
+  * Debian DPKG (ARM) for Raspberry Pi
+  * Debian RPM (ARM) for Raspberry Pi
 
 Support for MacOS and Windows will be available shortly.
 
