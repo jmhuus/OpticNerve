@@ -4,6 +4,14 @@ Optic Nerve is a desktop app that can control DSLR cameras via USB to initiate n
 ### USB
 These commands are communicated directly to the DSLR via USB using the PTP protocol. Connecting a DSLR direclty to your MacOS or Linux machine allows you to issue these commands.
 
+### Available Operating Systems
+* Linux
+* Debian DPKG (x86_64)
+* Red Hat RPM (x86_64)
+* Debian DPKG (ARM) for Raspberry Pi
+* Debian RPM (ARM) for Raspberry Pi
+Support for MacOS and Windows will be available shortly.
+
 
 ![Optic Nerve DSLR Tether](/example_screenshot.png)
 
