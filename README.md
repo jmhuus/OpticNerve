@@ -10,7 +10,7 @@ These commands are communicated directly to the DSLR via USB using the PTP proto
 * Red Hat RPM (x86_64)
 * Debian DPKG (ARM) for Raspberry Pi
 * Debian RPM (ARM) for Raspberry Pi
-* 
+
 Support for MacOS and Windows will be available shortly.
 
 
