@@ -7,6 +7,7 @@ from usb.util import endpoint_type, endpoint_direction, ENDPOINT_TYPE_BULK, \
 from usb.core import find, USBError
 import struct
 import time
+import sys
 
 
 class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
@@ -213,8 +214,9 @@ class PtpUsbTransport(PtpAbstractTransport.PtpAbstractTransport):
                 break
 
         if device:
-            device.reset()
-            time.sleep(0.5)
+            if not sys.platform == "darwin":
+                device.reset()
+                time.sleep(0.5)
             return device
         else:
             raise UsbException("USB camera not found.")

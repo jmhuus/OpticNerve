@@ -38,10 +38,8 @@ def get_directory_permissions(directory_path):
     platform = sys.platform
     if platform == "linux":
         return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
-    elif platform == "macos":
-        # TODO(jordanhuus): need to test/implement from windows machine
-        # return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
-        print("blah....")
+    elif platform == "darwin":
+        return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
     elif platform == "win":
         # TODO(jordanhuus): need to test/implement from windows machine
         # return [int(i) for i in list(oct(os.stat(directory_path).st_mode)[-3:])]
