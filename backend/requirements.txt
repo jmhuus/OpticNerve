@@ -2,7 +2,7 @@ alembic==1.4.2
 altgraph==0.17
 click==7.1.2
 Flask==1.1.2
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 Flask-Migrate==2.5.3
 Flask-SQLAlchemy==2.4.4
 importlib-metadata==3.7.0
